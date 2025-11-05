@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
 using System.Linq;
+using UnityEngine.UI;
 
 public class DeliverySystem : MonoBehaviour
 {
@@ -18,8 +19,8 @@ public class DeliverySystem : MonoBehaviour
 
     [Header("UI")]
     public TextMeshProUGUI statusText;
-    public TextMeshProUGUI distanceText;
-    public TextMeshProUGUI hpText;
+    
+    public Slider hpSlider;
     public RectTransform compassArrow;
 
     private GameObject[] deliveryZones;
@@ -40,6 +41,7 @@ public class DeliverySystem : MonoBehaviour
         UpdateTargets();
         UpdateCompass();
         UpdateDistanceAndStatus();
+        UpdateHPSlider();
 
         if (hasPackage && currentTarget != null)
         {
@@ -50,19 +52,27 @@ public class DeliverySystem : MonoBehaviour
             }
         }
 
-        // Päivitä HP UI
-        if (hpText != null)
-        {
-            if (hasPackage)
-                hpText.text = "Toimitus HP: " + currentDeliveryHP.ToString("F0") + " / " + maxDeliveryHP.ToString("F0");
-            else
-                hpText.text = "";
-        }
-
         // Tarkista, jos paketti tuhoutuu
         if (hasPackage && currentDeliveryHP <= 0)
         {
             FailDelivery();
+        }
+    }
+
+    void UpdateHPSlider()
+    {
+        if (hpSlider != null)
+        {
+            if (hasPackage)
+            {
+                hpSlider.gameObject.SetActive(true);
+                hpSlider.maxValue = maxDeliveryHP;
+                hpSlider.value = currentDeliveryHP;
+            }
+            else
+            {
+                hpSlider.gameObject.SetActive(false);
+            }
         }
     }
 
@@ -99,14 +109,10 @@ public class DeliverySystem : MonoBehaviour
         if (currentTarget == null)
         {
             if (statusText != null) statusText.text = "Ei aktiivista tilausta!";
-            if (distanceText != null) distanceText.text = "";
             return;
         }
 
         float distance = Vector3.Distance(transform.position, currentTarget.transform.position);
-
-        if (distanceText != null)
-            distanceText.text = "Etäisyys kohteeseen: " + distance.ToString("F1") + " m";
 
         if (statusText != null)
         {
@@ -125,9 +131,6 @@ public class DeliverySystem : MonoBehaviour
 
         currentDeliveryHP -= damage;
         currentDeliveryHP = Mathf.Clamp(currentDeliveryHP, 0, maxDeliveryHP);
-
-        if (hpText != null)
-            hpText.text = "Toimitus HP: " + currentDeliveryHP.ToString("F0") + " / " + maxDeliveryHP.ToString("F0");
 
         if (currentDeliveryHP <= 0)
         {
@@ -172,21 +175,28 @@ public class DeliverySystem : MonoBehaviour
     }
 
     private void UpdateUI()
+{
+    if (statusText != null)
     {
-        if (statusText != null)
-        {
-            if (hasPackage)
-                statusText.text = "Tilaus kerätty – Toimita se!";
-            else
-                statusText.text = "Nouda tilaus!";
-        }
+        if (hasPackage)
+            statusText.text = "Tilaus kerätty – Toimita se!";
+        else
+            statusText.text = "Nouda tilaus!";
+    }
 
-        if (hpText != null)
+    if (hpSlider != null)
+    {
+        if (hasPackage)
         {
-            if (hasPackage)
-                hpText.text = "Toimitus HP: " + currentDeliveryHP.ToString("F0") + " / " + maxDeliveryHP.ToString("F0");
-            else
-                hpText.text = "";
+            hpSlider.gameObject.SetActive(true);
+            hpSlider.maxValue = maxDeliveryHP;
+            hpSlider.value = currentDeliveryHP;
+        }
+        else
+        {
+            hpSlider.gameObject.SetActive(false);
         }
     }
+}
+
 }
