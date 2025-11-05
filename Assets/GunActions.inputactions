@@ -1,0 +1,63 @@
+{
+    "version": 1,
+    "name": "GunActions",
+    "maps": [
+        {
+            "name": "Fire",
+            "id": "bb3074ee-7586-4d34-82ca-a4429cd92c94",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "878598b4-9648-470c-b97e-4246afeaa52b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "e03de314-78b3-412a-8d28-10109fc67c74",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Reload",
+            "id": "83acbc24-1a8e-4db3-b8eb-3bef392f9a04",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "96b0eeb0-453a-41f6-8b2e-661a50c47c58",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "c678181b-9c9c-4a6c-9359-6d82772fdd2d",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
