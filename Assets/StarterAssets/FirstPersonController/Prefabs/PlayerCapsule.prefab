@@ -155,6 +155,8 @@ GameObject:
   - component: {fileID: 1978471637655604388}
   - component: {fileID: 5420857361349278248}
   - component: {fileID: 8616685848737228376}
+  - component: {fileID: 8133935372786883330}
+  - component: {fileID: 1828048939650807583}
   m_Layer: 8
   m_Name: PlayerCapsule
   m_TagString: Player
@@ -367,3 +369,44 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &8133935372786883330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8616685848737228372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 955ae646a3c0bc74395f4940bb3eb322, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  deliveryPoints: 0
+  reputation: 100
+  hasPackage: 0
+  deliveryBonus: 100
+  deliveryRange: 3
+  maxDeliveryHP: 100
+  currentDeliveryHP: 0
+  statusText: {fileID: 0}
+  hpSlider: {fileID: 0}
+  compassArrow: {fileID: 0}
+--- !u!114 &1828048939650807583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8616685848737228372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22e5e52b5da4815489b295ffa4fa6777, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scooter: {fileID: 0}
+  mountPoint: {fileID: 0}
+  mountDistance: 2
+  mountKey: 20
+  statusText: {fileID: 0}
+  moveSpeed: 5
+  turnSpeed: 50
