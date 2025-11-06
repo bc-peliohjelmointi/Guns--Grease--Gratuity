@@ -33,6 +33,10 @@ public class GunHitscan : MonoBehaviour
     Quaternion originalCamRot;
     public float flashTime = 0.2f; // how long flash stays visible
 
+    public GameObject tracerPrefab;  // assign your prefab in Inspector
+    public GunUI ui;
+    public float tracerSpeed = 200f; // optional if you want it to move
+
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
@@ -40,6 +44,8 @@ public class GunHitscan : MonoBehaviour
         if (playerCamera) originalCamRot = playerCamera.transform.localRotation;
         if (muzzleFlash)
             muzzleFlash.SetActive(false);
+        if (ui) ui.UpdateAmmo(currentAmmo, magazineSize);
+
     }
 
     void Update()
@@ -69,6 +75,7 @@ public class GunHitscan : MonoBehaviour
     void Fire()
     {
         currentAmmo--;
+        if (ui) ui.UpdateAmmo(currentAmmo, magazineSize);
 
         // muzzle flash
         StartCoroutine(Flash());
@@ -116,6 +123,13 @@ public class GunHitscan : MonoBehaviour
             }
         }
 
+        if (tracerPrefab)
+        {
+            Vector3 start = muzzle.position;
+            Vector3 end = hit.point; // from your RaycastHit
+            StartCoroutine(SpawnTracer(start, end));
+        }
+
         // simple camera recoil: rotate camera up a bit
         if (playerCamera)
         {
@@ -132,6 +146,7 @@ public class GunHitscan : MonoBehaviour
         // optionally trigger reload animation here (Animator.SetTrigger)
         yield return new WaitForSeconds(reloadTime);
         currentAmmo = magazineSize;
+        if (ui) ui.UpdateAmmo(currentAmmo, magazineSize);
         isReloading = false;
     }
 
@@ -143,6 +158,21 @@ public class GunHitscan : MonoBehaviour
             yield return new WaitForSeconds(flashTime);
             muzzleFlash.SetActive(false);
         }
+    }
+
+    IEnumerator SpawnTracer(Vector3 start, Vector3 end)
+    {
+        GameObject tracer = Instantiate(tracerPrefab, start, Quaternion.identity);
+        LineRenderer lr = tracer.GetComponent<LineRenderer>();
+
+        if (lr)
+        {
+            lr.SetPosition(0, start);
+            lr.SetPosition(1, end);
+        }
+
+        Destroy(tracer, 0.05f); // short lifetime, adjust to taste
+        yield return null;
     }
 
 }
