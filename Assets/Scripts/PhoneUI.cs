@@ -1,38 +1,48 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
 
 public class PhoneUI : MonoBehaviour
 {
-    [Header("References")]
-    public DeliverySystem deliverySystem;
+    [Header("Links")]
+    public DeliverySystem delivery;
+    public PlayerInput playerInput;
+
 
     [Header("UI Panels")]
     public GameObject phoneOverlay;
     public GameObject ordersPanel;
     public GameObject activeOrderPanel;
 
-    [Header("Order Slots (Full Panels)")]
-    public GameObject[] orderSlots; // each slot = full panel
+    [Header("Order UI Slots")]
+    public GameObject[] orderSlots;
     public TMP_Text[] orderNames;
     public TMP_Text[] orderRewards;
     public TMP_Text[] orderTimes;
     public Button[] acceptButtons;
 
-    [Header("Active Order Elements")]
+    [Header("Active Order UI")]
     public TMP_Text activeOrderName;
     public TMP_Text activeOrderTimer;
     public TMP_Text activeOrderReward;
     public Button declineButton;
 
     private bool isOpen = false;
-    private bool hasActiveOrder = false;
-
-    private List<Order> currentOrders = new List<Order>();
+    private List<Order> orders = new List<Order>();
     private Order selectedOrder;
+
+    // ✅ RESTAURANT LIST
+    private string[] restaurantNames = new string[]
+    {
+        "BurgerKong",
+        "TacoBill",
+        "KC",
+        "RonaldBRGR",
+        "PizzaHat",
+        "Metroway"
+    };
 
     void Start()
     {
@@ -46,7 +56,7 @@ public class PhoneUI : MonoBehaviour
 
         declineButton.onClick.AddListener(DeclineOrder);
 
-        GenerateOrders(); // start with random 1–3
+        GenerateOrders();
     }
 
     void Update()
@@ -54,10 +64,9 @@ public class PhoneUI : MonoBehaviour
         if (Keyboard.current.tabKey.wasPressedThisFrame)
             TogglePhone();
 
-        if (hasActiveOrder && selectedOrder != null)
+        if (delivery.hasActiveOrder)
         {
-            selectedOrder.timeRemaining -= Time.deltaTime;
-            UpdateActiveOrderUI();
+            activeOrderTimer.text = Mathf.CeilToInt(delivery.currentOrderTimeRemaining) + "s";
         }
     }
 
@@ -68,115 +77,86 @@ public class PhoneUI : MonoBehaviour
 
         Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;
         Cursor.visible = isOpen;
+
+        // ✅ Disable camera rotation
+        if (isOpen)
+        {
+            playerInput.actions["Look"].Disable();
+        }
+        else
+        {
+            playerInput.actions["Look"].Enable();
+        }
     }
 
-    // 🔹 Generates 1–3 random orders
+
+    // ✅ Generate 1–3 random orders
     void GenerateOrders()
     {
-        currentOrders.Clear();
+        orders.Clear();
 
-        int numberOfOrders = Random.Range(1, 4); // 1–3 inclusive
-        Debug.Log("Generated " + numberOfOrders + " orders.");
+        int count = Random.Range(1, 4);
 
-        for (int i = 0; i < numberOfOrders; i++)
+        for (int i = 0; i < count; i++)
         {
-            float timeLimit = Random.Range(60, 180);
-            Order newOrder = new Order
-            {
-                name = "Order #" + Random.Range(100, 999),
-                reward = Random.Range(80, 150),
-                timeLimit = timeLimit,
-                timeRemaining = timeLimit
-            };
-            currentOrders.Add(newOrder);
+            Order o = new Order();
+            o.name = restaurantNames[Random.Range(0, restaurantNames.Length)];
+            o.reward = Random.Range(5, 16); // 5–15
+            o.timeLimit = Random.Range(30f, 60f); // 30–60 sec
+            o.timeRemaining = o.timeLimit;
+
+            orders.Add(o);
         }
 
-        UpdateOrderListUI(numberOfOrders);
+        UpdateOrderListUI(count);
     }
 
-    void UpdateOrderListUI(int visibleCount)
+    void UpdateOrderListUI(int count)
     {
-        StopAllCoroutines(); // stop any previous fades
-
-        for (int i = 0; i < orderNames.Length; i++)
+        for (int i = 0; i < orderSlots.Length; i++)
         {
-            bool isActive = i < visibleCount;
-            orderSlots[i].SetActive(isActive);
+            bool active = i < count;
+            orderSlots[i].SetActive(active);
 
-            if (isActive)
+            if (active)
             {
-                var order = currentOrders[i];
-                orderNames[i].text = order.name;
-                orderRewards[i].text = "$" + order.reward;
-                orderTimes[i].text = "Time: " + Mathf.RoundToInt(order.timeLimit) + "s";
-                acceptButtons[i].interactable = true;
-
-                // Start fade-in animation with small delay
-                StartCoroutine(FadeInSlot(orderSlots[i], 0.25f, 0.05f * i));
+                orderNames[i].text = orders[i].name;
+                orderRewards[i].text = "$" + orders[i].reward;
+                orderTimes[i].text = Mathf.RoundToInt(orders[i].timeLimit) + "s";
             }
         }
     }
 
-    IEnumerator FadeInSlot(GameObject slot, float duration, float delay)
+    public void CloseActiveOrderPanel()
     {
-        yield return new WaitForSeconds(delay);
-
-        CanvasGroup cg = slot.GetComponent<CanvasGroup>();
-        if (cg == null)
-        {
-            cg = slot.AddComponent<CanvasGroup>();
-        }
-
-        cg.alpha = 0f;
-        float t = 0f;
-
-        while (t < duration)
-        {
-            t += Time.deltaTime;
-            cg.alpha = Mathf.Lerp(0f, 1f, t / duration);
-            yield return null;
-        }
-
-        cg.alpha = 1f;
+        activeOrderPanel.SetActive(false);
+        ordersPanel.SetActive(true);       // show the list again
+        GenerateOrders();                  // create new random orders
     }
 
     void AcceptOrder(int index)
     {
-        if (index < 0 || index >= currentOrders.Count)
-            return;
+        selectedOrder = orders[index];
 
-        selectedOrder = currentOrders[index];
-        hasActiveOrder = true;
-
-        ordersPanel.SetActive(false);
         activeOrderPanel.SetActive(true);
-
-        UpdateActiveOrderUI();
-
-        Debug.Log("Accepted order: " + selectedOrder.name);
-    }
-
-    void UpdateActiveOrderUI()
-    {
-        if (selectedOrder == null) return;
+        ordersPanel.SetActive(false);
 
         activeOrderName.text = selectedOrder.name;
         activeOrderReward.text = "$" + selectedOrder.reward;
-        activeOrderTimer.text = "Time: " + Mathf.CeilToInt(selectedOrder.timeRemaining) + "s";
+
+        delivery.AssignOrder(selectedOrder.name, selectedOrder.reward, selectedOrder.timeLimit);
+
+        Debug.Log("Order accepted: " + selectedOrder.name);
     }
 
     void DeclineOrder()
     {
-        if (selectedOrder != null)
-            Debug.Log("Declined order: " + selectedOrder.name);
-
-        hasActiveOrder = false;
         selectedOrder = null;
 
         activeOrderPanel.SetActive(false);
         ordersPanel.SetActive(true);
 
-        GenerateOrders(); // regenerate random orders
+        GenerateOrders();
     }
 }
 
@@ -184,7 +164,7 @@ public class PhoneUI : MonoBehaviour
 public class Order
 {
     public string name;
-    public float reward;
+    public int reward;
     public float timeLimit;
     public float timeRemaining;
 }
