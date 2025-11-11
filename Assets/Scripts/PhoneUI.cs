@@ -30,6 +30,10 @@ public class PhoneUI : MonoBehaviour
     public Button declineButton;
 
     private bool isOpen = false;
+    public bool IsOpen => isOpen;
+
+    public static bool AnyOpen { get; private set; }
+
     private List<Order> orders = new List<Order>();
     private Order selectedOrder;
 
@@ -73,6 +77,7 @@ public class PhoneUI : MonoBehaviour
     void TogglePhone()
     {
         isOpen = !isOpen;
+        AnyOpen = isOpen;
         phoneOverlay.SetActive(isOpen);
 
         Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;

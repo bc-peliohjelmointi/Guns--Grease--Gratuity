@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.InputSystem;
 
@@ -11,6 +11,8 @@ public class GunHitscan : MonoBehaviour
     public GameObject muzzleFlash; // assign in Inspector
     public GameObject impactPrefab;         // small prefab spawned on hit (sparks)
     public LayerMask hitMask = ~0;          // layers bullets will hit
+    public PhoneUI phoneUI;
+
 
     [Header("Stats")]
     public float damage = 25f;
@@ -50,27 +52,37 @@ public class GunHitscan : MonoBehaviour
 
     void Update()
     {
+        // ✅ Phone open → block shooting & reloading logic
+        if (PhoneUI.AnyOpen)
+            return;
+
         if (isReloading) return;
 
-        bool firePressed = automatic ? Mouse.current.leftButton.wasPressedThisFrame : Input.GetButtonDown("Fire1");
+        // ✅ Full-auto when held, semi-auto on click
+        bool firePressed = automatic
+            ? Mouse.current != null && Mouse.current.leftButton.isPressed
+            : Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
 
         if (firePressed && Time.time >= nextFireTime && currentAmmo > 0)
         {
             nextFireTime = Time.time + 1f / fireRate;
             Fire();
         }
-        else if ((Keyboard.current.rKey.wasPressedThisFrame) && (currentAmmo < magazineSize))
+        else if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame && currentAmmo < magazineSize)
         {
             StartCoroutine(Reload());
         }
 
-        // simple recoil recovery
         if (playerCamera)
         {
-            playerCamera.transform.localRotation = Quaternion.Slerp(playerCamera.transform.localRotation,
-                originalCamRot, Time.deltaTime * recoilSmooth);
+            playerCamera.transform.localRotation = Quaternion.Slerp(
+                playerCamera.transform.localRotation,
+                originalCamRot,
+                Time.deltaTime * recoilSmooth
+            );
         }
     }
+
 
     void Fire()
     {

@@ -36,6 +36,9 @@ public class DeliverySystem : MonoBehaviour
     private GameObject[] packages;
     private GameObject currentTarget;
 
+    [Header("Spawner")]
+    public ItemSpawner itemSpawner;
+
     void Start()
     {
         deliveryZones = GameObject.FindGameObjectsWithTag("DeliveryZone");
@@ -78,8 +81,13 @@ public class DeliverySystem : MonoBehaviour
         currentOrderTime = timeLimit;
         currentOrderTimeRemaining = timeLimit;
 
+        // ✅ Spawn package at random spawner
+        if (itemSpawner != null)
+            itemSpawner.SpawnItem();
+
         UpdateUI();
     }
+
 
     void UpdateOrderTimer()
     {
