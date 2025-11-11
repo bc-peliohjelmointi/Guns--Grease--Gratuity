@@ -9231,6 +9231,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2107169782}
     - target: {fileID: 6272221261361129766, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
+      propertyPath: ui
+      value: 
+      objectReference: {fileID: 1978461260}
+    - target: {fileID: 6272221261361129766, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
+      propertyPath: phoneUI
+      value: 
+      objectReference: {fileID: 25178012}
+    - target: {fileID: 6272221261361129766, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
       propertyPath: impactPrefab
       value: 
       objectReference: {fileID: 67086376}
