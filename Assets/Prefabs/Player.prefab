@@ -372,6 +372,7 @@ MonoBehaviour:
   hpSlider: {fileID: 0}
   compassArrow: {fileID: 0}
   timerText: {fileID: 0}
+  itemSpawner: {fileID: 0}
 --- !u!4 &7092120882670879579 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4135013735270702856, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
