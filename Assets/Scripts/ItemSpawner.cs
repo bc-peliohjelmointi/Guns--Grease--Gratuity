@@ -5,18 +5,14 @@ public class ItemSpawner : MonoBehaviour
     [Header("Item Settings")]
     public GameObject itemPrefab;
 
-    private string spawnPointTag = "Spawner";
     private Transform[] spawnPoints;
 
     void Start()
     {
-        GameObject[] spawnPointObjects = GameObject.FindGameObjectsWithTag(spawnPointTag);
-
+        var spawnPointObjects = GameObject.FindGameObjectsWithTag("Spawner");
         spawnPoints = new Transform[spawnPointObjects.Length];
-        for (int i = 0; i < spawnPointObjects.Length; i++)
-        {
+        for (int i = 0; i < spawnPoints.Length; i++)
             spawnPoints[i] = spawnPointObjects[i].transform;
-        }
     }
 
     public void SpawnItem()
@@ -27,9 +23,7 @@ public class ItemSpawner : MonoBehaviour
             return;
         }
 
-        int randomIndex = Random.Range(0, spawnPoints.Length);
-        Transform point = spawnPoints[randomIndex];
-
+        Transform point = spawnPoints[Random.Range(0, spawnPoints.Length)];
         Instantiate(itemPrefab, point.position, point.rotation);
     }
 }

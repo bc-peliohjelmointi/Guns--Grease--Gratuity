@@ -8,8 +8,9 @@ public class DeliverySystem : MonoBehaviour
 {
     [Header("References")]
     public PhoneUI phoneUI;
+    public ItemSpawner itemSpawner;
 
-    [Header("Active Order")]
+    [Header("Order Info")]
     public bool hasActiveOrder = false;
     public string currentOrderName;
     public int currentOrderReward;
@@ -18,7 +19,6 @@ public class DeliverySystem : MonoBehaviour
 
     [Header("Delivery Settings")]
     public int deliveryPoints = 0;
-    public int reputation = 100;
     public bool hasPackage = false;
     public float deliveryRange = 3f;
 
@@ -33,16 +33,12 @@ public class DeliverySystem : MonoBehaviour
     public TextMeshProUGUI timerText;
 
     private GameObject[] deliveryZones;
-    private GameObject[] packages;
     private GameObject currentTarget;
-
-    [Header("Spawner")]
-    public ItemSpawner itemSpawner;
 
     void Start()
     {
         deliveryZones = GameObject.FindGameObjectsWithTag("DeliveryZone");
-        packages = GameObject.FindGameObjectsWithTag("Package");
+        ShuffleDeliveryZones();
         UpdateUI();
     }
 
@@ -50,66 +46,64 @@ public class DeliverySystem : MonoBehaviour
     {
         UpdateTargets();
         UpdateCompass();
-        UpdateDistanceAndStatus();
+        UpdateStatus();
         UpdateHPSlider();
-        UpdateOrderTimer();
+        UpdateTimer();
 
-        // Deliver
         if (hasPackage && currentTarget != null)
         {
             float distance = Vector3.Distance(transform.position, currentTarget.transform.position);
             if (distance <= deliveryRange && Keyboard.current.eKey.wasPressedThisFrame)
-            {
                 DeliverPackage();
-            }
         }
 
-        // Package destroyed
         if (hasPackage && currentDeliveryHP <= 0)
-        {
-            FailDelivery("Paketti tuhoutui!");        }
+            FailDelivery("Paketti tuhoutui!");
     }
 
-    // ========================
-    //    ORDER SYSTEM LINK
-    // ========================
     public void AssignOrder(string name, int reward, float timeLimit)
     {
         hasActiveOrder = true;
+        hasPackage = false;
         currentOrderName = name;
         currentOrderReward = reward;
         currentOrderTime = timeLimit;
         currentOrderTimeRemaining = timeLimit;
 
-        // ✅ Spawn package at random spawner
-        if (itemSpawner != null)
-            itemSpawner.SpawnItem();
+        itemSpawner?.SpawnItem();
 
         UpdateUI();
     }
 
+    public void CancelOrder() // 🧹 called when declining an order
+    {
+        hasActiveOrder = false;
+        hasPackage = false;
+        currentOrderName = "";
+        currentOrderReward = 0;
+        currentOrderTime = 0;
+        currentOrderTimeRemaining = 0;
 
-    void UpdateOrderTimer()
+        ClearAllPackages();
+        DisableCompass();
+        statusText.text = "Ei aktiivista tilausta!";
+        UpdateUI();
+    }
+
+    void UpdateTimer()
     {
         if (!hasActiveOrder) return;
 
         currentOrderTimeRemaining -= Time.deltaTime;
-
-        if (timerText != null)
-            timerText.text = Mathf.CeilToInt(currentOrderTimeRemaining) + "s";
+        timerText.text = Mathf.CeilToInt(currentOrderTimeRemaining) + "s";
 
         if (currentOrderTimeRemaining <= 0)
-        {
             FailDelivery("Aika loppui!");
-        }
     }
-
-    // ========================
 
     void UpdateHPSlider()
     {
         if (hpSlider == null) return;
-
         hpSlider.gameObject.SetActive(hasPackage);
         if (hasPackage)
         {
@@ -120,33 +114,34 @@ public class DeliverySystem : MonoBehaviour
 
     void UpdateTargets()
     {
-        if (!hasPackage) // find packages
+        if (!hasActiveOrder)
         {
-            packages = GameObject.FindGameObjectsWithTag("Package");
-            currentTarget = (packages.Length > 0) ?
-                packages.OrderBy(p => Vector3.Distance(transform.position, p.transform.position)).First() :
-                null;
+            currentTarget = GameObject.FindGameObjectWithTag("ApartmentDoor");
+            return;
         }
-        else // find delivery zones
+
+        if (!hasPackage)
         {
-            currentTarget = (deliveryZones.Length > 0) ?
-                deliveryZones.OrderBy(z => Vector3.Distance(transform.position, z.transform.position)).First() :
-                null;
+            var packages = GameObject.FindGameObjectsWithTag("Package");
+            currentTarget = packages.FirstOrDefault();
+        }
+        else
+        {
+            if (currentTarget == null || !deliveryZones.Contains(currentTarget))
+                currentTarget = deliveryZones[Random.Range(0, deliveryZones.Length)];
         }
     }
 
     void UpdateCompass()
     {
         if (compassArrow == null || currentTarget == null) return;
-
         Vector3 dir = (currentTarget.transform.position - transform.position).normalized;
         dir.y = 0f;
-
         float angle = Vector3.SignedAngle(transform.forward, dir, Vector3.up);
         compassArrow.localEulerAngles = new Vector3(0, 0, -angle);
     }
 
-    void UpdateDistanceAndStatus()
+    void UpdateStatus()
     {
         if (!hasActiveOrder)
         {
@@ -161,33 +156,25 @@ public class DeliverySystem : MonoBehaviour
         }
 
         float distance = Vector3.Distance(transform.position, currentTarget.transform.position);
-
-        if (distance <= deliveryRange)
-            statusText.text = "<color=yellow>Paina [E] toimittaaksesi!</color>";
-        else
-            statusText.text = "Toimita paketti!";
+        statusText.text = distance <= deliveryRange
+            ? "<color=yellow>Paina [E] toimittaaksesi!</color>"
+            : "Toimita paketti!";
     }
 
     public void TakeDamage(float dmg)
     {
         if (!hasPackage) return;
-
-        currentDeliveryHP -= dmg;
-        currentDeliveryHP = Mathf.Clamp(currentDeliveryHP, 0, maxDeliveryHP);
+        currentDeliveryHP = Mathf.Clamp(currentDeliveryHP - dmg, 0, maxDeliveryHP);
     }
 
     void DeliverPackage()
     {
         hasPackage = false;
         hasActiveOrder = false;
-
         deliveryPoints += currentOrderReward;
+        statusText.text = $"<color=green>Toimitus onnistui! +{currentOrderReward}</color>";
 
-        statusText.text = "<color=green>Toimitus onnistui! +" + currentOrderReward + "</color>";
-
-        if (phoneUI != null)
-            phoneUI.CloseActiveOrderPanel();
-
+        phoneUI?.CloseActiveOrderPanel();
         UpdateUI();
     }
 
@@ -195,13 +182,24 @@ public class DeliverySystem : MonoBehaviour
     {
         hasPackage = false;
         hasActiveOrder = false;
+        statusText.text = $"<color=red>Toimitus epäonnistui! {reason}</color>";
 
-        statusText.text = "<color=red>Toimitus epäonnistui! " + reason + "</color>";
-
-        if (phoneUI != null)
-            phoneUI.CloseActiveOrderPanel();
-
+        ClearAllPackages();
+        phoneUI?.CloseActiveOrderPanel();
         UpdateUI();
+    }
+
+    public void ClearAllPackages()
+    {
+        foreach (var pkg in GameObject.FindGameObjectsWithTag("Package"))
+            Destroy(pkg);
+    }
+
+    public void DisableCompass()
+    {
+        currentTarget = null;
+        if (compassArrow != null)
+            compassArrow.localEulerAngles = Vector3.zero;
     }
 
     void OnTriggerEnter(Collider other)
@@ -211,16 +209,23 @@ public class DeliverySystem : MonoBehaviour
             hasPackage = true;
             currentDeliveryHP = maxDeliveryHP;
             Destroy(other.gameObject);
-
             statusText.text = "Paketti kerätty!";
         }
     }
 
     void UpdateUI()
     {
-        if (timerText != null)
+        timerText.text = hasActiveOrder
+            ? Mathf.CeilToInt(currentOrderTimeRemaining) + "s"
+            : "";
+    }
+
+    void ShuffleDeliveryZones()
+    {
+        for (int i = 0; i < deliveryZones.Length; i++)
         {
-            timerText.text = hasActiveOrder ? Mathf.CeilToInt(currentOrderTimeRemaining) + "s" : "";
+            int randomIndex = Random.Range(i, deliveryZones.Length);
+            (deliveryZones[i], deliveryZones[randomIndex]) = (deliveryZones[randomIndex], deliveryZones[i]);
         }
     }
 }

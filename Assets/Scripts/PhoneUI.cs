@@ -10,7 +10,6 @@ public class PhoneUI : MonoBehaviour
     public DeliverySystem delivery;
     public PlayerInput playerInput;
 
-
     [Header("UI Panels")]
     public GameObject phoneOverlay;
     public GameObject ordersPanel;
@@ -29,23 +28,17 @@ public class PhoneUI : MonoBehaviour
     public TMP_Text activeOrderReward;
     public Button declineButton;
 
-    private bool isOpen = false;
-    public bool IsOpen => isOpen;
+    [Header("Other Buttons")]
+    public Button endDayButton;
 
+    private bool isOpen = false;
     public static bool AnyOpen { get; private set; }
 
     private List<Order> orders = new List<Order>();
     private Order selectedOrder;
 
-    // ✅ RESTAURANT LIST
-    private string[] restaurantNames = new string[]
-    {
-        "BurgerKong",
-        "TacoBill",
-        "KC",
-        "RonaldBRGR",
-        "PizzaHat",
-        "Metroway"
+    private readonly string[] restaurantNames = {
+        "BurgerKong", "TacoBill", "KC", "RonaldBRGR", "PizzaHat", "Metroway"
     };
 
     void Start()
@@ -59,6 +52,7 @@ public class PhoneUI : MonoBehaviour
         }
 
         declineButton.onClick.AddListener(DeclineOrder);
+        endDayButton.onClick.AddListener(() => DaySystem.Instance.EndDay());
 
         GenerateOrders();
     }
@@ -69,9 +63,7 @@ public class PhoneUI : MonoBehaviour
             TogglePhone();
 
         if (delivery.hasActiveOrder)
-        {
             activeOrderTimer.text = Mathf.CeilToInt(delivery.currentOrderTimeRemaining) + "s";
-        }
     }
 
     void TogglePhone()
@@ -83,34 +75,26 @@ public class PhoneUI : MonoBehaviour
         Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;
         Cursor.visible = isOpen;
 
-        // ✅ Disable camera rotation
         if (isOpen)
-        {
             playerInput.actions["Look"].Disable();
-        }
         else
-        {
             playerInput.actions["Look"].Enable();
-        }
     }
 
-
-    // ✅ Generate 1–3 random orders
-    void GenerateOrders()
+    public void GenerateOrders()
     {
         orders.Clear();
-
         int count = Random.Range(1, 4);
 
         for (int i = 0; i < count; i++)
         {
-            Order o = new Order();
-            o.name = restaurantNames[Random.Range(0, restaurantNames.Length)];
-            o.reward = Random.Range(5, 16); // 5–15
-            o.timeLimit = Random.Range(30f, 60f); // 30–60 sec
-            o.timeRemaining = o.timeLimit;
-
-            orders.Add(o);
+            orders.Add(new Order
+            {
+                name = restaurantNames[Random.Range(0, restaurantNames.Length)],
+                reward = Random.Range(5, 16),
+                timeLimit = Random.Range(30f, 60f),
+                timeRemaining = 0
+            });
         }
 
         UpdateOrderListUI(count);
@@ -135,14 +119,13 @@ public class PhoneUI : MonoBehaviour
     public void CloseActiveOrderPanel()
     {
         activeOrderPanel.SetActive(false);
-        ordersPanel.SetActive(true);       // show the list again
-        GenerateOrders();                  // create new random orders
+        ordersPanel.SetActive(true);
+        GenerateOrders();
     }
 
     void AcceptOrder(int index)
     {
         selectedOrder = orders[index];
-
         activeOrderPanel.SetActive(true);
         ordersPanel.SetActive(false);
 
@@ -150,16 +133,17 @@ public class PhoneUI : MonoBehaviour
         activeOrderReward.text = "$" + selectedOrder.reward;
 
         delivery.AssignOrder(selectedOrder.name, selectedOrder.reward, selectedOrder.timeLimit);
-
-        Debug.Log("Order accepted: " + selectedOrder.name);
+        Debug.Log($"Order accepted: {selectedOrder.name}");
     }
 
     void DeclineOrder()
     {
         selectedOrder = null;
-
         activeOrderPanel.SetActive(false);
         ordersPanel.SetActive(true);
+
+        // 🧹 Remove leftover packages
+        delivery.CancelOrder();
 
         GenerateOrders();
     }
