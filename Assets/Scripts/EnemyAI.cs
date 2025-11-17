@@ -20,7 +20,6 @@ public class EnemyAI : MonoBehaviour
     // Attack
     public float timeBetweenAttacks;
     bool alreadyAttacked;
-    public GameObject projectile;
 
     // States
     public float sightRange, attackRange;
@@ -81,14 +80,9 @@ public class EnemyAI : MonoBehaviour
 
         transform.LookAt(player);
 
-        if (!alreadyAttacked)
+       if (!alreadyAttacked)
         {
-            // Attack code here
-            Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
-            rb.AddForce(transform.forward * 8f, ForceMode.Impulse);
-
-            alreadyAttacked = true;
-            Invoke(nameof(ResetAttack), timeBetweenAttacks);
+          //  // Attack code here
         }
     }
 
@@ -107,13 +101,5 @@ public class EnemyAI : MonoBehaviour
     private void DestroyEnemy()
     {
         Destroy(gameObject);
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, sightRange);
     }
 }
