@@ -9,6 +9,7 @@ TagManager:
   - DeliveryZone
   - Spawner
   - Enemy
+  - ApartmentDoor
   layers:
   - Default
   - TransparentFX
