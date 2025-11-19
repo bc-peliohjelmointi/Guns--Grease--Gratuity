@@ -75,7 +75,7 @@ public class DeliverySystem : MonoBehaviour
         UpdateUI();
     }
 
-    public void CancelOrder() // 🧹 called when declining an order
+    public void CancelOrder()
     {
         hasActiveOrder = false;
         hasPackage = false;
@@ -84,11 +84,14 @@ public class DeliverySystem : MonoBehaviour
         currentOrderTime = 0;
         currentOrderTimeRemaining = 0;
 
+        PlayerStats.Instance.OnOrderDeclined();
+
         ClearAllPackages();
         DisableCompass();
         statusText.text = "Ei aktiivista tilausta!";
         UpdateUI();
     }
+
 
     void UpdateTimer()
     {
@@ -171,8 +174,9 @@ public class DeliverySystem : MonoBehaviour
     {
         hasPackage = false;
         hasActiveOrder = false;
-        deliveryPoints += currentOrderReward;
         statusText.text = $"<color=green>Toimitus onnistui! +{currentOrderReward}</color>";
+
+        PlayerStats.Instance.OnDeliveryCompleted(currentOrderReward, currentDeliveryHP);
 
         phoneUI?.CloseActiveOrderPanel();
         UpdateUI();
@@ -183,6 +187,8 @@ public class DeliverySystem : MonoBehaviour
         hasPackage = false;
         hasActiveOrder = false;
         statusText.text = $"<color=red>Toimitus epäonnistui! {reason}</color>";
+
+        PlayerStats.Instance.OnDeliveryFailed();
 
         ClearAllPackages();
         phoneUI?.CloseActiveOrderPanel();

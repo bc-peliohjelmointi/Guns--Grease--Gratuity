@@ -28,8 +28,13 @@ public class PhoneUI : MonoBehaviour
     public TMP_Text activeOrderReward;
     public Button declineButton;
 
-    [Header("Other Buttons")]
+    [Header("End Day Panel")]
     public Button endDayButton;
+    public GameObject endDayPanel;
+    public TMP_Text summaryMoneyText;
+    public TMP_Text summaryReputationText;
+    public Button closeEndDayPanelButton;   // closes the panel only
+
 
     private bool isOpen = false;
     public static bool AnyOpen { get; private set; }
@@ -52,7 +57,11 @@ public class PhoneUI : MonoBehaviour
         }
 
         declineButton.onClick.AddListener(DeclineOrder);
-        endDayButton.onClick.AddListener(() => DaySystem.Instance.EndDay());
+
+        endDayPanel.SetActive(false);
+        endDayButton.onClick.AddListener(ShowEndDayPanel);
+        closeEndDayPanelButton.onClick.AddListener(CloseEndDayPanel);
+
 
         GenerateOrders();
     }
@@ -136,6 +145,7 @@ public class PhoneUI : MonoBehaviour
         Debug.Log($"Order accepted: {selectedOrder.name}");
     }
 
+
     void DeclineOrder()
     {
         selectedOrder = null;
@@ -147,6 +157,34 @@ public class PhoneUI : MonoBehaviour
 
         GenerateOrders();
     }
+
+
+    // ----------------------
+    // End day stuff
+    // ----------------------
+
+    void ShowEndDayPanel()
+    {
+        endDayPanel.SetActive(true);
+
+        summaryMoneyText.text = "$" + PlayerStats.Instance.moneyToday.ToString("0.00");
+        summaryReputationText.text = PlayerStats.Instance.reputation.ToString("0.0");
+
+        // Disable order panels
+        ordersPanel.SetActive(false);
+        activeOrderPanel.SetActive(false);
+    }
+
+    public void CloseEndDayPanel()
+    {
+        endDayPanel.SetActive(false);
+
+        // Reopen the orders list
+        ordersPanel.SetActive(true);
+    }
+
+
+
 }
 
 [System.Serializable]

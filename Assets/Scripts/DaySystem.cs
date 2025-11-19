@@ -45,8 +45,6 @@ public class DaySystem : MonoBehaviour
     {
         Debug.Log("Ending Day " + currentDay);
         delivery.hasActiveOrder = false;
-        // delivery.DisableCompass(); // stop pointing anywhere
-        // The phone handles showing the “Go home” / end-day UI
     }
 
     // ===========================
