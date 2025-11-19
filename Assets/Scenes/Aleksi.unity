@@ -179,6 +179,10 @@ MonoBehaviour:
   activeOrderReward: {fileID: 1194832261}
   declineButton: {fileID: 1717795882}
   endDayButton: {fileID: 0}
+  endDayPanel: {fileID: 0}
+  summaryMoneyText: {fileID: 0}
+  summaryReputationText: {fileID: 0}
+  closeEndDayPanelButton: {fileID: 0}
 --- !u!4 &25178013
 Transform:
   m_ObjectHideFlags: 0
@@ -6154,7 +6158,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3213983986020760075, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
   m_PrefabInstance: {fileID: 1656709146040544057}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1889523813}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
@@ -7767,11 +7771,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!1 &1889523813 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3213983986020760071, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
-  m_PrefabInstance: {fileID: 1656709146040544057}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1911280605
 GameObject:
   m_ObjectHideFlags: 0
@@ -7855,68 +7854,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2869230313555353789, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
   m_PrefabInstance: {fileID: 1656709146040544057}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1933528341
+--- !u!114 &1933528341 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 1469568962133849383, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
+  m_PrefabInstance: {fileID: 1656709146040544057}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1889523813}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 955ae646a3c0bc74395f4940bb3eb322, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  phoneUI: {fileID: 25178012}
-  itemSpawner: {fileID: 25178014}
-  hasActiveOrder: 0
-  currentOrderName: 
-  currentOrderReward: 0
-  currentOrderTime: 0
-  currentOrderTimeRemaining: 0
-  deliveryPoints: 0
-  hasPackage: 0
-  deliveryRange: 3
-  maxDeliveryHP: 100
-  currentDeliveryHP: 0
-  statusText: {fileID: 1029200079}
-  hpSlider: {fileID: 312809301}
-  compassArrow: {fileID: 2034844717}
-  timerText: {fileID: 1650637003}
---- !u!114 &1933528342
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1889523813}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39c7e76611c091b429ea3d892f4e708f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scooterRoot: {fileID: 291807790}
-  turnSpeed: 60
-  canControl: 0
---- !u!114 &1933528343
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1889523813}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22e5e52b5da4815489b295ffa4fa6777, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scooter: {fileID: 1163771764}
-  mountPoint: {fileID: 1953659268}
-  mountDistance: 2
-  mountKey: 20
-  statusText: {fileID: 2107169782}
-  moveSpeed: 5
-  turnSpeed: 50
 --- !u!1 &1935713839
 GameObject:
   m_ObjectHideFlags: 0
@@ -9215,110 +9163,50 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 142248832307949800, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
-      propertyPath: phoneUI
-      value: 
-      objectReference: {fileID: 25178012}
-    - target: {fileID: 142248832307949800, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
-      propertyPath: hpSlider
-      value: 
-      objectReference: {fileID: 312809301}
-    - target: {fileID: 142248832307949800, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
-      propertyPath: timerText
-      value: 
-      objectReference: {fileID: 1650637003}
-    - target: {fileID: 142248832307949800, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
-      propertyPath: statusText
-      value: 
-      objectReference: {fileID: 1029200079}
-    - target: {fileID: 142248832307949800, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
-      propertyPath: itemSpawner
-      value: 
-      objectReference: {fileID: 25178014}
-    - target: {fileID: 142248832307949800, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
-      propertyPath: compassArrow
-      value: 
-      objectReference: {fileID: 2034844717}
-    - target: {fileID: 164172104601655507, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1216401095756812013, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 1216401095756812013, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 1216401095756812013, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1285302391015943697, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 2052884471108417464, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3165828675440723793, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
+    - target: {fileID: 1469568962133849383, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
       propertyPath: phoneUI
       value: 
       objectReference: {fileID: 25178012}
-    - target: {fileID: 3165828675440723793, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
+    - target: {fileID: 1469568962133849383, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
       propertyPath: hpSlider
       value: 
       objectReference: {fileID: 312809301}
-    - target: {fileID: 3165828675440723793, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
+    - target: {fileID: 1469568962133849383, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
       propertyPath: timerText
       value: 
       objectReference: {fileID: 1650637003}
-    - target: {fileID: 3165828675440723793, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
+    - target: {fileID: 1469568962133849383, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
       propertyPath: statusText
       value: 
       objectReference: {fileID: 1029200079}
-    - target: {fileID: 3165828675440723793, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
+    - target: {fileID: 1469568962133849383, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
       propertyPath: itemSpawner
       value: 
       objectReference: {fileID: 25178014}
-    - target: {fileID: 3165828675440723793, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
+    - target: {fileID: 1469568962133849383, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
       propertyPath: compassArrow
       value: 
       objectReference: {fileID: 2034844717}
-    - target: {fileID: 3213983986020760064, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
-      propertyPath: RotationSpeed
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3213983986020760071, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 3700896365188619770, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4778402334881082188, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
+    - target: {fileID: 2566779811228292538, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
+      propertyPath: scooterRoot
+      value: 
+      objectReference: {fileID: 291807790}
+    - target: {fileID: 4182661306016418333, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
       propertyPath: scooter
       value: 
       objectReference: {fileID: 1163771764}
-    - target: {fileID: 4778402334881082188, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
+    - target: {fileID: 4182661306016418333, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
       propertyPath: mountPoint
       value: 
       objectReference: {fileID: 1953659268}
-    - target: {fileID: 4778402334881082188, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
+    - target: {fileID: 4182661306016418333, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
       propertyPath: statusText
       value: 
       objectReference: {fileID: 2107169782}
-    - target: {fileID: 5135245145229621232, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5275100764106059065, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6272221261361129766, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
       propertyPath: ui
       value: 
@@ -9331,14 +9219,6 @@ PrefabInstance:
       propertyPath: impactPrefab
       value: 
       objectReference: {fileID: 67086376}
-    - target: {fileID: 6698901320662852709, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7092120882670879580, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7529772913961821255, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.67677
@@ -9382,16 +9262,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3213983986020760071, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1933528341}
-    - targetCorrespondingSourceObject: {fileID: 3213983986020760071, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1933528343}
-    - targetCorrespondingSourceObject: {fileID: 3213983986020760071, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1933528342}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
 --- !u!1001 &3599569025927394576
 PrefabInstance:

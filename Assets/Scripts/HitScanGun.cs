@@ -122,10 +122,10 @@ public class GunHitscan : MonoBehaviour
             }
 
             // damage handling: try to find a health component
-            var health = hit.collider.GetComponentInParent<Health>();
-            if (health != null)
+            var ai = hit.collider.GetComponentInParent<EnemyAI>();
+            if (ai != null)
             {
-                health.TakeDamage(damage);
+                ai.TakeDamage(damage);
             }
 
             // optional: apply force

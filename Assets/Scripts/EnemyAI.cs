@@ -7,6 +7,8 @@ public class EnemyAI : MonoBehaviour
     public NavMeshAgent agent;
 
     public Transform player;
+    private float damageToDelivery = 10f;
+    private DeliverySystem delivery;
 
     public LayerMask whatIsGround, whatIsPlayer;
 
@@ -28,6 +30,7 @@ public class EnemyAI : MonoBehaviour
     private void Awake()
     {
         player = GameObject.Find("Player").transform;
+        delivery = player.GetComponent<DeliverySystem>();
         agent = GetComponent<NavMeshAgent>();
     }
 
@@ -82,7 +85,11 @@ public class EnemyAI : MonoBehaviour
 
        if (!alreadyAttacked)
         {
-          //  // Attack code here
+            if (delivery != null && delivery.hasPackage)
+                delivery.TakeDamage(damageToDelivery);
+
+            alreadyAttacked = true;
+            Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
     }
 
@@ -91,15 +98,9 @@ public class EnemyAI : MonoBehaviour
         alreadyAttacked = false;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float dmg)
     {
-        health -= damage;
-
-        if (health <= 0) Invoke(nameof(DestroyEnemy), 0.5f);
-    }
-
-    private void DestroyEnemy()
-    {
-        Destroy(gameObject);
+        health -= dmg;
+        if (health <= 0) Destroy(gameObject);
     }
 }
