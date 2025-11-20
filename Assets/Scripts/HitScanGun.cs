@@ -6,18 +6,17 @@ using UnityEngine.InputSystem;
 public class GunHitscan : MonoBehaviour
 {
     [Header("References")]
-    public Transform muzzle;                // where bullets originate
-    public Camera playerCamera;             // FPS camera; if null we'll use muzzle.forward
-    public GameObject muzzleFlash; // assign in Inspector
-    public GameObject impactPrefab;         // small prefab spawned on hit (sparks)
-    public LayerMask hitMask = ~0;          // layers bullets will hit
+    public Transform muzzle;
+    public Camera playerCamera;
+    public GameObject muzzleFlash;
+    public GameObject impactPrefab;
+    public LayerMask hitMask = ~0;
     public PhoneUI phoneUI;
-
 
     [Header("Stats")]
     public float damage = 25f;
     public float range = 100f;
-    public float fireRate = 10f;            // rounds per second
+    public float fireRate = 10f;
     public int magazineSize = 30;
     public float reloadTime = 2f;
     public bool automatic = true;
@@ -25,7 +24,7 @@ public class GunHitscan : MonoBehaviour
     [Header("Effects")]
     public AudioClip fireSound;
     public AudioClip reloadSound;
-    public float recoilAmount = 1.5f;       // camera recoil angle
+    public float recoilAmount = 1.5f;
     public float recoilSmooth = 6f;
 
     AudioSource audioSource;
@@ -33,32 +32,31 @@ public class GunHitscan : MonoBehaviour
     float nextFireTime;
     bool isReloading;
     Quaternion originalCamRot;
-    public float flashTime = 0.2f; // how long flash stays visible
+    public float flashTime = 0.2f;
 
-    public GameObject tracerPrefab;  // assign your prefab in Inspector
+    public GameObject tracerPrefab;
     public GunUI ui;
-    public float tracerSpeed = 200f; // optional if you want it to move
+    public float tracerSpeed = 200f;
 
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
         currentAmmo = magazineSize;
         if (playerCamera) originalCamRot = playerCamera.transform.localRotation;
+
         if (muzzleFlash)
             muzzleFlash.SetActive(false);
-        if (ui) ui.UpdateAmmo(currentAmmo, magazineSize);
 
+        if (ui) ui.UpdateAmmo(currentAmmo, magazineSize);
     }
 
     void Update()
     {
-        // ✅ Phone open → block shooting & reloading logic
         if (PhoneUI.AnyOpen)
             return;
 
         if (isReloading) return;
 
-        // ✅ Full-auto when held, semi-auto on click
         bool firePressed = automatic
             ? Mouse.current != null && Mouse.current.leftButton.isPressed
             : Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
@@ -83,27 +81,22 @@ public class GunHitscan : MonoBehaviour
         }
     }
 
-
     void Fire()
     {
         currentAmmo--;
         if (ui) ui.UpdateAmmo(currentAmmo, magazineSize);
 
-        // muzzle flash
         StartCoroutine(Flash());
 
-        // audio
         if (fireSound) audioSource.PlayOneShot(fireSound);
 
-        // direction
         Vector3 origin = muzzle ? muzzle.position : transform.position;
         Vector3 dir;
+
         if (playerCamera)
         {
-            // shoot from camera center so aim is correct
             Ray camRay = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
             dir = camRay.direction;
-            // optional: set origin to muzzle but aim toward camera center point at range:
             origin = muzzle ? muzzle.position : origin;
         }
         else
@@ -111,54 +104,59 @@ public class GunHitscan : MonoBehaviour
             dir = muzzle ? muzzle.forward : transform.forward;
         }
 
-        // raycast
-        if (Physics.Raycast(origin, dir, out RaycastHit hit, range, hitMask, QueryTriggerInteraction.Ignore))
+        RaycastHit hit;
+        bool didHit = Physics.Raycast(origin, dir, out hit, range, hitMask, QueryTriggerInteraction.Ignore);
+
+        Vector3 tracerEnd;
+
+        if (didHit)
         {
-            // spawn impact
+            tracerEnd = hit.point;
+
             if (impactPrefab)
             {
                 var go = Instantiate(impactPrefab, hit.point, Quaternion.LookRotation(hit.normal));
                 Destroy(go, 5f);
             }
 
-            // damage handling: try to find a health component
             var ai = hit.collider.GetComponentInParent<EnemyAI>();
             if (ai != null)
             {
                 ai.TakeDamage(damage);
             }
 
-            // optional: apply force
             if (hit.rigidbody != null)
             {
-                hit.rigidbody.AddForceAtPosition(dir * 200f, hit.point); // tune force
+                hit.rigidbody.AddForceAtPosition(dir * 200f, hit.point);
             }
+        }
+        else
+        {
+            // ✅ Proper miss direction — NOT random anymore
+            tracerEnd = origin + dir * range;
         }
 
         if (tracerPrefab)
         {
-            Vector3 start = muzzle.position;
-            Vector3 end = hit.point; // from your RaycastHit
-            StartCoroutine(SpawnTracer(start, end));
+            StartCoroutine(SpawnTracer(muzzle.position, tracerEnd));
         }
 
-        // simple camera recoil: rotate camera up a bit
         if (playerCamera)
         {
             playerCamera.transform.localRotation *= Quaternion.Euler(-recoilAmount, 0f, 0f);
         }
-
-        // TODO: play firing animation by triggering an Animator if you have one
     }
 
     IEnumerator Reload()
     {
         isReloading = true;
         if (reloadSound) audioSource.PlayOneShot(reloadSound);
-        // optionally trigger reload animation here (Animator.SetTrigger)
+
         yield return new WaitForSeconds(reloadTime);
+
         currentAmmo = magazineSize;
         if (ui) ui.UpdateAmmo(currentAmmo, magazineSize);
+
         isReloading = false;
     }
 
@@ -183,8 +181,7 @@ public class GunHitscan : MonoBehaviour
             lr.SetPosition(1, end);
         }
 
-        Destroy(tracer, 0.05f); // short lifetime, adjust to taste
+        Destroy(tracer, 0.05f);
         yield return null;
     }
-
 }
