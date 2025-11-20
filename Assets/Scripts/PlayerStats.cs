@@ -13,6 +13,7 @@ public class PlayerStats : MonoBehaviour
     public float money = 0f;
     public float moneyToday = 0f;
 
+
     [Header("Reputation")]
     [Range(0f, 5f)]
     public float reputation = 2.5f;   // Start neutral
@@ -22,6 +23,18 @@ public class PlayerStats : MonoBehaviour
     [Header("Package Health")]
     public float lastPackageHealth = 100f;
 
+    // ----------------------
+    // UPGRADE LEVELS
+    // ----------------------
+    [Header("Upgrade Levels")]
+    public int weaponDamageLevel = 0;       // Affects gun damage
+    public int deliveryTimeLevel = 0;       // Affects delivery time bonus
+    public int scooterSpeedLevel = 0;       // Affects scooter speed
+    public int rewardMultiplierLevel = 0;   // Multiplies order rewards
+
+    // ----------------------
+    // Singleton
+    // ----------------------
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -31,27 +44,34 @@ public class PlayerStats : MonoBehaviour
     }
 
     // ----------------------
-    // Stats modifications
+    // MONEY
     // ----------------------
-
     public void AddMoney(float amount)
     {
         money += amount;
         moneyToday += amount;
     }
 
-    public void OnDeliveryCompleted(float reward, float packageHealth)
+    // ----------------------
+    // DELIVERY RESULT
+    // ----------------------
+    public void OnDeliveryCompleted(float baseReward, float packageHealth)
     {
         deliveriesCompleted++;
         lastPackageHealth = packageHealth;
 
-        AddMoney(reward);
+        // Apply reward multiplier from upgrades
+        float finalReward = baseReward * (1f + rewardMultiplierLevel * 0.1f);
+
+        AddMoney(finalReward);
+
         AddReputation(repGain);
     }
 
     public void OnDeliveryFailed()
     {
         deliveriesFailed++;
+
         AddReputation(-repLoss);
     }
 
@@ -60,11 +80,17 @@ public class PlayerStats : MonoBehaviour
         AddReputation(-repLoss);
     }
 
+    // ----------------------
+    // REPUTATION
+    // ----------------------
     public void AddReputation(float amount)
     {
         reputation = Mathf.Clamp(reputation + amount, 0f, 5f);
     }
 
+    // ----------------------
+    // DAY RESET
+    // ----------------------
     public void ResetDayStats()
     {
         moneyToday = 0f;
