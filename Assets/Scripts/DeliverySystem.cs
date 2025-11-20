@@ -33,14 +33,22 @@ public class DeliverySystem : MonoBehaviour
     public TextMeshProUGUI timerText;
 
     private GameObject[] deliveryZones;
+    private GameObject activeDeliveryZone;  // only the selected zone
+
     private GameObject currentTarget;
 
     void Start()
     {
         deliveryZones = GameObject.FindGameObjectsWithTag("DeliveryZone");
+
+        // Make sure all zones are disabled at start
+        foreach (var zone in deliveryZones)
+            zone.SetActive(false);
+
         ShuffleDeliveryZones();
         UpdateUI();
     }
+
 
     void Update()
     {
@@ -70,10 +78,19 @@ public class DeliverySystem : MonoBehaviour
         currentOrderTime = timeLimit;
         currentOrderTimeRemaining = timeLimit;
 
+        // Spawn the package
         itemSpawner?.SpawnItem();
+
+        // Pick a random delivery zone
+        activeDeliveryZone = deliveryZones[Random.Range(0, deliveryZones.Length)];
+
+        // Enable only that one
+        foreach (var zone in deliveryZones)
+            zone.SetActive(zone == activeDeliveryZone);
 
         UpdateUI();
     }
+
 
     public void CancelOrder()
     {
@@ -130,8 +147,7 @@ public class DeliverySystem : MonoBehaviour
         }
         else
         {
-            if (currentTarget == null || !deliveryZones.Contains(currentTarget))
-                currentTarget = deliveryZones[Random.Range(0, deliveryZones.Length)];
+            currentTarget = activeDeliveryZone;
         }
     }
 
@@ -178,9 +194,11 @@ public class DeliverySystem : MonoBehaviour
 
         PlayerStats.Instance.OnDeliveryCompleted(currentOrderReward, currentDeliveryHP);
 
+        DisableAllDeliveryZones();
         phoneUI?.CloseActiveOrderPanel();
         UpdateUI();
     }
+
 
     void FailDelivery(string reason)
     {
@@ -190,6 +208,7 @@ public class DeliverySystem : MonoBehaviour
 
         PlayerStats.Instance.OnDeliveryFailed();
 
+        DisableAllDeliveryZones();
         ClearAllPackages();
         phoneUI?.CloseActiveOrderPanel();
         UpdateUI();
@@ -234,4 +253,13 @@ public class DeliverySystem : MonoBehaviour
             (deliveryZones[i], deliveryZones[randomIndex]) = (deliveryZones[randomIndex], deliveryZones[i]);
         }
     }
+
+    void DisableAllDeliveryZones()
+    {
+        foreach (var zone in deliveryZones)
+            zone.SetActive(false);
+
+        activeDeliveryZone = null;
+    }
+
 }
