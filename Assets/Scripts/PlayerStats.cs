@@ -8,6 +8,7 @@ public class PlayerStats : MonoBehaviour
     public int currentDay = 1;
     public int deliveriesCompleted = 0;
     public int deliveriesFailed = 0;
+    public int ordersLeft = 6;
 
     [Header("Economy")]
     public float money = 0f;
@@ -96,5 +97,6 @@ public class PlayerStats : MonoBehaviour
         moneyToday = 0f;
         deliveriesCompleted = 0;
         deliveriesFailed = 0;
+        ordersLeft = 6;
     }
 }

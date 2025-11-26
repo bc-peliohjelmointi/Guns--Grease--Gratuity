@@ -102,6 +102,7 @@ public class DeliverySystem : MonoBehaviour
         currentOrderTimeRemaining = 0;
 
         PlayerStats.Instance.OnOrderDeclined();
+        PlayerStats.Instance.ordersLeft--;
 
         ClearAllPackages();
         DisableCompass();
@@ -193,6 +194,7 @@ public class DeliverySystem : MonoBehaviour
         statusText.text = $"<color=green>Toimitus onnistui! +{currentOrderReward}</color>";
 
         PlayerStats.Instance.OnDeliveryCompleted(currentOrderReward, currentDeliveryHP);
+        PlayerStats.Instance.ordersLeft--;
 
         DisableAllDeliveryZones();
         phoneUI?.CloseActiveOrderPanel();
@@ -207,6 +209,7 @@ public class DeliverySystem : MonoBehaviour
         statusText.text = $"<color=red>Toimitus epäonnistui! {reason}</color>";
 
         PlayerStats.Instance.OnDeliveryFailed();
+        PlayerStats.Instance.ordersLeft--;
 
         DisableAllDeliveryZones();
         ClearAllPackages();

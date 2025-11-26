@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
 
@@ -33,6 +34,10 @@ public class PhoneUI : MonoBehaviour
     public TMP_Text[] orderRewards;
     public TMP_Text[] orderTimes;
     public Button[] acceptButtons;
+
+    [Header("Order Panel Extra UI")]
+    public TMP_Text ordersLeftText;
+    public TMP_Text currentRankText;
 
     [Header("Active Order UI")]
     public TMP_Text activeOrderName;
@@ -102,6 +107,8 @@ public class PhoneUI : MonoBehaviour
             activeOrderTimer.text = Mathf.CeilToInt(delivery.currentOrderTimeRemaining) + "s";
     }
 
+
+
     void TogglePhone()
     {
         isOpen = !isOpen;
@@ -123,11 +130,7 @@ public class PhoneUI : MonoBehaviour
 
     void ShowHomeScreen()
     {
-        homePanel.SetActive(true);
-        deliveryPanel.SetActive(false);
-        activeOrderPanel.SetActive(false);
-        statsPanel.SetActive(false);
-        mapPanel.SetActive(false);
+        SwitchPanel(homePanel);
     }
 
     // --------------------------
@@ -136,24 +139,31 @@ public class PhoneUI : MonoBehaviour
 
     void OpenDeliveryApp()
     {
-        homePanel.SetActive(false);
-        statsPanel.SetActive(false);
-        mapPanel.SetActive(false);
+        SwitchPanel(deliveryPanel);
+        UpdateExtraOrderUI();
 
-        deliveryPanel.SetActive(true);
-        activeOrderPanel.SetActive(false);
+        if (delivery.hasActiveOrder)
+        {
+            // Show active order UI inside delivery panel
+            activeOrderPanel.SetActive(true);
 
-        GenerateOrders();
+            // Populate info
+            activeOrderName.text = delivery.currentOrderName;
+            activeOrderReward.text = "$" + delivery.currentOrderReward;
+            activeOrderTimer.text = Mathf.CeilToInt(delivery.currentOrderTimeRemaining) + "s";
+        }
+        else
+        {
+            // No active order → show order list
+            activeOrderPanel.SetActive(false);
+            GenerateOrders();
+        }
     }
+
 
     void OpenStatsApp()
     {
-        homePanel.SetActive(false);
-        deliveryPanel.SetActive(false);
-        activeOrderPanel.SetActive(false);
-        mapPanel.SetActive(false);
-
-        statsPanel.SetActive(true);
+        SwitchPanel(statsPanel);
 
         statsMoneyText.text = "$" + PlayerStats.Instance.money.ToString("0.00");
         statsReputationText.text = PlayerStats.Instance.reputation.ToString("0.0");
@@ -162,12 +172,7 @@ public class PhoneUI : MonoBehaviour
 
     void OpenMapApp()
     {
-        homePanel.SetActive(false);
-        deliveryPanel.SetActive(false);
-        activeOrderPanel.SetActive(false);
-        statsPanel.SetActive(false);
-
-        mapPanel.SetActive(true);
+        SwitchPanel(mapPanel);
     }
 
     // --------------------------
@@ -208,11 +213,22 @@ public class PhoneUI : MonoBehaviour
         }
     }
 
+    void UpdateExtraOrderUI()
+    {
+        // Orders Left
+        ordersLeftText.text = PlayerStats.Instance.ordersLeft.ToString();
+
+        // Rank = rounded reputation (floor)
+        int rank = Mathf.FloorToInt(PlayerStats.Instance.reputation);
+        currentRankText.text = rank.ToString();
+    }
+
+
     void AcceptOrder(int index)
     {
         selectedOrder = orders[index];
+        deliveryPanel.SetActive(true);
         activeOrderPanel.SetActive(true);
-        deliveryPanel.SetActive(false);
 
         activeOrderName.text = selectedOrder.name;
         activeOrderReward.text = "$" + selectedOrder.reward;
@@ -225,6 +241,8 @@ public class PhoneUI : MonoBehaviour
         selectedOrder = null;
         activeOrderPanel.SetActive(false);
         deliveryPanel.SetActive(true);
+
+        PlayerStats.Instance.ordersLeft--;
 
         delivery.CancelOrder();
         GenerateOrders();
@@ -259,6 +277,50 @@ public class PhoneUI : MonoBehaviour
         activeOrderPanel.SetActive(false);
         deliveryPanel.SetActive(true);
         GenerateOrders();
+    }
+
+    //----------------
+    //  Animations
+    //----------------
+
+    IEnumerator PlayPopTransition(GameObject panel)
+    {
+        panel.SetActive(true);
+
+        RectTransform rt = panel.GetComponent<RectTransform>();
+        if (rt == null) yield break;
+
+        float duration = 0.15f;
+        float time = 0f;
+
+        Vector3 startScale = new Vector3(0.9f, 0.9f, 1f);
+        Vector3 endScale = Vector3.one;
+
+        rt.localScale = startScale;
+
+        while (time < duration)
+        {
+            time += Time.unscaledDeltaTime;
+            float t = time / duration;
+
+            t = 1f - Mathf.Pow(1f - t, 3f);
+
+            rt.localScale = Vector3.Lerp(startScale, endScale, t);
+            yield return null;
+        }
+
+        rt.localScale = endScale;
+    }
+
+    void SwitchPanel(GameObject target)
+    {
+        homePanel.SetActive(false);
+        deliveryPanel.SetActive(false);
+        activeOrderPanel.SetActive(false);
+        statsPanel.SetActive(false);
+        mapPanel.SetActive(false);
+
+        StartCoroutine(PlayPopTransition(target));
     }
 }
 
