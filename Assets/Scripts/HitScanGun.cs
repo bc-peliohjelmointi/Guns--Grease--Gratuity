@@ -12,6 +12,7 @@ public class GunHitscan : MonoBehaviour
     public GameObject impactPrefab;
     public LayerMask hitMask = ~0;
     public PhoneUI phoneUI;
+    public PullOurScript pullOurScript;
 
     [Header("Stats")]
     public float damage = 25f;
@@ -61,7 +62,7 @@ public class GunHitscan : MonoBehaviour
             ? Mouse.current != null && Mouse.current.leftButton.isPressed
             : Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
 
-        if (firePressed && Time.time >= nextFireTime && currentAmmo > 0)
+        if (firePressed && Time.time >= nextFireTime && currentAmmo > 0 && pullOurScript.gunIsOut==true)
         {
             nextFireTime = Time.time + 1f / fireRate;
             Fire();
