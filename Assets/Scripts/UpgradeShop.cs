@@ -21,6 +21,8 @@ public class UpgradeShop : MonoBehaviour
         UpdateUI();
     }
 
+    
+
     public void BuyDamage()
     {
         if (PlayerStats.Instance.money >= damagePrice)
@@ -67,6 +69,7 @@ public class UpgradeShop : MonoBehaviour
 
     void UpdateUI()
     {
+
         moneyText.text = "Money: $" + PlayerStats.Instance.money;
 
         damageText.text = "Damage Lv. " + PlayerStats.Instance.weaponDamageLevel 
@@ -80,5 +83,7 @@ public class UpgradeShop : MonoBehaviour
 
         rewardText.text = "Reward Multiplier Lv. " + PlayerStats.Instance.rewardMultiplierLevel
                           + " (Cost $" + rewardMultiplierPrice + ")";
+
+
     }
 }
