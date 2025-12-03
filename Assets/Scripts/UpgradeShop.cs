@@ -72,16 +72,16 @@ public class UpgradeShop : MonoBehaviour
 
         moneyText.text = "Money: $" + PlayerStats.Instance.money;
 
-        damageText.text = "Damage Lv. " + PlayerStats.Instance.weaponDamageLevel 
+        damageText.text = "Level " + PlayerStats.Instance.weaponDamageLevel 
                           + " (Cost $" + damagePrice + ")";
 
-        timeText.text = "Delivery Time Lv. " + PlayerStats.Instance.deliveryTimeLevel
+        timeText.text = "Level " + PlayerStats.Instance.deliveryTimeLevel
                         + " (Cost $" + deliveryTimePrice + ")";
 
-        speedText.text = "Scooter Speed Lv. " + PlayerStats.Instance.scooterSpeedLevel
+        speedText.text = "Level " + PlayerStats.Instance.scooterSpeedLevel
                          + " (Cost $" + scooterSpeedPrice + ")";
 
-        rewardText.text = "Reward Multiplier Lv. " + PlayerStats.Instance.rewardMultiplierLevel
+        rewardText.text = "Level " + PlayerStats.Instance.rewardMultiplierLevel
                           + " (Cost $" + rewardMultiplierPrice + ")";
 
 
