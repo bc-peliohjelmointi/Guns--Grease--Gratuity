@@ -10,6 +10,7 @@ TagManager:
   - Spawner
   - Enemy
   - ApartmentDoor
+  - Roadwork
   layers:
   - Default
   - TransparentFX

@@ -99,5 +99,7 @@ public class PlayerStats : MonoBehaviour
         deliveriesCompleted = 0;
         deliveriesFailed = 0;
         ordersLeft = 6;
+
+        RoadworkManager.Instance?.GenerateNewDayRoadworks();
     }
 }
