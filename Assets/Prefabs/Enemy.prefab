@@ -132,7 +132,7 @@ NavMeshAgent:
   m_AutoRepath: 1
   m_Height: 2
   m_BaseOffset: 1
-  m_WalkableMask: 4294967295
+  m_WalkableMask: 1
   m_ObstacleAvoidanceType: 4
 --- !u!114 &1662016825831253135
 MonoBehaviour:
@@ -148,18 +148,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agent: {fileID: 1207712149331427809}
   player: {fileID: 0}
+  damageToDelivery: 10
+  timeBetweenAttacks: 0.5
+  walkPointRange: 5
   whatIsGround:
     serializedVersion: 2
     m_Bits: 8
   whatIsPlayer:
     serializedVersion: 2
     m_Bits: 64
-  health: 120
-  walkPoint: {x: 0, y: 0, z: 0}
-  walkPointRange: 5
-  timeBetweenAttacks: 0.5
-  projectile: {fileID: 0}
   sightRange: 20
   attackRange: 12
-  playerInSightRange: 0
-  playerInAttackRange: 0
+  health: 125

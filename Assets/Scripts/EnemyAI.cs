@@ -1,44 +1,50 @@
-using Unity.Mathematics;
-using UnityEditor.Profiling.Memory.Experimental;
 using UnityEngine;
 using UnityEngine.AI;
+
 public class EnemyAI : MonoBehaviour
 {
+    [Header("References")]
     public NavMeshAgent agent;
-
     public Transform player;
-    private float damageToDelivery = 10f;
     private DeliverySystem delivery;
 
-    public LayerMask whatIsGround, whatIsPlayer;
+    [Header("Attack Settings")]
+    public float damageToDelivery = 10f;
+    public float timeBetweenAttacks = 1f;
+    private bool alreadyAttacked;
 
-    public float health;
+    [Header("Patrol Settings")]
+    public float walkPointRange = 10f;
+    private Vector3 walkPoint;
+    private bool walkPointSet;
 
-    // Patrol
-    public Vector3 walkPoint;
-    bool walkPointSet;
-    public float walkPointRange;
+    [Header("Detection")]
+    public LayerMask whatIsGround;
+    public LayerMask whatIsPlayer;
+    public float sightRange = 8f;
+    public float attackRange = 2f;
+    private bool playerInSightRange;
+    private bool playerInAttackRange;
 
-    // Attack
-    public float timeBetweenAttacks;
-    bool alreadyAttacked;
-
-    // States
-    public float sightRange, attackRange;
-    public bool playerInSightRange, playerInAttackRange;
+    [Header("Enemy Stats")]
+    public float health = 50f;
 
     private void Awake()
     {
         player = GameObject.Find("Player").transform;
-        delivery = player.GetComponent<DeliverySystem>();
+        if (player != null)
+            delivery = player.GetComponent<DeliverySystem>();
+
         agent = GetComponent<NavMeshAgent>();
     }
 
     private void Update()
     {
+        // RANGE CHECK
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
 
+        // STATES
         if (!playerInSightRange && !playerInAttackRange) Patrolling();
         if (playerInSightRange && !playerInAttackRange) ChasePlayer();
         if (playerInSightRange && playerInAttackRange) AttackPlayer();
@@ -56,16 +62,18 @@ public class EnemyAI : MonoBehaviour
         // Walkpoint reached
         if (distanceToWalkPoint.magnitude < 1f)
             walkPointSet = false;
-
     }
 
     private void SearchWalkPoint()
     {
-        // Calculate random point in range
-        float randomZ = UnityEngine.Random.Range(-walkPointRange, walkPointRange);
-        float randomX = UnityEngine.Random.Range(-walkPointRange, walkPointRange);
+        float randomZ = Random.Range(-walkPointRange, walkPointRange);
+        float randomX = Random.Range(-walkPointRange, walkPointRange);
 
-        walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
+        walkPoint = new Vector3(
+            transform.position.x + randomX,
+            transform.position.y,
+            transform.position.z + randomZ
+        );
 
         if (Physics.Raycast(walkPoint, -transform.up, 2f, whatIsGround))
             walkPointSet = true;
@@ -73,20 +81,25 @@ public class EnemyAI : MonoBehaviour
 
     private void ChasePlayer()
     {
-        agent.SetDestination(player.position);
+        if (player != null)
+            agent.SetDestination(player.position);
     }
 
     private void AttackPlayer()
     {
-        // Make sure enemy doesn't move
+        // Stop movement
         agent.SetDestination(transform.position);
 
-        transform.LookAt(player);
+        if (player != null)
+            transform.LookAt(player);
 
-       if (!alreadyAttacked)
+        if (!alreadyAttacked)
         {
+            // DAMAGE ONLY PACKAGE
             if (delivery != null && delivery.hasPackage)
+            {
                 delivery.TakeDamage(damageToDelivery);
+            }
 
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
@@ -101,6 +114,9 @@ public class EnemyAI : MonoBehaviour
     public void TakeDamage(float dmg)
     {
         health -= dmg;
-        if (health <= 0) Destroy(gameObject);
+        if (health <= 0f)
+        {
+            Destroy(gameObject);
+        }
     }
 }
