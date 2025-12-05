@@ -9,9 +9,11 @@ public class EnemyAI : MonoBehaviour
     private DeliverySystem delivery;
 
     [Header("Attack Settings")]
-    public float damageToDelivery = 10f;
     public float timeBetweenAttacks = 1f;
     private bool alreadyAttacked;
+
+    [Header("Shooting Settings")]
+    public EnemyGunHitscan enemyGun; // oma hitscan ase
 
     [Header("Patrol Settings")]
     public float walkPointRange = 10f;
@@ -57,10 +59,7 @@ public class EnemyAI : MonoBehaviour
         if (walkPointSet)
             agent.SetDestination(walkPoint);
 
-        Vector3 distanceToWalkPoint = transform.position - walkPoint;
-
-        // Walkpoint reached
-        if (distanceToWalkPoint.magnitude < 1f)
+        if (Vector3.Distance(transform.position, walkPoint) < 1f)
             walkPointSet = false;
     }
 
@@ -95,10 +94,10 @@ public class EnemyAI : MonoBehaviour
 
         if (!alreadyAttacked)
         {
-            // DAMAGE ONLY PACKAGE
-            if (delivery != null && delivery.hasPackage)
+            // Ampuu vain, jos pelaajalla on paketti
+            if (delivery != null && delivery.hasPackage && enemyGun != null)
             {
-                delivery.TakeDamage(damageToDelivery);
+                enemyGun.TryShoot(delivery);
             }
 
             alreadyAttacked = true;
