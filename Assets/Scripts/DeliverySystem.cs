@@ -244,7 +244,7 @@ public class DeliverySystem : MonoBehaviour
     void UpdateUI()
     {
         timerText.text = hasActiveOrder
-            ? Mathf.CeilToInt(currentOrderTimeRemaining) + "s"
+            ? Mathf.CeilToInt(currentOrderTimeRemaining) + ""
             : "";
     }
 
