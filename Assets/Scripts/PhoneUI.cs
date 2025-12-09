@@ -416,6 +416,7 @@ public class PhoneUI : MonoBehaviour
         activeOrderPanel.SetActive(false);
         statsPanel.SetActive(false);
         mapPanel.SetActive(false);
+        instructionsPanel.SetActive(false);
 
         StartCoroutine(PlayPopTransition(target));
     }
