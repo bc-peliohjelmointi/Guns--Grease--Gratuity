@@ -9,21 +9,28 @@ public class DoorTeleport : MonoBehaviour
     [Header("Teleport Settings")]
     public Transform teleportTarget;
     public KeyCode interactKey = KeyCode.E;
+    public float interactDistance = 3f;
     public bool requireKeyPress = true;
 
+    [Header("Look Settings")]
+    public Camera playerCamera;
+    public LayerMask doorLayer;
+
     [Header("UI")]
-    public TextMeshProUGUI interactText;   // "Press E to enter"
-    public Image fadePanel;                 // Black fullscreen UI image
+    public TextMeshProUGUI interactText;
+    public Image fadePanel;
 
     [Header("Fade Settings")]
     public float fadeDuration = 0.75f;
+    public float blackHoldTime = 1f;   // ✅ EXTRA 1 SECOND BLACK SCREEN
 
     private CharacterController playerController;
-    private bool playerInTrigger = false;
     private bool isFading = false;
 
     void Start()
     {
+        playerController = FindObjectOfType<CharacterController>();
+
         if (interactText != null)
             interactText.gameObject.SetActive(false);
 
@@ -31,21 +38,40 @@ public class DoorTeleport : MonoBehaviour
         {
             Color c = fadePanel.color;
             c.a = 0f;
-            fadePanel.color = c; // fully transparent at start
+            fadePanel.color = c;
         }
     }
 
     void Update()
     {
-        if (playerInTrigger && requireKeyPress && Keyboard.current.eKey.wasPressedThisFrame)
+        bool lookingAtDoor = IsLookingAtDoor();
+
+        if (interactText != null)
+            interactText.gameObject.SetActive(lookingAtDoor);
+
+        if (lookingAtDoor && requireKeyPress && Keyboard.current.eKey.wasPressedThisFrame)
         {
             StartCoroutine(FadeTeleport());
         }
 
-        if (playerInTrigger && !requireKeyPress)
+        if (lookingAtDoor && !requireKeyPress)
         {
             StartCoroutine(FadeTeleport());
         }
+    }
+
+    bool IsLookingAtDoor()
+    {
+        if (playerCamera == null) return false;
+
+        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, interactDistance, doorLayer))
+        {
+            return hit.transform == transform;
+        }
+
+        return false;
     }
 
     IEnumerator FadeTeleport()
@@ -53,7 +79,7 @@ public class DoorTeleport : MonoBehaviour
         if (isFading || fadePanel == null) yield break;
         isFading = true;
 
-        // ✅ Fade to black
+        // ✅ FADE TO BLACK
         float t = 0;
         while (t < fadeDuration)
         {
@@ -64,10 +90,13 @@ public class DoorTeleport : MonoBehaviour
             yield return null;
         }
 
-        // ✅ Actual teleport
+        // ✅ HOLD BLACK FOR 1 FULL SECOND
+        yield return new WaitForSeconds(blackHoldTime);
+
+        // ✅ TELEPORT
         TeleportNow();
 
-        // ✅ Fade back to clear
+        // ✅ FADE BACK IN
         t = 0;
         while (t < fadeDuration)
         {
@@ -89,7 +118,6 @@ public class DoorTeleport : MonoBehaviour
             return;
         }
 
-        // Disable CharacterController before teleporting
         playerController.enabled = false;
 
         playerController.transform.position = teleportTarget.position;
@@ -97,33 +125,7 @@ public class DoorTeleport : MonoBehaviour
 
         playerController.enabled = true;
 
-        // Hide the UI text after teleport
         if (interactText != null)
             interactText.gameObject.SetActive(false);
-
-        playerInTrigger = false;
-    }
-
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.TryGetComponent<CharacterController>(out var cc))
-        {
-            playerController = cc;
-            playerInTrigger = true;
-
-            if (interactText != null)
-                interactText.gameObject.SetActive(true);
-        }
-    }
-
-    void OnTriggerExit(Collider other)
-    {
-        if (other.GetComponent<CharacterController>() != null)
-        {
-            playerInTrigger = false;
-
-            if (interactText != null)
-                interactText.gameObject.SetActive(false);
-        }
     }
 }

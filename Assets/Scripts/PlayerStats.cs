@@ -9,7 +9,7 @@ public class PlayerStats : MonoBehaviour
     public int currentDay = 1;
     public int deliveriesCompleted = 0;
     public int deliveriesFailed = 0;
-    public int ordersLeft = 6;
+    public int ordersLeft;
 
     [Header("Economy")]
     public float money = 0f;
@@ -41,6 +41,7 @@ public class PlayerStats : MonoBehaviour
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+        ordersLeft = GetDailyOrderLimit();
 
         DontDestroyOnLoad(gameObject);
     }
@@ -63,7 +64,14 @@ public class PlayerStats : MonoBehaviour
         lastPackageHealth = packageHealth;
 
         // Apply reward multiplier from upgrades
-        float finalReward = baseReward * (1f + rewardMultiplierLevel * 0.1f);
+        int rank = Mathf.FloorToInt(reputation);
+        float rankBonus = rank * 0.10f;
+
+        float finalReward =
+            baseReward *
+            (1f + rewardMultiplierLevel * 0.1f) *
+            (1f + rankBonus);
+
 
         AddMoney(finalReward);
 
@@ -98,8 +106,14 @@ public class PlayerStats : MonoBehaviour
         moneyToday = 0f;
         deliveriesCompleted = 0;
         deliveriesFailed = 0;
-        ordersLeft = 6;
+        ordersLeft = GetDailyOrderLimit();
 
         RoadworkManager.Instance?.GenerateNewDayRoadworks();
+    }
+
+    public int GetDailyOrderLimit()
+    {
+        int rank = Mathf.FloorToInt(reputation);
+        return 3 + rank; // base 3 + 1 per rank
     }
 }
