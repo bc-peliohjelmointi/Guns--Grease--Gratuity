@@ -7,33 +7,29 @@ public class EnemyAI : MonoBehaviour
     public NavMeshAgent agent;
     public Transform player;
     private DeliverySystem delivery;
+    public EnemyGunProjectile gun;
 
-    [Header("Attack Settings")]
-    public float timeBetweenAttacks = 1f;
-    private bool alreadyAttacked;
-
-    [Header("Shooting Settings")]
-    public EnemyGunHitscan enemyGun; // oma hitscan ase
-
-    [Header("Patrol Settings")]
-    public float walkPointRange = 10f;
-    private Vector3 walkPoint;
-    private bool walkPointSet;
-
-    [Header("Detection")]
-    public LayerMask whatIsGround;
+    [Header("Ranges")]
+    public float sightRange = 12f;
+    public float attackRange = 8f;
     public LayerMask whatIsPlayer;
-    public float sightRange = 8f;
-    public float attackRange = 2f;
+
     private bool playerInSightRange;
     private bool playerInAttackRange;
 
-    [Header("Enemy Stats")]
+    [Header("Patrol")]
+    public float walkPointRange = 10f;
+    private Vector3 walkPoint;
+    private bool walkPointSet;
+    public LayerMask whatIsGround;
+
+    [Header("Stats")]
     public float health = 50f;
 
     private void Awake()
     {
         player = GameObject.Find("Player").transform;
+
         if (player != null)
             delivery = player.GetComponent<DeliverySystem>();
 
@@ -42,22 +38,25 @@ public class EnemyAI : MonoBehaviour
 
     private void Update()
     {
-        // RANGE CHECK
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
 
-        // STATES
-        if (!playerInSightRange && !playerInAttackRange) Patrolling();
-        if (playerInSightRange && !playerInAttackRange) ChasePlayer();
-        if (playerInSightRange && playerInAttackRange) AttackPlayer();
+        if (!playerInSightRange && !playerInAttackRange)
+            Patrolling();
+
+        if (playerInSightRange && !playerInAttackRange)
+            ChasePlayer();
+
+        if (playerInAttackRange)
+            AttackPlayer();
     }
 
     private void Patrolling()
     {
-        if (!walkPointSet) SearchWalkPoint();
+        if (!walkPointSet)
+            SearchWalkPoint();
 
-        if (walkPointSet)
-            agent.SetDestination(walkPoint);
+        agent.SetDestination(walkPoint);
 
         if (Vector3.Distance(transform.position, walkPoint) < 1f)
             walkPointSet = false;
@@ -86,36 +85,23 @@ public class EnemyAI : MonoBehaviour
 
     private void AttackPlayer()
     {
-        // Stop movement
-        agent.SetDestination(transform.position);
-
         if (player != null)
             transform.LookAt(player);
 
-        if (!alreadyAttacked)
-        {
-            // Ampuu vain, jos pelaajalla on paketti
-            if (delivery != null && delivery.hasPackage && enemyGun != null)
-            {
-                enemyGun.TryShoot(delivery);
-            }
+        // Enemy liikkuu kohti pelaajaa samalla kun ampuu
+        if (player != null)
+            agent.SetDestination(player.position);
 
-            alreadyAttacked = true;
-            Invoke(nameof(ResetAttack), timeBetweenAttacks);
-        }
-    }
-
-    private void ResetAttack()
-    {
-        alreadyAttacked = false;
+        // Ammutaan vain jos pelaajalla on paketti
+        if (delivery != null && delivery.hasPackage)
+            gun.TryShoot(player);
     }
 
     public void TakeDamage(float dmg)
     {
         health -= dmg;
-        if (health <= 0f)
-        {
+
+        if (health <= 0)
             Destroy(gameObject);
-        }
     }
 }
