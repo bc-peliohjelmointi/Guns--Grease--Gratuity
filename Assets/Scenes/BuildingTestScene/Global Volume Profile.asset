@@ -83,7 +83,7 @@ MonoBehaviour:
     m_Value: 2
   scatter:
     m_OverrideState: 1
-    m_Value: 0.01
+    m_Value: 0.04
   clamp:
     m_OverrideState: 1
     m_Value: 65472
@@ -240,7 +240,7 @@ MonoBehaviour:
   active: 1
   shadows:
     m_OverrideState: 1
-    m_Value: {x: 0.9558646, y: 1, z: 0.97645795, w: -0.38309845}
+    m_Value: {x: 0.9558646, y: 1, z: 0.97645795, w: -0.6591549}
   midtones:
     m_OverrideState: 1
     m_Value: {x: 0.8788174, y: 0.9933741, z: 1, w: -1}
