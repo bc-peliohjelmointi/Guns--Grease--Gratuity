@@ -11,6 +11,8 @@ TagManager:
   - Enemy
   - ApartmentDoor
   - Roadwork
+  - PatrolPoint
+  - Ground
   layers:
   - Default
   - TransparentFX

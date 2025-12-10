@@ -2,36 +2,36 @@ using UnityEngine;
 
 public class EnemyGunProjectile : MonoBehaviour
 {
-    [Header("References")]
-    public Transform firePoint;
+    [Header("Projectile Settings")]
     public GameObject projectilePrefab;
-
-    [Header("Stats")]
+    public Transform firePoint;
     public float projectileSpeed = 30f;
-    public float timeBetweenShots = 1.0f;
-    private float lastShotTime = 0f;
+    public float shootCooldown = 1f;
+
+    private float lastShotTime;
 
     public void TryShoot(Transform target)
     {
-        if (Time.time < lastShotTime + timeBetweenShots)
-            return;
-
-        if (firePoint == null || projectilePrefab == null || target == null)
+        // cooldown
+        if (Time.time < lastShotTime + shootCooldown)
             return;
 
         lastShotTime = Time.time;
 
-        Shoot(target.position);
-    }
+        if (projectilePrefab == null || firePoint == null)
+            return;
 
-    private void Shoot(Vector3 targetPos)
-    {
-        Vector3 direction = (targetPos - firePoint.position).normalized;
+        // suunta pelaajaan
+        Vector3 dir = (target.position + Vector3.up * 1.2f - firePoint.position).normalized;
 
-        GameObject proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.LookRotation(direction));
+        // luodaan projektiili
+        GameObject proj = GameObject.Instantiate(projectilePrefab, firePoint.position, Quaternion.LookRotation(dir));
 
+        // annetaan velocity
         Rigidbody rb = proj.GetComponent<Rigidbody>();
         if (rb != null)
-            rb.linearVelocity = direction * projectileSpeed;
+        {
+            rb.linearVelocity = dir * projectileSpeed;
+        }
     }
 }

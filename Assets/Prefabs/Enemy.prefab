@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 1043431206390345422}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 0.128, z: -0.321}
+  m_LocalPosition: {x: 0, y: 0.146, z: -0.309}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -183,13 +183,17 @@ MonoBehaviour:
   gun: {fileID: 2109626464099024575}
   sightRange: 20
   attackRange: 12
+  whatIsPlayer:
+    serializedVersion: 2
+    m_Bits: 64
+  obstructionMask:
+    serializedVersion: 2
+    m_Bits: 1
+  eyePoint: {fileID: 0}
   walkPointRange: 5
   whatIsGround:
     serializedVersion: 2
     m_Bits: 8
-  whatIsPlayer:
-    serializedVersion: 2
-    m_Bits: 64
   health: 125
 --- !u!1001 &5131442992692312051
 PrefabInstance:
@@ -274,7 +278,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectilePrefab: {fileID: 1143759643287643506, guid: 3bf3772995593bc40b3fa55faa317273, type: 3}
   firePoint: {fileID: 5317768231436320732}
-  fireRate: 1
+  projectileSpeed: 30
+  shootCooldown: 1
 --- !u!4 &1036743564601042230 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5284355076194833093, guid: ec81deb4449b7cf489f777cca4142876, type: 3}
