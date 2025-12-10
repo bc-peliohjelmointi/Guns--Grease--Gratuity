@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb60a22f311433c4c962b888d1393f88, type: 3}
   m_Name: PaniniProjection
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   distance:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 0
   cropToFit:
     m_OverrideState: 0
@@ -83,7 +83,7 @@ MonoBehaviour:
     m_Value: 2
   scatter:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.01
   clamp:
     m_OverrideState: 1
     m_Value: 65472
@@ -127,7 +127,7 @@ MonoBehaviour:
     m_Value: {x: 0.5, y: 0.5}
   intensity:
     m_OverrideState: 1
-    m_Value: 0.46
+    m_Value: 0.38
   smoothness:
     m_OverrideState: 0
     m_Value: 0.2
@@ -196,7 +196,7 @@ MonoBehaviour:
   active: 1
   intensity:
     m_OverrideState: 1
-    m_Value: 0.51
+    m_Value: 0.24
 --- !u!114 &6765218568782934624
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -215,7 +215,7 @@ MonoBehaviour:
     m_Value: 0
   contrast:
     m_OverrideState: 1
-    m_Value: 71
+    m_Value: 26
   colorFilter:
     m_OverrideState: 1
     m_Value: {r: 1, g: 1, b: 1, a: 1}
@@ -224,7 +224,7 @@ MonoBehaviour:
     m_Value: -54
   saturation:
     m_OverrideState: 1
-    m_Value: -36
+    m_Value: -53
 --- !u!114 &8009489023698721067
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -237,16 +237,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 558a8e2b6826cf840aae193990ba9f2e, type: 3}
   m_Name: ShadowsMidtonesHighlights
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   shadows:
     m_OverrideState: 1
-    m_Value: {x: 0.9625736, y: 0.92514604, z: 1, w: 0}
+    m_Value: {x: 0.9558646, y: 1, z: 0.97645795, w: -0.38309845}
   midtones:
     m_OverrideState: 1
-    m_Value: {x: 0.8194133, y: 1, z: 0.83919686, w: 0}
+    m_Value: {x: 0.8788174, y: 0.9933741, z: 1, w: -1}
   highlights:
     m_OverrideState: 1
-    m_Value: {x: 0.9359044, y: 1, z: 0.91709936, w: 0}
+    m_Value: {x: 0.9359044, y: 1, z: 0.91709936, w: -0.5464787}
   shadowsStart:
     m_OverrideState: 0
     m_Value: 0
