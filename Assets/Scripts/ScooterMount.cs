@@ -120,9 +120,9 @@ public class ScooterMount : MonoBehaviour
         if (statusText == null) return;
 
         if (isMounted)
-            statusText.text = "[F] Mount";
+            statusText.text = "[F] Dismount";
         else if (Vector3.Distance(transform.position, scooter.position) < mountDistance)
-            statusText.text = "[F] Discmount";
+            statusText.text = "[F] Mount";
         else
             statusText.text = "";
     }

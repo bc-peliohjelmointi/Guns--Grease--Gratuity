@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7181980255972709588}
   - component: {fileID: 4115544356503998305}
+  - component: {fileID: 5914885504364987831}
   m_Layer: 0
   m_Name: TurretSpawner
   m_TagString: Untagged
@@ -45,5 +46,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   turretPrefab: {fileID: 3187331741464151730, guid: edae7a26f83ce474eb418f7b44348713, type: 3}
-  spawnRadius: 10
+  spawnRadius: 12
   spawnChance: 0.15
+--- !u!65 &5914885504364987831
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3668126006378848116}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 12, y: 0.1, z: 12}
+  m_Center: {x: 0, y: 0, z: 0}
