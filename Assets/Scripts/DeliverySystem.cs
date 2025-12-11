@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine.InputSystem;
 using System.Linq;
 using UnityEngine.UI;
+using System.Collections;
 
 public class DeliverySystem : MonoBehaviour
 {
@@ -31,6 +32,17 @@ public class DeliverySystem : MonoBehaviour
     public Slider hpSlider;
     public RectTransform compassArrow;
     public TextMeshProUGUI timerText;
+
+    [Header("Fade Panel")]
+    public Image fadePanel;
+    public float fadeDuration = 1f;
+    public float fadeHold = 1.5f;
+
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip startDeliverySFX;
+    public AudioClip pickupPackageSFX;
+    public AudioClip deliveryCompleteSFX;
 
     private GameObject[] deliveryZones;
     private GameObject activeDeliveryZone;  // only the selected zone
@@ -71,6 +83,8 @@ public class DeliverySystem : MonoBehaviour
 
     public void AssignOrder(string name, int reward, float timeLimit)
     {
+        if (startDeliverySFX) audioSource.PlayOneShot(startDeliverySFX);
+
         hasActiveOrder = true;
         hasPackage = false;
         currentOrderName = name;
@@ -191,6 +205,11 @@ public class DeliverySystem : MonoBehaviour
     {
         hasPackage = false;
         hasActiveOrder = false;
+
+        if (deliveryCompleteSFX) audioSource.PlayOneShot(deliveryCompleteSFX);
+
+        StartCoroutine(FadeEffect());
+
         statusText.text = $"<color=green>Toimitus onnistui! +{currentOrderReward}</color>";
 
         PlayerStats.Instance.OnDeliveryCompleted(currentOrderReward, currentDeliveryHP);
@@ -236,10 +255,14 @@ public class DeliverySystem : MonoBehaviour
         {
             hasPackage = true;
             currentDeliveryHP = maxDeliveryHP;
+
+            if (pickupPackageSFX) audioSource.PlayOneShot(pickupPackageSFX);
+
             Destroy(other.gameObject);
             statusText.text = "Paketti kerätty!";
         }
     }
+
 
     void UpdateUI()
     {
@@ -265,4 +288,31 @@ public class DeliverySystem : MonoBehaviour
         activeDeliveryZone = null;
     }
 
+    IEnumerator FadeEffect()
+    {
+        // Fade to black
+        float t = 0f;
+        Color c = fadePanel.color;
+
+        while (t < fadeDuration)
+        {
+            t += Time.deltaTime;
+            float a = Mathf.Lerp(0f, 1f, t / fadeDuration);
+            fadePanel.color = new Color(c.r, c.g, c.b, a);
+            yield return null;
+        }
+
+        // Hold
+        yield return new WaitForSeconds(fadeHold);
+
+        // Fade out
+        t = 0f;
+        while (t < fadeDuration)
+        {
+            t += Time.deltaTime;
+            float a = Mathf.Lerp(1f, 0f, t / fadeDuration);
+            fadePanel.color = new Color(c.r, c.g, c.b, a);
+            yield return null;
+        }
+    }
 }
