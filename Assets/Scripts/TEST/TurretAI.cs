@@ -16,11 +16,16 @@ public class TurretAI : MonoBehaviour
 
     private float fireCooldown = 0f;
     private Transform player;
+    private DeliverySystem deliverySystem;
     private AudioSource audioSource;
 
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        if (player != null)
+            deliverySystem = player.GetComponent<DeliverySystem>();
+
         audioSource = GetComponent<AudioSource>();
 
         // Random Y rotation on spawn
@@ -29,10 +34,12 @@ public class TurretAI : MonoBehaviour
 
     void Update()
     {
-        if (player == null) return;
+        if (player == null || deliverySystem == null)
+            return;
 
-        // Only shoot when a delivery is active
-        if (PlayerStats.Instance.ordersLeft <= 0) return;
+        // SHOOT ONLY IF PLAYER HAS PACKAGE
+        if (!deliverySystem.hasPackage)
+            return;
 
         float distance = Vector3.Distance(transform.position, player.position);
 

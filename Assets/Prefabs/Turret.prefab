@@ -127,9 +127,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 120
-  currentHealth: 0
-  smokePuffPrefab: {fileID: 1315614681493600653, guid: fe87e0d112f55d2468bf7bc68d941781, type: 3}
-  deathEffect: {fileID: 0}
+  smokeDeathEffect: {fileID: 1315614681493600653, guid: fe87e0d112f55d2468bf7bc68d941781, type: 3}
+  hitSound: {fileID: 8300000, guid: 3292a6421c9fde94a9e88e51532ac93e, type: 3}
+  deathSound: {fileID: 8300000, guid: b01c40cafcb9eb6429f0b8a1a050f5a1, type: 3}
 --- !u!114 &7015710989958982816
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -143,14 +143,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRange: 25
-  rotationSpeed: 5
+  rotationSpeed: 6
   fireRate: 2
   bulletPrefab: {fileID: 7547324298326030361, guid: 95cb35ea084b27f468fbc1bfc4e2512f, type: 3}
   firePoint: {fileID: 2882769634224097057}
-  audioSource: {fileID: 2710130841799968159}
-  shootSFX: {fileID: 8300000, guid: 7d7598fcb214ac54eb9e29f71ccbc443, type: 3}
-  hitSFX: {fileID: 8300000, guid: 3292a6421c9fde94a9e88e51532ac93e, type: 3}
-  deathSFX: {fileID: 8300000, guid: b01c40cafcb9eb6429f0b8a1a050f5a1, type: 3}
+  shootSound: {fileID: 8300000, guid: 7d7598fcb214ac54eb9e29f71ccbc443, type: 3}
 --- !u!82 &2710130841799968159
 AudioSource:
   m_ObjectHideFlags: 0

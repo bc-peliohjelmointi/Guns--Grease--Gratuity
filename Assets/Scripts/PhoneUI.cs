@@ -323,6 +323,9 @@ public class PhoneUI : MonoBehaviour
         activeOrderName.text = selectedOrder.name;
         activeOrderReward.text = "$" + selectedOrder.reward;
 
+        PlayerStats.Instance.ordersLeft--;          // FIX
+        UpdateExtraOrderUI();                       // FIX
+
         delivery.AssignOrder(
             selectedOrder.name,
             selectedOrder.reward,
@@ -330,19 +333,20 @@ public class PhoneUI : MonoBehaviour
         );
     }
 
+
     void DeclineOrder()
     {
         selectedOrder = null;
         activeOrderPanel.SetActive(false);
         deliveryPanel.SetActive(true);
 
-        PlayerStats.Instance.ordersLeft--;
 
         delivery.CancelOrder();
 
-        ordersGeneratedToday = false;   
-        GenerateOrdersOnce();           
+        ordersGeneratedToday = false;
+        GenerateOrdersOnce();
     }
+
 
     // --------------------------
     // END DAY

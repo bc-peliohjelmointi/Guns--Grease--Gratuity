@@ -114,6 +114,6 @@ public class PlayerStats : MonoBehaviour
     public int GetDailyOrderLimit()
     {
         int rank = Mathf.FloorToInt(reputation);
-        return 3 + rank; // base 3 + 1 per rank
+        return 4; // base 3 + 1 per rank
     }
 }
