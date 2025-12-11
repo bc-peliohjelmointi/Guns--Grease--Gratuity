@@ -7,69 +7,43 @@ public class EnemyAI : MonoBehaviour
     public NavMeshAgent agent;
     public Transform player;
     private DeliverySystem delivery;
-    public EnemyGunProjectile gun; // viittaus aseeseen (child)
+    public LayerMask whatIsGround, whatIsPlayer;
 
-    [Header("Detection")]
-    public float sightRange = 20f;        // kauempaa havainto
-    public float attackRange = 12f;       // etäisyys, jolla ampuminen aktivoituu
-    public LayerMask whatIsPlayer;        // pelaajan layer
-    public LayerMask obstructionMask;     // esteet (seinät yms)
-    public Transform eyePoint;            // mistä raycast lähtee (voisi olla ase/firePoint tai enemy head)
+    [Header("Projectile Settings")]
+    public GameObject projectilePrefab;     // ← LISÄTTY
+    public Transform firePoint;             // ← LISÄTTY
+    public float projectileForce = 32f;     // ← LISÄTTY
 
     [Header("Patrol")]
-    public float walkPointRange = 10f;
-    public LayerMask whatIsGround;
     private Vector3 walkPoint;
     private bool walkPointSet;
+    public float walkPointRange;
 
     [Header("Stats")]
-    public float health = 50f;
+    public float health = 100f;
 
-    bool playerInSight;
-    bool playerInAttackRange;
+    public float timeBetweenAttacks;
+    bool alreadyAttacked;
+
+    public float sightRange, attackRange;
+    public bool playerInSightRange, playerInAttackRange;
 
     private void Awake()
     {
-        if (player == null)
-        {
-            var p = GameObject.Find("Player");
-            if (p != null) player = p.transform;
-        }
-
-        if (player != null)
-            delivery = player.GetComponent<DeliverySystem>();
-
+        player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
-        if (eyePoint == null) eyePoint = transform; // fallback
     }
 
     private void Update()
     {
-        // Tarkista pelaajan etäisyys ensin
-        float dist = player == null ? Mathf.Infinity : Vector3.Distance(transform.position, player.position);
-        playerInSight = false;
-        playerInAttackRange = false;
+        playerInSightRange = Physics.CheckSphere(transform.position, sightRange);
+        playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
 
-        if (player != null && dist <= sightRange)
-        {
-            // Raycast tarkistus: onko näköyhteys pelaajaan?
-            Vector3 dir = (player.position - eyePoint.position).normalized;
-            if (!Physics.Raycast(eyePoint.position, dir, dist, obstructionMask))
-            {
-                // ei esteitä -> pelaaja näkyvissä
-                playerInSight = true;
-            }
-        }
-
-        if (player != null && dist <= attackRange)
-            playerInAttackRange = true;
-
-        // State-päättely
-        if (!playerInSight && !playerInAttackRange)
+        if (!playerInSightRange && !playerInAttackRange)
             Patrolling();
-        else if (playerInSight && !playerInAttackRange)
+        else if (playerInSightRange && !playerInAttackRange)
             ChasePlayer();
-        else if (playerInSight && playerInAttackRange)
+        else if (playerInSightRange && playerInAttackRange)
             AttackPlayer();
     }
 
@@ -80,7 +54,9 @@ public class EnemyAI : MonoBehaviour
         if (walkPointSet)
             agent.SetDestination(walkPoint);
 
-        if (Vector3.Distance(transform.position, walkPoint) < 1f)
+        Vector3 distanceToWalkPoint = transform.position - walkPoint;
+
+        if (distanceToWalkPoint.magnitude < 1f)
             walkPointSet = false;
     }
 
@@ -101,26 +77,39 @@ public class EnemyAI : MonoBehaviour
 
     private void ChasePlayer()
     {
-        if (player != null)
-            agent.SetDestination(player.position);
+        agent.SetDestination(player.position);
     }
 
     private void AttackPlayer()
     {
-        if (player == null) return;
+        agent.SetDestination(transform.position);
+        transform.LookAt(player);
 
-        // Käänny kohti pelaajaa, mutta älä lukitse paikalleen — liikkuu samalla
-        Vector3 lookPos = player.position;
-        lookPos.y = transform.position.y;
-        transform.LookAt(lookPos);
-
-        agent.SetDestination(player.position);
-
-        // Ampuminen vain, jos pelaajalla on paketti
-        if (delivery != null && delivery.hasPackage && gun != null)
+        if (!alreadyAttacked)
         {
-            gun.TryShoot(player);
+            // ----------------------
+            //   ATTACK CODE HERE
+            // ----------------------
+            if (projectilePrefab != null && firePoint != null)
+            {
+                Rigidbody rb = Instantiate(
+                    projectilePrefab,
+                    firePoint.position,
+                    firePoint.rotation
+                ).GetComponent<Rigidbody>();
+
+                rb.AddForce(firePoint.forward * projectileForce, ForceMode.Impulse);
+            }
+            // ----------------------
+
+            alreadyAttacked = true;
+            Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
+    }
+
+    private void ResetAttack()
+    {
+        alreadyAttacked = false;
     }
 
     public void TakeDamage(float dmg)
@@ -130,18 +119,11 @@ public class EnemyAI : MonoBehaviour
             Destroy(gameObject);
     }
 
-    // Visual debug: näytetään sightRange ray, editorissa näkyy
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, sightRange);
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
-        if (eyePoint != null && player != null)
-        {
-            Gizmos.color = Color.cyan;
-            Vector3 dir = (player.position - eyePoint.position).normalized;
-            Gizmos.DrawLine(eyePoint.position, eyePoint.position + dir * Mathf.Min(sightRange, Vector3.Distance(eyePoint.position, player.position)));
-        }
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, sightRange);
     }
 }

@@ -1,31 +1,27 @@
 using UnityEngine;
 
-public class EnemyProjectile : MonoBehaviour
+public class ProjectileDamage : MonoBehaviour
 {
-    public float lifetime = 6f;
     public float damage = 10f;
+    public float lifeTime = 5f;
 
-    void Start()
+    private void Start()
     {
-        Destroy(gameObject, lifetime);
+        Destroy(gameObject, lifeTime);
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-        // Jos osuu pelaajaan (DeliverySystem), tee vahinko vain jos paketti on mukana
-        DeliverySystem delivery = other.GetComponent<DeliverySystem>();
-        if (delivery != null)
+        // Osuuko pelaajaan?
+        if (collision.collider.CompareTag("Player"))
         {
-            if (delivery.hasPackage)
+            DeliverySystem delivery = collision.collider.GetComponent<DeliverySystem>();
+            if (delivery != null)
+            {
                 delivery.TakeDamage(damage);
-
-            Destroy(gameObject);
-            return;
+            }
         }
 
-        // Voit lisätä muita törmäystapauksia (esim. ympäristö)
-        // Jos haluat, että projektiili tuhoutuu seinään:
-        if (!other.isTrigger)
-            Destroy(gameObject);
+        Destroy(gameObject);
     }
 }
