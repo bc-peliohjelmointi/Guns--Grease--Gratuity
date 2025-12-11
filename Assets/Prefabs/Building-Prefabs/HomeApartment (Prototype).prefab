@@ -31412,10 +31412,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95778a657d9ee1641a7a83bb9dbc2b54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damagePrice: 200
-  deliveryTimePrice: 150
-  scooterSpeedPrice: 250
-  rewardMultiplierPrice: 300
+  damagePrice: 100
+  deliveryTimePrice: 50
+  scooterSpeedPrice: 50
+  rewardMultiplierPrice: 100
   moneyText: {fileID: 0}
   damageText: {fileID: 0}
   timeText: {fileID: 0}
@@ -53937,6 +53937,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2a4794ad0298a9498124f8c02955ac2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerCamera: {fileID: 0}
+  interactDistance: 3
   interactText: {fileID: 0}
   fadePanel: {fileID: 0}
   sleepCooldown: 300
@@ -53960,8 +53962,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 6.4251165, y: 2.6902905, z: 3.3705654}
-  m_Center: {x: 2.0658383, y: 0.845145, z: -0.19226949}
+  m_Size: {x: 3.8979423, y: 2.6635194, z: 2.7083526}
+  m_Center: {x: 1.9481701, y: 0.8317595, z: 0.1388391}
 --- !u!4 &6552177350430300791 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2242959541117993310, guid: 1cc7753ad8e096d4c8b059687625cdfa, type: 3}
@@ -54309,19 +54311,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9045290921488884203, guid: 99dc4141f1483104ea22cb833d3e777b, type: 3}
       propertyPath: m_Size.x
-      value: 3.9167347
+      value: 3.6036417
       objectReference: {fileID: 0}
     - target: {fileID: 9045290921488884203, guid: 99dc4141f1483104ea22cb833d3e777b, type: 3}
       propertyPath: m_Size.z
-      value: 4.750862
+      value: 3.1693878
       objectReference: {fileID: 0}
     - target: {fileID: 9045290921488884203, guid: 99dc4141f1483104ea22cb833d3e777b, type: 3}
       propertyPath: m_Center.x
-      value: -0.7
+      value: -0.8565465
       objectReference: {fileID: 0}
     - target: {fileID: 9045290921488884203, guid: 99dc4141f1483104ea22cb833d3e777b, type: 3}
       propertyPath: m_Center.z
-      value: 2.5
+      value: 2.510788
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -54384,4 +54386,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   outlineMode: 0
   outlineColor: {r: 1, g: 1, b: 1, a: 1}
-  outlineWidth: 2
+  outlineWidth: 1

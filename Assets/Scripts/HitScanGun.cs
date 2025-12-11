@@ -120,10 +120,10 @@ public class GunHitscan : MonoBehaviour
                 Destroy(go, 5f);
             }
 
-            var ai = hit.collider.GetComponentInParent<EnemyAI>();
-            if (ai != null)
+            var turret = hit.collider.GetComponentInParent<TurretHealth>();
+            if (turret != null)
             {
-                ai.TakeDamage(damage);
+                turret.TakeDamage(Mathf.CeilToInt(damage)); // TurretHealth expects int
             }
 
             if (hit.rigidbody != null)

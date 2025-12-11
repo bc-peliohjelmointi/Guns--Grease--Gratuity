@@ -1,24 +1,26 @@
-using UnityEngine;
 using StarterAssets;
 using TMPro;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class ShopTrigger : MonoBehaviour
 {
     [Header("UI Elements")]
-    public GameObject shopCanvas;       // Shop UI
-    public TextMeshProUGUI interactText; // "Press E" text in HUD
-    public GameObject phoneCanvas;      // Optional phone UI
-    public GameObject guiCanvas;        // Player HUD
+    public GameObject shopCanvas;         // Shop UI panel
+    public TextMeshProUGUI interactText;  // "Press E" text in HUD
+    public GameObject phoneCanvas;        // Optional phone UI to hide
+    public GameObject guiCanvas;          // Player HUD to hide
 
     [Header("Player Controller")]
-    public FirstPersonController controller;
+    public FirstPersonController controller; // Reference to player controller
 
     private bool playerInRange = false;
 
     private void Start()
     {
-        shopCanvas.SetActive(false);
+        // Hide shop and prompt at start
+        if (shopCanvas != null)
+            shopCanvas.SetActive(false);
 
         if (interactText != null)
             interactText.gameObject.SetActive(false);
@@ -26,12 +28,16 @@ public class ShopTrigger : MonoBehaviour
 
     private void Update()
     {
+        // Open or close shop when player presses E
         if (playerInRange && Keyboard.current.eKey.wasPressedThisFrame)
         {
-            if (shopCanvas.activeSelf)
-                CloseShop();
-            else
-                OpenShop();
+            if (shopCanvas != null)
+            {
+                if (shopCanvas.activeSelf)
+                    CloseShop();
+                else
+                    OpenShop();
+            }
         }
     }
 
@@ -43,7 +49,7 @@ public class ShopTrigger : MonoBehaviour
 
             if (interactText != null)
             {
-                interactText.text = "Press E";
+                interactText.text = "[E] to upgrade";
                 interactText.gameObject.SetActive(true);
             }
         }
@@ -64,27 +70,48 @@ public class ShopTrigger : MonoBehaviour
 
     private void OpenShop()
     {
-        guiCanvas.SetActive(false);
-        phoneCanvas.SetActive(false);
-        shopCanvas.SetActive(true);
+        // Hide other UI
+        if (guiCanvas != null) guiCanvas.SetActive(false);
+        if (phoneCanvas != null) phoneCanvas.SetActive(false);
+
+        // Show shop
+        if (shopCanvas != null)
+        {
+            shopCanvas.SetActive(true);
+
+            // Update the upgrade shop UI every time it's opened
+            UpgradeShop upgradeShop = shopCanvas.GetComponent<UpgradeShop>();
+            if (upgradeShop != null)
+                upgradeShop.UpdateUI();
+        }
 
         if (interactText != null)
             interactText.gameObject.SetActive(false);
 
-        controller.canMove = false;
+        // Freeze player
+        if (controller != null)
+            controller.canMove = false;
 
+        // Unlock cursor
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
 
     private void CloseShop()
     {
-        shopCanvas.SetActive(false);
-        guiCanvas.SetActive(true);
-        phoneCanvas.SetActive(true);
+        // Hide shop UI
+        if (shopCanvas != null)
+            shopCanvas.SetActive(false);
 
-        controller.canMove = true;
+        // Restore other UI
+        if (guiCanvas != null) guiCanvas.SetActive(true);
+        if (phoneCanvas != null) phoneCanvas.SetActive(true);
 
+        // Unfreeze player
+        if (controller != null)
+            controller.canMove = true;
+
+        // Lock cursor
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }

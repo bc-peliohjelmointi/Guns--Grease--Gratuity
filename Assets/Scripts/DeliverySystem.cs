@@ -78,7 +78,7 @@ public class DeliverySystem : MonoBehaviour
         }
 
         if (hasPackage && currentDeliveryHP <= 0)
-            FailDelivery("Paketti tuhoutui!");
+            FailDelivery("Package destroyed!");
     }
 
     public void AssignOrder(string name, int reward, float timeLimit)
@@ -120,7 +120,7 @@ public class DeliverySystem : MonoBehaviour
 
         ClearAllPackages();
         DisableCompass();
-        statusText.text = "Ei aktiivista tilausta!";
+        statusText.text = "No active order!";
         UpdateUI();
     }
 
@@ -133,7 +133,7 @@ public class DeliverySystem : MonoBehaviour
         timerText.text = Mathf.CeilToInt(currentOrderTimeRemaining) + "s";
 
         if (currentOrderTimeRemaining <= 0)
-            FailDelivery("Aika loppui!");
+            FailDelivery("Time ran out!");
     }
 
     void UpdateHPSlider()
@@ -179,26 +179,26 @@ public class DeliverySystem : MonoBehaviour
     {
         if (!hasActiveOrder)
         {
-            statusText.text = "Ei aktiivista tilausta!";
+            statusText.text = "No active order!";
             return;
         }
 
         if (!hasPackage)
         {
-            statusText.text = "Hae paketti!";
+            statusText.text = "Retrieve the package!";
             return;
         }
 
         float distance = Vector3.Distance(transform.position, currentTarget.transform.position);
         statusText.text = distance <= deliveryRange
-            ? "<color=yellow>Paina [E] toimittaaksesi!</color>"
-            : "Toimita paketti!";
+            ? "<color=yellow>[E] to deliver!!</color>"
+            : "Deliver package!";
     }
 
     public void TakeDamage(float dmg)
     {
         if (!hasPackage) return;
-        currentDeliveryHP = Mathf.Clamp(currentDeliveryHP - dmg, 0, maxDeliveryHP);
+        currentDeliveryHP = Mathf.Clamp(currentDeliveryHP - 10, 0, maxDeliveryHP);
     }
 
     void DeliverPackage()
@@ -210,7 +210,7 @@ public class DeliverySystem : MonoBehaviour
 
         StartCoroutine(FadeEffect());
 
-        statusText.text = $"<color=green>Toimitus onnistui! +{currentOrderReward}</color>";
+        statusText.text = $"<color=green>Delivery Completed! +{currentOrderReward}</color>";
 
         PlayerStats.Instance.OnDeliveryCompleted(currentOrderReward, currentDeliveryHP);
         PlayerStats.Instance.ordersLeft--;
@@ -225,7 +225,7 @@ public class DeliverySystem : MonoBehaviour
     {
         hasPackage = false;
         hasActiveOrder = false;
-        statusText.text = $"<color=red>Toimitus epäonnistui! {reason}</color>";
+        statusText.text = $"<color=red>Delivery failed! {reason}</color>";
 
         PlayerStats.Instance.OnDeliveryFailed();
         PlayerStats.Instance.ordersLeft--;
@@ -259,7 +259,7 @@ public class DeliverySystem : MonoBehaviour
             if (pickupPackageSFX) audioSource.PlayOneShot(pickupPackageSFX);
 
             Destroy(other.gameObject);
-            statusText.text = "Paketti kerätty!";
+            statusText.text = "Package retrieved!";
         }
     }
 

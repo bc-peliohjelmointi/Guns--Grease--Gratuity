@@ -253,14 +253,14 @@ public class PhoneUI : MonoBehaviour
 
             
             float rankMultiplier = 1f + (orderRank * 0.10f);
-            int baseReward = Random.Range(5, 16);
+            int baseReward = Random.Range(8, 20);
             int finalReward = Mathf.RoundToInt(baseReward * rankMultiplier);
 
             orders.Add(new Order
             {
                 name = restaurantNames[Random.Range(0, restaurantNames.Length)],
                 reward = finalReward,
-                timeLimit = Random.Range(30f, 60f),
+                timeLimit = Random.Range(70f, 160f),
                 rank = orderRank
             });
         }

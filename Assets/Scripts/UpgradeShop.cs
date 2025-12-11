@@ -4,10 +4,10 @@ using TMPro;
 public class UpgradeShop : MonoBehaviour
 {
     [Header("Upgrade Prices")]
-    public int damagePrice = 200;
-    public int deliveryTimePrice = 150;
-    public int scooterSpeedPrice = 250;
-    public int rewardMultiplierPrice = 300;
+    public int damagePrice = 100;
+    public int deliveryTimePrice = 50;
+    public int scooterSpeedPrice = 50;
+    public int rewardMultiplierPrice = 100;
 
     [Header("UI")]
     public TextMeshProUGUI moneyText;
@@ -16,12 +16,11 @@ public class UpgradeShop : MonoBehaviour
     public TextMeshProUGUI speedText;
     public TextMeshProUGUI rewardText;
 
-    private void Start()
+    private void OnEnable()
     {
+        // Called every time the shop UI is opened
         UpdateUI();
     }
-
-    
 
     public void BuyDamage()
     {
@@ -29,7 +28,6 @@ public class UpgradeShop : MonoBehaviour
         {
             PlayerStats.Instance.money -= damagePrice;
             PlayerStats.Instance.weaponDamageLevel++;
-
             UpdateUI();
         }
     }
@@ -40,7 +38,6 @@ public class UpgradeShop : MonoBehaviour
         {
             PlayerStats.Instance.money -= deliveryTimePrice;
             PlayerStats.Instance.deliveryTimeLevel++;
-
             UpdateUI();
         }
     }
@@ -51,7 +48,6 @@ public class UpgradeShop : MonoBehaviour
         {
             PlayerStats.Instance.money -= scooterSpeedPrice;
             PlayerStats.Instance.scooterSpeedLevel++;
-
             UpdateUI();
         }
     }
@@ -62,17 +58,17 @@ public class UpgradeShop : MonoBehaviour
         {
             PlayerStats.Instance.money -= rewardMultiplierPrice;
             PlayerStats.Instance.rewardMultiplierLevel++;
-
             UpdateUI();
         }
     }
 
-    void UpdateUI()
+    public void UpdateUI()
     {
+        if (PlayerStats.Instance == null) return;
 
         moneyText.text = "Money: $" + PlayerStats.Instance.money;
 
-        damageText.text = "Level " + PlayerStats.Instance.weaponDamageLevel 
+        damageText.text = "Level " + PlayerStats.Instance.weaponDamageLevel
                           + " (Cost $" + damagePrice + ")";
 
         timeText.text = "Level " + PlayerStats.Instance.deliveryTimeLevel
@@ -83,7 +79,5 @@ public class UpgradeShop : MonoBehaviour
 
         rewardText.text = "Level " + PlayerStats.Instance.rewardMultiplierLevel
                           + " (Cost $" + rewardMultiplierPrice + ")";
-
-
     }
 }

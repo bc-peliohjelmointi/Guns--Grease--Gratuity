@@ -1,74 +1,98 @@
-using UnityEngine;
-using UnityEngine.InputSystem;
+﻿using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class scooterCtrl : MonoBehaviour
 {
     [Header("Main")]
     public Transform scooterRoot;
-    public Transform visualModel;   // Scooter body for leaning
+    public Transform visualModel; // Scooter body for leaning
 
     [Header("Movement Settings")]
-    public float acceleration = 5f;
-    public float deceleration = 4f;
-    public float maxSpeed = 12f;
+    public float acceleration = 20f;
+    public float deceleration = 15f;
+    public float maxSpeed = 30f;
     public float turnSpeed = 65f;
-    public float leanAmount = 15f;
+    public float leanAmount = 12f;
 
     [Header("Control")]
     public bool canControl = false;
 
     private float currentSpeed = 0f;
+    private Rigidbody rb;
 
-    void Update()
+    private void Start()
+    {
+        rb = scooterRoot.GetComponent<Rigidbody>();
+        rb.freezeRotation = true; // We will handle rotation manually
+    }
+
+    private void FixedUpdate()
     {
         if (!canControl)
         {
-            currentSpeed = 0;
+            currentSpeed = 0f;
             return;
         }
 
-        float forward = 0f;
+        HandleMovement();
+        HandleTurningAndLean();
+    }
 
-        if (Keyboard.current.wKey.isPressed) forward = 1f;
-        if (Keyboard.current.sKey.isPressed) forward = -1f;
+    private void HandleMovement()
+    {
+        float forwardInput = 0f;
+        if (UnityEngine.InputSystem.Keyboard.current.wKey.isPressed) forwardInput = 1f;
+        if (UnityEngine.InputSystem.Keyboard.current.sKey.isPressed) forwardInput = -1f;
 
-        // --- ACCELERATION ---
-        if (forward != 0)
+        // Accelerate or brake
+        if (forwardInput > 0f)
         {
-            currentSpeed += forward * acceleration * Time.deltaTime;
-            currentSpeed = Mathf.Clamp(currentSpeed, -maxSpeed * 0.5f, maxSpeed);
+            currentSpeed += forwardInput * acceleration * Time.fixedDeltaTime;
+        }
+        else if (forwardInput < 0f)
+        {
+            // Braking only, no reversing
+            currentSpeed = Mathf.MoveTowards(currentSpeed, 0f, deceleration * 2f * Time.fixedDeltaTime);
         }
         else
         {
-            currentSpeed = Mathf.MoveTowards(currentSpeed, 0, deceleration * Time.deltaTime);
+            // Natural deceleration
+            currentSpeed = Mathf.MoveTowards(currentSpeed, 0f, deceleration * Time.fixedDeltaTime);
         }
 
-        // --- MOVE SCOOTER ---
-        scooterRoot.Translate(Vector3.forward * currentSpeed * Time.deltaTime);
+        currentSpeed = Mathf.Clamp(currentSpeed, 0f, maxSpeed);
 
-        // --- TURN INPUT ---
-        float turnInput = 0f;
-        if (Keyboard.current.aKey.isPressed) turnInput = -1f;
-        if (Keyboard.current.dKey.isPressed) turnInput = 1f;
+        // Move scooter with Rigidbody for collision
+        Vector3 move = scooterRoot.forward * currentSpeed * Time.fixedDeltaTime;
+        rb.MovePosition(rb.position + move);
+    }
 
-        // --- TURN + LEAN ONLY IF MOVING ---
-        if (Mathf.Abs(currentSpeed) > 0.1f)
+    private void HandleTurningAndLean()
+    {
+        if (currentSpeed < 0.1f) // Only turn when moving
         {
-            if (turnInput != 0)
-                scooterRoot.Rotate(Vector3.up, turnInput * turnSpeed * Time.deltaTime);
-
-            float lean = -turnInput * leanAmount * Mathf.Clamp01(Mathf.Abs(currentSpeed) / maxSpeed);
-            Quaternion targetLean = Quaternion.Euler(0, 0, lean);
-            visualModel.localRotation = Quaternion.Lerp(visualModel.localRotation, targetLean, Time.deltaTime * 5f);
-        }
-        else
-        {
-            // reset lean when stopped
+            // Reset lean
             visualModel.localRotation = Quaternion.Lerp(
                 visualModel.localRotation,
                 Quaternion.identity,
-                Time.deltaTime * 5f
+                Time.fixedDeltaTime * 5f
             );
+            return;
         }
+
+        float turnInput = 0f;
+        if (UnityEngine.InputSystem.Keyboard.current.aKey.isPressed) turnInput = -1f;
+        if (UnityEngine.InputSystem.Keyboard.current.dKey.isPressed) turnInput = 1f;
+
+        // Turn scooter
+        if (turnInput != 0f)
+        {
+            scooterRoot.Rotate(Vector3.up, turnInput * turnSpeed * Time.fixedDeltaTime);
+        }
+
+        // Lean visual model
+        float lean = -turnInput * leanAmount * Mathf.Clamp01(currentSpeed / maxSpeed);
+        Quaternion targetLean = Quaternion.Euler(0f, 0f, lean);
+        visualModel.localRotation = Quaternion.Lerp(visualModel.localRotation, targetLean, Time.fixedDeltaTime * 5f);
     }
 }

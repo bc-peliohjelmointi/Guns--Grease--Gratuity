@@ -19,7 +19,7 @@ public class PlayerStats : MonoBehaviour
     [Header("Reputation")]
     [Range(0f, 5f)]
     public float reputation = 2.5f;   // Start neutral
-    public float repGain = 0.1f;
+    public float repGain = 0.2f;
     public float repLoss = 0.3f;
 
     [Header("Package Health")]

@@ -271,6 +271,8 @@ GameObject:
   - component: {fileID: 7205070918609022749}
   - component: {fileID: 6909701071042552997}
   - component: {fileID: 5628927569763110887}
+  - component: {fileID: 2570781577587025425}
+  - component: {fileID: 7915987110701736661}
   m_Layer: 0
   m_Name: Scooter_1
   m_TagString: Untagged
@@ -314,7 +316,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.13229299, y: 0.15324406, z: 1.1502919}
+  m_Size: {x: 0.1, y: 0.15324406, z: 1}
   m_Center: {x: -0.001507163, y: 0.016289629, z: 0.25304157}
 --- !u!114 &5628927569763110887
 MonoBehaviour:
@@ -336,6 +338,48 @@ MonoBehaviour:
   turnSpeed: 65
   leanAmount: 15
   canControl: 0
+--- !u!54 &2570781577587025425
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5027431714097165822}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 80
+  m_CollisionDetection: 0
+--- !u!114 &7915987110701736661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5027431714097165822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 2.5
 --- !u!1 &6162044163245999746
 GameObject:
   m_ObjectHideFlags: 0

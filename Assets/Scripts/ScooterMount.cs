@@ -5,22 +5,23 @@ using TMPro;
 
 public class ScooterMount : MonoBehaviour
 {
+    [Header("References")]
     public Transform scooter;
     public Transform mountPoint;
+    public TextMeshProUGUI statusText;
+
+    [Header("Settings")]
     public float mountDistance = 2f;
     public Key mountKey = Key.F;
-    public TextMeshProUGUI statusText;
 
     private CharacterController playerController;
     private FirstPersonController fpsController;
-    private bool isMounted = false;
     private scooterCtrl scooterControl;
     private Camera playerCamera;
     private Transform cameraOriginalParent;
     private Quaternion cameraOriginalRotation;
 
-    public float moveSpeed = 5f;
-    public float turnSpeed = 50f;
+    [HideInInspector] public bool isMounted = false;
 
     private void Start()
     {
@@ -37,6 +38,12 @@ public class ScooterMount : MonoBehaviour
 
     private void Update()
     {
+        HandleMountInput();
+        UpdateStatusText();
+    }
+
+    private void HandleMountInput()
+    {
         if (Keyboard.current[mountKey].wasPressedThisFrame)
         {
             if (!isMounted && Vector3.Distance(transform.position, scooter.position) < mountDistance)
@@ -47,24 +54,9 @@ public class ScooterMount : MonoBehaviour
 
         if (isMounted)
         {
-            // --- Liikkuminen WASD ---
-            float move = 0f;
-            if (Keyboard.current.wKey.isPressed)
-                move = 1f;
-            else if (Keyboard.current.sKey.isPressed)
-                move = -1f;
-
-            float turn = 0f;
-            if (Keyboard.current.aKey.isPressed)
-                turn = -1f;
-            else if (Keyboard.current.dKey.isPressed)
-                turn = 1f;
-
-            scooter.Translate(Vector3.forward * move * moveSpeed * Time.deltaTime);
-            scooter.Rotate(Vector3.up, turn * turnSpeed * Time.deltaTime);
+            // WASD movement handled by scooterCtrl, so we just pass control
+            // Optional: could add minor forward/backward movement here if needed
         }
-
-        UpdateStatusText();
     }
 
     private void MountScooter()
@@ -88,9 +80,17 @@ public class ScooterMount : MonoBehaviour
         if (scooterControl != null)
             scooterControl.canControl = true;
 
+        // Lock cursor for riding
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        UpdateStatusText();
+
+        // Disable gun while riding
+        var gunScript = GetComponentInChildren<PullOurScript>();
+        if (gunScript != null)
+        {
+            gunScript.gunIsOut = false;
+            gunScript.animator.SetBool("GunOut", false);
+        }
     }
 
     private void DismountScooter()
@@ -112,8 +112,7 @@ public class ScooterMount : MonoBehaviour
             scooterControl.canControl = false;
 
         Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-        UpdateStatusText();
+        Cursor.visible = true;
     }
 
     private void UpdateStatusText()
@@ -121,9 +120,9 @@ public class ScooterMount : MonoBehaviour
         if (statusText == null) return;
 
         if (isMounted)
-            statusText.text = "Paina [F] poistuaksesi skuutista";
+            statusText.text = "[F] Mount";
         else if (Vector3.Distance(transform.position, scooter.position) < mountDistance)
-            statusText.text = "Paina [F] noustaksesi skuuttiin";
+            statusText.text = "[F] Discmount";
         else
             statusText.text = "";
     }
