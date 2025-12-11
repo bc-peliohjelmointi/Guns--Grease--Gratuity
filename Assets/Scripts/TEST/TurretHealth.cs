@@ -3,34 +3,40 @@ using UnityEngine;
 public class TurretHealth : MonoBehaviour
 {
     public int maxHealth = 5;
-    public int currentHealth;
-
-    public System.Action onHit;
-    public System.Action onDeath;
-    public GameObject smokePuffPrefab; // assign in Inspector
+    private int currentHealth;
 
     [Header("Effects")]
-    public GameObject deathEffect; // assign in Inspector
+    public GameObject smokeDeathEffect; // expanding smoke sphere
+    public AudioClip hitSound;
+    public AudioClip deathSound;
+
+    private AudioSource audioSource;
 
     void Start()
     {
         currentHealth = maxHealth;
+        audioSource = GetComponent<AudioSource>();
     }
-
 
     public void TakeDamage(int dmg)
     {
         currentHealth -= dmg;
-        onHit?.Invoke();  // play hit SFX
+
+        if (hitSound)
+            audioSource.PlayOneShot(hitSound);
 
         if (currentHealth <= 0)
-        {
-            onDeath?.Invoke(); // play death SFX
-            if (deathEffect != null)
-                Instantiate(deathEffect, transform.position, Quaternion.identity);
-            if (smokePuffPrefab != null)
-                Instantiate(smokePuffPrefab, transform.position, Quaternion.identity);
-            Destroy(gameObject);
-        }
+            Die();
+    }
+
+    private void Die()
+    {
+        if (deathSound)
+            AudioSource.PlayClipAtPoint(deathSound, transform.position);
+
+        if (smokeDeathEffect)
+            Instantiate(smokeDeathEffect, transform.position, Quaternion.identity);
+
+        Destroy(gameObject);
     }
 }

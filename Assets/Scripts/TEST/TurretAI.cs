@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public class TurretAI : MonoBehaviour
 {
@@ -12,35 +12,27 @@ public class TurretAI : MonoBehaviour
     public Transform firePoint;
 
     [Header("Audio")]
-    public AudioSource audioSource;
-    public AudioClip shootSFX;
-    public AudioClip hitSFX;
-    public AudioClip deathSFX;
+    public AudioClip shootSound;
 
-    private Transform player;
     private float fireCooldown = 0f;
-    private TurretHealth health;
+    private Transform player;
+    private AudioSource audioSource;
 
     void Start()
     {
-        // Random rotation on spawn (Y only, so turret stays upright)
-        transform.rotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
-
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
-        health = GetComponent<TurretHealth>();
+        audioSource = GetComponent<AudioSource>();
 
-        if (health != null)
-        {
-            health.onHit += PlayHitSound;
-            health.onDeath += PlayDeathSound;
-        }
+        // Random Y rotation on spawn
+        transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
     }
-
 
     void Update()
     {
-        if (!DeliveryIsActive()) return;               // Only shoot during deliveries
         if (player == null) return;
+
+        // Only shoot when a delivery is active
+        if (PlayerStats.Instance.ordersLeft <= 0) return;
 
         float distance = Vector3.Distance(transform.position, player.position);
 
@@ -54,18 +46,6 @@ public class TurretAI : MonoBehaviour
             fireCooldown -= Time.deltaTime;
     }
 
-    // -------------------------
-    // DELIVERY CHECK
-    // -------------------------
-    bool DeliveryIsActive()
-    {
-        DeliverySystem ds = FindObjectOfType<DeliverySystem>();
-        return ds != null && ds.hasActiveOrder;
-    }
-
-    // -------------------------
-    // TURRET BEHAVIOR
-    // -------------------------
     void RotateTowardsPlayer()
     {
         Vector3 dir = (player.position - transform.position).normalized;
@@ -81,24 +61,9 @@ public class TurretAI : MonoBehaviour
 
         Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
 
-        if (shootSFX && audioSource)
-            audioSource.PlayOneShot(shootSFX);
+        if (shootSound)
+            audioSource.PlayOneShot(shootSound);
 
         fireCooldown = fireRate;
-    }
-
-    // -------------------------
-    // SOUND EVENTS
-    // -------------------------
-    void PlayHitSound()
-    {
-        if (hitSFX && audioSource)
-            audioSource.PlayOneShot(hitSFX);
-    }
-
-    void PlayDeathSound()
-    {
-        if (deathSFX && audioSource)
-            audioSource.PlayOneShot(deathSFX);
     }
 }
