@@ -1,20 +1,28 @@
 using System.Collections;
-using TMPro;
 using UnityEngine;
+using TMPro;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class SleepTrigger : MonoBehaviour
 {
-    [Header("UI & Fade")]
-    public TextMeshProUGUI interactText;  // "Press E to sleep"
-    public GameObject fadePanel;          // Assign your full-screen fade panel
+    [Header("Player")]
+    public Camera playerCamera;
+    public float interactDistance = 3f;
+
+    [Header("UI")]
+    public TextMeshProUGUI interactText;
+    public Image fadePanel;
 
     [Header("Sleep Settings")]
-    public float sleepCooldown = 300f;    // 5 minutes
-    public float fadeDuration = 3f;       // 3 seconds fade
+    public float sleepCooldown = 300f;
+    public float fadeDuration = 1.5f;
 
-    private bool playerInRange = false;
     private bool canSleep = true;
+    private Color fadeColor;
+
+    //  NEW
+    private PhoneUI phoneUI;
 
     private void Start()
     {
@@ -22,63 +30,77 @@ public class SleepTrigger : MonoBehaviour
             interactText.gameObject.SetActive(false);
 
         if (fadePanel != null)
-            fadePanel.SetActive(false);
+        {
+            fadeColor = fadePanel.color;
+            fadeColor.a = 0f;
+            fadePanel.color = fadeColor;
+            fadePanel.gameObject.SetActive(true);
+        }
+
+        if (playerCamera == null)
+            playerCamera = Camera.main;
+
+        //  NEW — find phoneUI in scene
+        phoneUI = FindObjectOfType<PhoneUI>();
     }
 
     private void Update()
     {
-        if (playerInRange && canSleep && Keyboard.current.eKey.wasPressedThisFrame)
-        {
-            StartCoroutine(SleepRoutine());
-        }
+        HandleRaycast();
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void HandleRaycast()
     {
-        if (other.CompareTag("Player") && canSleep)
+        interactText.gameObject.SetActive(false);
+
+        if (!canSleep) return;
+
+        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, interactDistance))
         {
-            playerInRange = true;
-            if (interactText != null)
+            if (hit.transform == transform)
             {
                 interactText.text = "Press E to sleep";
                 interactText.gameObject.SetActive(true);
-            }
-        }
-    }
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            playerInRange = false;
-            if (interactText != null)
-                interactText.gameObject.SetActive(false);
+                if (Keyboard.current.eKey.wasPressedThisFrame)
+                    StartCoroutine(SleepRoutine());
+            }
         }
     }
 
     private IEnumerator SleepRoutine()
     {
         canSleep = false;
-        if (interactText != null)
-            interactText.gameObject.SetActive(false);
+        interactText.gameObject.SetActive(false);
 
-        if (fadePanel != null)
-            fadePanel.SetActive(true);
+        //  NEW — close End Day panel automatically
+        if (phoneUI != null)
+            phoneUI.CloseEndDayPanel();
 
-        // Wait for fade duration
-        yield return new WaitForSeconds(fadeDuration);
+        yield return StartCoroutine(Fade(0f, 1f, fadeDuration));
 
-        // Advance the day and reset daily stats
         PlayerStats.Instance.currentDay++;
         PlayerStats.Instance.ResetDayStats();
 
-        // Remove fade
-        if (fadePanel != null)
-            fadePanel.SetActive(false);
+        yield return StartCoroutine(Fade(1f, 0f, fadeDuration));
 
-        // Start cooldown
         yield return new WaitForSeconds(sleepCooldown);
-
         canSleep = true;
+    }
+
+    private IEnumerator Fade(float from, float to, float duration)
+    {
+        float t = 0f;
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            float a = Mathf.Lerp(from, to, t / duration);
+            fadeColor.a = a;
+            fadePanel.color = fadeColor;
+            yield return null;
+        }
     }
 }

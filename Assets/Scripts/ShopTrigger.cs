@@ -81,6 +81,7 @@ public class ShopTrigger : MonoBehaviour
     {
         shopCanvas.SetActive(false);
         guiCanvas.SetActive(true);
+        phoneCanvas.SetActive(true);
 
         controller.canMove = true;
 
