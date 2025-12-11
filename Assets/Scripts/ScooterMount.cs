@@ -70,7 +70,7 @@ public class ScooterMount : MonoBehaviour
     private void MountScooter()
     {
         isMounted = true;
-        fpsController.enabled = false;
+        fpsController.canMove = false;
         playerController.enabled = false;
 
         transform.SetParent(scooter);
@@ -96,7 +96,7 @@ public class ScooterMount : MonoBehaviour
     private void DismountScooter()
     {
         isMounted = false;
-        fpsController.enabled = true;
+        fpsController.canMove = true;
         playerController.enabled = true;
 
         transform.SetParent(null);

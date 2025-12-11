@@ -1,34 +1,38 @@
-using StarterAssets;
 using UnityEngine;
-using UnityEngine.InputSystem; // Uusi input system
+using StarterAssets;
+using TMPro;
+using UnityEngine.InputSystem;
 
 public class ShopTrigger : MonoBehaviour
 {
-    public GameObject shopCanvas;        // Shop Canvas
-    public GameObject promptCanvas;      // "Press E" teksti
-    public GameObject phoneCanvas;
-    public GameObject guiCanvas;
+    [Header("UI Elements")]
+    public GameObject shopCanvas;       // Shop UI
+    public TextMeshProUGUI interactText; // "Press E" text in HUD
+    public GameObject phoneCanvas;      // Optional phone UI
+    public GameObject guiCanvas;        // Player HUD
+
+    [Header("Player Controller")]
     public FirstPersonController controller;
+
     private bool playerInRange = false;
 
-    void Start()
+    private void Start()
     {
         shopCanvas.SetActive(false);
-        promptCanvas.SetActive(false);
+
+        if (interactText != null)
+            interactText.gameObject.SetActive(false);
     }
 
-    void Update()
+    private void Update()
     {
         if (playerInRange && Keyboard.current.eKey.wasPressedThisFrame)
         {
-            OpenShop();
+            if (shopCanvas.activeSelf)
+                CloseShop();
+            else
+                OpenShop();
         }
-
-        if (Keyboard.current.escapeKey.wasPressedThisFrame && shopCanvas.activeSelf)
-        {
-            CloseShop();
-        }
-
     }
 
     private void OnTriggerEnter(Collider other)
@@ -36,7 +40,12 @@ public class ShopTrigger : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerInRange = true;
-            promptCanvas.SetActive(true);
+
+            if (interactText != null)
+            {
+                interactText.text = "Press E";
+                interactText.gameObject.SetActive(true);
+            }
         }
     }
 
@@ -45,17 +54,22 @@ public class ShopTrigger : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerInRange = false;
-            promptCanvas.SetActive(false);
+
+            if (interactText != null)
+                interactText.gameObject.SetActive(false);
+
             CloseShop();
         }
     }
 
-    public void OpenShop()
+    private void OpenShop()
     {
         guiCanvas.SetActive(false);
         phoneCanvas.SetActive(false);
         shopCanvas.SetActive(true);
-        promptCanvas.SetActive(false);
+
+        if (interactText != null)
+            interactText.gameObject.SetActive(false);
 
         controller.canMove = false;
 
@@ -63,7 +77,7 @@ public class ShopTrigger : MonoBehaviour
         Cursor.visible = true;
     }
 
-    public void CloseShop()
+    private void CloseShop()
     {
         shopCanvas.SetActive(false);
         guiCanvas.SetActive(true);
