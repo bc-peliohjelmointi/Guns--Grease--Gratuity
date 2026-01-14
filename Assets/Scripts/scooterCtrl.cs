@@ -19,7 +19,7 @@ public class scooterCtrl : MonoBehaviour
 
     private float currentSpeed = 0f;
     private Rigidbody rb;
-
+    
     private void Start()
     {
         rb = scooterRoot.GetComponent<Rigidbody>();
@@ -63,8 +63,10 @@ public class scooterCtrl : MonoBehaviour
         currentSpeed = Mathf.Clamp(currentSpeed, 0f, maxSpeed);
 
         // Move scooter with Rigidbody for collision
-        Vector3 move = scooterRoot.forward * currentSpeed * Time.fixedDeltaTime;
-        rb.MovePosition(rb.position + move);
+        // PHYSICS-BASED movement (collision-safe)
+        Vector3 velocity = transform.forward * currentSpeed;
+        velocity.y = rb.linearVelocity.y;
+        rb.linearVelocity = velocity;
     }
 
     private void HandleTurningAndLean()
