@@ -1,3 +1,4 @@
+```csharp
 using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
@@ -5,12 +6,15 @@ using System.Linq;
 using UnityEngine.UI;
 using System.Collections;
 
+// Manages delivery orders, package state, UI, and delivery flow
 public class DeliverySystem : MonoBehaviour
 {
+    // External system references
     [Header("References")]
     public PhoneUI phoneUI;
     public ItemSpawner itemSpawner;
 
+    // Current order data
     [Header("Order Info")]
     public bool hasActiveOrder = false;
     public string currentOrderName;
@@ -18,42 +22,48 @@ public class DeliverySystem : MonoBehaviour
     public float currentOrderTime;
     public float currentOrderTimeRemaining;
 
+    // Delivery state and interaction settings
     [Header("Delivery Settings")]
     public int deliveryPoints = 0;
     public bool hasPackage = false;
     public float deliveryRange = 3f;
 
+    // Package health values
     [Header("Delivery HP")]
     public float maxDeliveryHP = 100f;
     public float currentDeliveryHP;
 
+    // UI references
     [Header("UI")]
     public TextMeshProUGUI statusText;
     public Slider hpSlider;
     public RectTransform compassArrow;
     public TextMeshProUGUI timerText;
 
+    // Screen fade effect settings
     [Header("Fade Panel")]
     public Image fadePanel;
     public float fadeDuration = 1f;
     public float fadeHold = 1.5f;
 
+    // Audio feedback
     [Header("Audio")]
     public AudioSource audioSource;
     public AudioClip startDeliverySFX;
     public AudioClip pickupPackageSFX;
     public AudioClip deliveryCompleteSFX;
 
+    // Delivery zone handling
     private GameObject[] deliveryZones;
-    private GameObject activeDeliveryZone;  // only the selected zone
+    private GameObject activeDeliveryZone;
 
+    // Current navigation target (package or delivery zone)
     private GameObject currentTarget;
 
     void Start()
     {
+        // Cache all delivery zones and disable them initially
         deliveryZones = GameObject.FindGameObjectsWithTag("DeliveryZone");
-
-        // Make sure all zones are disabled at start
         foreach (var zone in deliveryZones)
             zone.SetActive(false);
 
@@ -61,15 +71,16 @@ public class DeliverySystem : MonoBehaviour
         UpdateUI();
     }
 
-
     void Update()
     {
+        // Update gameplay systems each frame
         UpdateTargets();
         UpdateCompass();
         UpdateStatus();
         UpdateHPSlider();
         UpdateTimer();
 
+        // Deliver package when close enough and E is pressed
         if (hasPackage && currentTarget != null)
         {
             float distance = Vector3.Distance(transform.position, currentTarget.transform.position);
@@ -77,10 +88,12 @@ public class DeliverySystem : MonoBehaviour
                 DeliverPackage();
         }
 
+        // Fail delivery if package HP reaches zero
         if (hasPackage && currentDeliveryHP <= 0)
             FailDelivery("Package destroyed!");
     }
 
+    // Assigns a new delivery order
     public void AssignOrder(string name, int reward, float timeLimit)
     {
         if (startDeliverySFX) audioSource.PlayOneShot(startDeliverySFX);
@@ -92,28 +105,22 @@ public class DeliverySystem : MonoBehaviour
         currentOrderTime = timeLimit;
         currentOrderTimeRemaining = timeLimit;
 
-        // Spawn the package
+        // Spawn package pickup
         itemSpawner?.SpawnItem();
 
-        // Pick a random delivery zone
+        // Select and enable one random delivery zone
         activeDeliveryZone = deliveryZones[Random.Range(0, deliveryZones.Length)];
-
-        // Enable only that one
         foreach (var zone in deliveryZones)
             zone.SetActive(zone == activeDeliveryZone);
 
         UpdateUI();
     }
 
-
+    // Cancels the active order and applies penalties
     public void CancelOrder()
     {
         hasActiveOrder = false;
         hasPackage = false;
-        currentOrderName = "";
-        currentOrderReward = 0;
-        currentOrderTime = 0;
-        currentOrderTimeRemaining = 0;
 
         PlayerStats.Instance.OnOrderDeclined();
         PlayerStats.Instance.ordersLeft--;
@@ -124,7 +131,7 @@ public class DeliverySystem : MonoBehaviour
         UpdateUI();
     }
 
-
+    // Updates remaining delivery time
     void UpdateTimer()
     {
         if (!hasActiveOrder) return;
@@ -136,9 +143,11 @@ public class DeliverySystem : MonoBehaviour
             FailDelivery("Time ran out!");
     }
 
+    // Updates the package HP slider
     void UpdateHPSlider()
     {
         if (hpSlider == null) return;
+
         hpSlider.gameObject.SetActive(hasPackage);
         if (hasPackage)
         {
@@ -147,6 +156,7 @@ public class DeliverySystem : MonoBehaviour
         }
     }
 
+    // Chooses the current navigation target
     void UpdateTargets()
     {
         if (!hasActiveOrder)
@@ -156,25 +166,23 @@ public class DeliverySystem : MonoBehaviour
         }
 
         if (!hasPackage)
-        {
-            var packages = GameObject.FindGameObjectsWithTag("Package");
-            currentTarget = packages.FirstOrDefault();
-        }
+            currentTarget = GameObject.FindGameObjectsWithTag("Package").FirstOrDefault();
         else
-        {
             currentTarget = activeDeliveryZone;
-        }
     }
 
+    // Rotates compass arrow toward current target
     void UpdateCompass()
     {
         if (compassArrow == null || currentTarget == null) return;
+
         Vector3 dir = (currentTarget.transform.position - transform.position).normalized;
         dir.y = 0f;
         float angle = Vector3.SignedAngle(transform.forward, dir, Vector3.up);
         compassArrow.localEulerAngles = new Vector3(0, 0, -angle);
     }
 
+    // Updates on-screen status text
     void UpdateStatus()
     {
         if (!hasActiveOrder)
@@ -195,19 +203,20 @@ public class DeliverySystem : MonoBehaviour
             : "Deliver package!";
     }
 
+    // Applies damage to the package
     public void TakeDamage(float dmg)
     {
         if (!hasPackage) return;
         currentDeliveryHP = Mathf.Clamp(currentDeliveryHP - 10, 0, maxDeliveryHP);
     }
 
+    // Completes the delivery successfully
     void DeliverPackage()
     {
         hasPackage = false;
         hasActiveOrder = false;
 
         if (deliveryCompleteSFX) audioSource.PlayOneShot(deliveryCompleteSFX);
-
         StartCoroutine(FadeEffect());
 
         statusText.text = $"<color=green>Delivery Completed! +{currentOrderReward}</color>";
@@ -220,11 +229,12 @@ public class DeliverySystem : MonoBehaviour
         UpdateUI();
     }
 
-
+    // Fails the delivery with a reason
     void FailDelivery(string reason)
     {
         hasPackage = false;
         hasActiveOrder = false;
+
         statusText.text = $"<color=red>Delivery failed! {reason}</color>";
 
         PlayerStats.Instance.OnDeliveryFailed();
@@ -236,12 +246,14 @@ public class DeliverySystem : MonoBehaviour
         UpdateUI();
     }
 
+    // Removes all package objects from the scene
     public void ClearAllPackages()
     {
         foreach (var pkg in GameObject.FindGameObjectsWithTag("Package"))
             Destroy(pkg);
     }
 
+    // Resets compass direction
     public void DisableCompass()
     {
         currentTarget = null;
@@ -249,6 +261,7 @@ public class DeliverySystem : MonoBehaviour
             compassArrow.localEulerAngles = Vector3.zero;
     }
 
+    // Handles package pickup
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Package") && !hasPackage)
@@ -263,23 +276,26 @@ public class DeliverySystem : MonoBehaviour
         }
     }
 
-
+    // Updates simple UI elements
     void UpdateUI()
     {
         timerText.text = hasActiveOrder
-            ? Mathf.CeilToInt(currentOrderTimeRemaining) + ""
+            ? Mathf.CeilToInt(currentOrderTimeRemaining).ToString()
             : "";
     }
 
+    // Randomizes delivery zone order
     void ShuffleDeliveryZones()
     {
         for (int i = 0; i < deliveryZones.Length; i++)
         {
             int randomIndex = Random.Range(i, deliveryZones.Length);
-            (deliveryZones[i], deliveryZones[randomIndex]) = (deliveryZones[randomIndex], deliveryZones[i]);
+            (deliveryZones[i], deliveryZones[randomIndex]) =
+                (deliveryZones[randomIndex], deliveryZones[i]);
         }
     }
 
+    // Disables all delivery zones
     void DisableAllDeliveryZones()
     {
         foreach (var zone in deliveryZones)
@@ -288,31 +304,30 @@ public class DeliverySystem : MonoBehaviour
         activeDeliveryZone = null;
     }
 
+    // Handles screen fade in/out effect
     IEnumerator FadeEffect()
     {
-        // Fade to black
         float t = 0f;
         Color c = fadePanel.color;
 
+        // Fade to black
         while (t < fadeDuration)
         {
             t += Time.deltaTime;
-            float a = Mathf.Lerp(0f, 1f, t / fadeDuration);
-            fadePanel.color = new Color(c.r, c.g, c.b, a);
+            fadePanel.color = new Color(c.r, c.g, c.b, Mathf.Lerp(0f, 1f, t / fadeDuration));
             yield return null;
         }
 
-        // Hold
         yield return new WaitForSeconds(fadeHold);
 
-        // Fade out
+        // Fade back in
         t = 0f;
         while (t < fadeDuration)
         {
             t += Time.deltaTime;
-            float a = Mathf.Lerp(1f, 0f, t / fadeDuration);
-            fadePanel.color = new Color(c.r, c.g, c.b, a);
+            fadePanel.color = new Color(c.r, c.g, c.b, Mathf.Lerp(1f, 0f, t / fadeDuration));
             yield return null;
         }
     }
 }
+```
