@@ -297,7 +297,7 @@ public class PhoneUI : MonoBehaviour
                 orderRewards[i].text = "$" + orders[i].reward;
                 orderTimes[i].text = Mathf.RoundToInt(orders[i].timeLimit) + "s";
 
-                orderRanks[i].text = "Rank " + orders[i].rank;
+                orderRanks[i].text = "" + orders[i].rank;
             }
         }
     }
