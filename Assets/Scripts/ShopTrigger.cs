@@ -81,8 +81,6 @@ public class ShopTrigger : MonoBehaviour
 
             // Update the upgrade shop UI every time it's opened
             UpgradeShop upgradeShop = shopCanvas.GetComponent<UpgradeShop>();
-            if (upgradeShop != null)
-                upgradeShop.UpdateUI();
         }
 
         if (interactText != null)

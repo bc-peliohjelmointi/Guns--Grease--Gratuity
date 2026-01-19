@@ -3,14 +3,12 @@ using TMPro;
 
 public class UpgradeShop : MonoBehaviour
 {
-    // Prices for each upgrade type
     [Header("Upgrade Prices")]
     public int damagePrice = 100;
     public int deliveryTimePrice = 50;
     public int scooterSpeedPrice = 50;
     public int rewardMultiplierPrice = 100;
 
-    // UI text references
     [Header("UI")]
     public TextMeshProUGUI moneyText;
     public TextMeshProUGUI damageText;
@@ -18,74 +16,89 @@ public class UpgradeShop : MonoBehaviour
     public TextMeshProUGUI speedText;
     public TextMeshProUGUI rewardText;
 
-    // Called whenever the shop UI becomes active
+    private PlayerStats stats;
+
+    private void Start()
+    {
+        // Cache PlayerStats once it definitely exists
+        stats = PlayerStats.Instance;
+        UpdateUI();
+    }
+
     private void OnEnable()
     {
         UpdateUI();
     }
 
-    // Purchase weapon damage upgrade
+    private void Update()
+    {
+        // Keep money text always correct while shop is open
+        UpdateMoneyOnly();
+    }
+
+    // -------------------------
+    // BUY METHODS
+    // -------------------------
+
     public void BuyDamage()
     {
-        if (PlayerStats.Instance.money >= damagePrice)
+        if (stats.money >= damagePrice)
         {
-            PlayerStats.Instance.money -= damagePrice;
-            PlayerStats.Instance.weaponDamageLevel++;
+            stats.money -= damagePrice;
+            stats.weaponDamageLevel++;
             UpdateUI();
         }
     }
 
-    // Purchase delivery time upgrade
     public void BuyDeliveryTime()
     {
-        if (PlayerStats.Instance.money >= deliveryTimePrice)
+        if (stats.money >= deliveryTimePrice)
         {
-            PlayerStats.Instance.money -= deliveryTimePrice;
-            PlayerStats.Instance.deliveryTimeLevel++;
+            stats.money -= deliveryTimePrice;
+            stats.deliveryTimeLevel++;
             UpdateUI();
         }
     }
 
-    // Purchase scooter speed upgrade
     public void BuyScooterSpeed()
     {
-        if (PlayerStats.Instance.money >= scooterSpeedPrice)
+        if (stats.money >= scooterSpeedPrice)
         {
-            PlayerStats.Instance.money -= scooterSpeedPrice;
-            PlayerStats.Instance.scooterSpeedLevel++;
+            stats.money -= scooterSpeedPrice;
+            stats.scooterSpeedLevel++;
             UpdateUI();
         }
     }
 
-    // Purchase reward multiplier upgrade
     public void BuyRewardMultiplier()
     {
-        if (PlayerStats.Instance.money >= rewardMultiplierPrice)
+        if (stats.money >= rewardMultiplierPrice)
         {
-            PlayerStats.Instance.money -= rewardMultiplierPrice;
-            PlayerStats.Instance.rewardMultiplierLevel++;
+            stats.money -= rewardMultiplierPrice;
+            stats.rewardMultiplierLevel++;
             UpdateUI();
         }
     }
 
-    // Refreshes all shop UI text values
-    public void UpdateUI()
+    // -------------------------
+    // UI
+    // -------------------------
+
+    void UpdateMoneyOnly()
     {
-        // Safety check in case PlayerStats is not initialized
-        if (PlayerStats.Instance == null) return;
+        if (stats == null) return;
+        moneyText.text = $"Money: ${Mathf.FloorToInt(stats.money)}";
+    }
 
-        moneyText.text = "Money: $" + PlayerStats.Instance.money;
+    void UpdateUI()
+    {
+        if (stats == null) return;
 
-        damageText.text = "Level " + PlayerStats.Instance.weaponDamageLevel +
-                          " (Cost $" + damagePrice + ")";
+        UpdateMoneyOnly();
 
-        timeText.text = "Level " + PlayerStats.Instance.deliveryTimeLevel +
-                        " (Cost $" + deliveryTimePrice + ")";
-
-        speedText.text = "Level " + PlayerStats.Instance.scooterSpeedLevel +
-                         " (Cost $" + scooterSpeedPrice + ")";
-
-        rewardText.text = "Level " + PlayerStats.Instance.rewardMultiplierLevel +
-                          " (Cost $" + rewardMultiplierPrice + ")";
+        damageText.text = $"Level {stats.weaponDamageLevel} (Cost ${damagePrice})";
+        timeText.text = $"Level {stats.deliveryTimeLevel} (Cost ${deliveryTimePrice})";
+        speedText.text = $"Level {stats.scooterSpeedLevel} (Cost ${scooterSpeedPrice})";
+        rewardText.text = $"Level {stats.rewardMultiplierLevel} (Cost ${rewardMultiplierPrice})";
     }
 }
