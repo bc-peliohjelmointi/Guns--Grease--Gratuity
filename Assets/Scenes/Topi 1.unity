@@ -5361,6 +5361,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4908676714517574513, guid: 99dc4141f1483104ea22cb833d3e777b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6113031429282719578, guid: 99dc4141f1483104ea22cb833d3e777b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6501647747389333712, guid: 99dc4141f1483104ea22cb833d3e777b, type: 3}
       propertyPath: m_Name
       value: UpgradeShopTable
@@ -5381,6 +5389,10 @@ PrefabInstance:
       propertyPath: phoneCanvas
       value: 
       objectReference: {fileID: 1002671614}
+    - target: {fileID: 8373102966945778704, guid: 99dc4141f1483104ea22cb833d3e777b, type: 3}
+      propertyPath: interactText
+      value: 
+      objectReference: {fileID: 1220914293}
     - target: {fileID: 9040998229105547144, guid: 99dc4141f1483104ea22cb833d3e777b, type: 3}
       propertyPath: m_LocalPosition.x
       value: -25.98622
@@ -8949,6 +8961,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1217521744}
   m_CullTransparentMesh: 1
+--- !u!114 &1220914293 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2608070342773856173, guid: 99dc4141f1483104ea22cb833d3e777b, type: 3}
+  m_PrefabInstance: {fileID: 767648938}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1233540504 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4841026606421913031, guid: f5e88b90f7ab15c46a0ac9e6dc37173e, type: 3}

@@ -34,9 +34,7 @@ public class PlayerStats : MonoBehaviour
     public int scooterSpeedLevel = 0;       // Affects scooter speed
     public int rewardMultiplierLevel = 0;   // Multiplies order rewards
 
-    // ----------------------
-    // Singleton
-    // ----------------------
+
     private void Awake()
     {
         if (Instance == null) Instance = this;
