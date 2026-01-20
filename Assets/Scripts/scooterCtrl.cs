@@ -10,7 +10,9 @@ public class scooterCtrl : MonoBehaviour
     [Header("Movement Settings")]
     public float acceleration = 20f;
     public float deceleration = 15f;
+    public float brakeDeceleration = 30f;
     public float maxSpeed = 30f;
+    public float maxReverse = -30f;
     public float turnSpeed = 65f;
     public float leanAmount = 12f;
 
@@ -40,27 +42,36 @@ public class scooterCtrl : MonoBehaviour
 
     private void HandleMovement()
     {
-        float forwardInput = 0f;
-        if (UnityEngine.InputSystem.Keyboard.current.wKey.isPressed) forwardInput = 1f;
-        if (UnityEngine.InputSystem.Keyboard.current.sKey.isPressed) forwardInput = -1f;
+        float movementInput = 0f;
+        if (UnityEngine.InputSystem.Keyboard.current.wKey.isPressed) movementInput = 1f;
+        if (UnityEngine.InputSystem.Keyboard.current.sKey.isPressed) movementInput = -1f;
 
-        // Accelerate or brake
-        if (forwardInput > 0f)
+        float movementDirection = Vector3.Dot(rb.linearVelocity, transform.forward);
+
+        // current deceleration speed to deceleration strenght
+        float currentDeceleration = deceleration;
+
+        // braking on opposing input
+        if (movementInput != 0f && movementDirection != 0f && Mathf.Sign(movementInput) != Mathf.Sign(movementDirection))
         {
-            currentSpeed += forwardInput * acceleration * Time.fixedDeltaTime;
+            currentDeceleration = brakeDeceleration;
         }
-        else if (forwardInput < 0f)
+
+        // Accelerate when direction is the same as input or when stopped
+        if (movementInput != 0f)
         {
-            // Braking only, no reversing
-            currentSpeed = Mathf.MoveTowards(currentSpeed, 0f, deceleration * 2f * Time.fixedDeltaTime);
+            float inputDetermination = movementInput > 0f ? acceleration : deceleration;
+
+            currentSpeed += movementInput * inputDetermination * Time.fixedDeltaTime;
         }
+
         else
         {
-            // Natural deceleration
+            // deceleration
             currentSpeed = Mathf.MoveTowards(currentSpeed, 0f, deceleration * Time.fixedDeltaTime);
         }
 
-        currentSpeed = Mathf.Clamp(currentSpeed, 0f, maxSpeed);
+        currentSpeed = Mathf.Clamp(currentSpeed, maxReverse, maxSpeed);
 
         // Move scooter with Rigidbody for collision
         // PHYSICS-BASED movement (collision-safe)
