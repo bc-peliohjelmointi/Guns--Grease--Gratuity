@@ -73,24 +73,32 @@ public class EnemyAI : MonoBehaviour
     }
     private void AttackPlayer()
     {
-        // Make sure enemy doesn't move
         agent.SetDestination(transform.position);
 
-        transform.LookAt(player);
+        Vector3 lookDir = player.position - transform.position;
+        lookDir.y = 0f;
+        transform.rotation = Quaternion.LookRotation(lookDir);
 
         if (!alreadyAttacked)
         {
-            //Attack code
-            Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
+            Vector3 shootDir = (player.position - transform.position).normalized;
 
-            rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
-            rb.AddForce(transform.up * 8f, ForceMode.Impulse);
+            GameObject bullet = Instantiate(
+                projectile,
+                transform.position,
+                Quaternion.LookRotation(shootDir)
+            );
 
+            Rigidbody rb = bullet.GetComponent<Rigidbody>();
+            rb.AddForce(shootDir * 32f, ForceMode.Impulse);
+            rb.AddForce(Vector3.up * 8f, ForceMode.Impulse);
 
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
     }
+
+
 
     private void ResetAttack()
     {
@@ -107,7 +115,7 @@ public class EnemyAI : MonoBehaviour
 
     private void DestroyEnemy()
     {
-        Destroy(gameObject);
+        Destroy((gameObject), 05f);
     }
 
     private void OnDrawGizmosSelected()
