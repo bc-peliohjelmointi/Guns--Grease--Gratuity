@@ -13,6 +13,7 @@ TagManager:
   - Roadwork
   - PatrolPoint
   - Ground
+  - DeliveryDoor
   layers:
   - Default
   - TransparentFX
