@@ -14,6 +14,7 @@ TagManager:
   - PatrolPoint
   - Ground
   - DeliveryDoor
+  - ExitPoint
   layers:
   - Default
   - TransparentFX

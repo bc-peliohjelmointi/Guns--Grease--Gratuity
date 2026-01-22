@@ -60,6 +60,7 @@ public class DeliverySystem : MonoBehaviour
 
     // Current navigation target (package or delivery zone)
     private GameObject currentTarget;
+    public bool pendingDelivery = false;
 
     void Start()
     {
@@ -220,7 +221,7 @@ public class DeliverySystem : MonoBehaviour
         currentDeliveryHP = Mathf.Clamp(currentDeliveryHP - dmg, 0, maxDeliveryHP);
     }
 
-    void DeliverPackage()
+    public void DeliverPackage()
     {
         hasPackage = false;
         hasActiveOrder = false;
@@ -337,22 +338,52 @@ public class DeliverySystem : MonoBehaviour
         }
     }
 
+    // - STAIRWELL -
+
     private IEnumerator TeleportAndDeliver()
     {
         isTeleporting = true;
 
-        // 1) Fade out
         yield return StartCoroutine(FadeOut());
 
-        // 2) Teleport
-        stairwellTeleportManager.TeleportPlayer(transform);
+        stairwellTeleportManager.TeleportToStairwell(transform);
 
-        // 3) Deliver
-        DeliverPackage();
+        pendingDelivery = true; // mark delivery for exit
 
-        // 4) Fade back in
         yield return StartCoroutine(FadeIn());
 
         isTeleporting = false;
     }
+
+    public Transform GetActiveDeliveryExitPoint()
+    {
+        if (activeDeliveryZone == null)
+            return null;
+
+        GameObject[] exitPoints = GameObject.FindGameObjectsWithTag("ExitPoint");
+        if (exitPoints.Length == 0)
+            return null;
+
+        Transform closest = null;
+        float closestDist = float.MaxValue;
+
+        Vector3 zonePos = activeDeliveryZone.transform.position;
+
+        foreach (GameObject ep in exitPoints)
+        {
+            float dist = Vector3.Distance(zonePos, ep.transform.position);
+            if (dist < closestDist)
+            {
+                closestDist = dist;
+                closest = ep.transform;
+            }
+        }
+
+        return closest;
+    }
+    public Transform GetActiveDeliveryZoneTransform()
+    {
+        return activeDeliveryZone != null ? activeDeliveryZone.transform : null;
+    }
+
 }

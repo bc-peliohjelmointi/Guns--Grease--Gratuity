@@ -2,51 +2,50 @@ using UnityEngine;
 
 public class StairwellTeleportManager : MonoBehaviour
 {
-    [Header("Teleport Settings")]
-    public Transform stairwellTarget; // Shared stairwell destination
+    [Header("Teleport Targets")]
+    public Transform stairwellTarget; // entry destination
+    public DeliverySystem deliverySystem;
 
-    private void OnTriggerEnter(Collider other)
+    public void TeleportToStairwell(Transform player)
     {
-        // Only trigger teleport when entering a DeliveryZone
-        if (other.CompareTag("DeliveryZone"))
-        {
-            Transform player = GameObject.FindGameObjectWithTag("Player").transform;
-
-            if (player != null)
-            {
-                TeleportPlayer(player);
-            }
-        }
+        Teleport(player, stairwellTarget);
     }
 
-    public void TeleportPlayer(Transform playerTransform)
+    public void TeleportToDeliveryZone(Transform player)
     {
-        if (playerTransform == null || stairwellTarget == null) return;
+        if (deliverySystem == null) return;
 
-        // Handle CharacterController
-        CharacterController cc = playerTransform.GetComponent<CharacterController>();
-        if (cc != null)
+        Transform zone = deliverySystem.GetActiveDeliveryZoneTransform();
+        if (zone == null) return;
+
+        Teleport(player, zone);
+    }
+
+    private void Teleport(Transform player, Transform target)
+    {
+        if (player == null || target == null) return;
+
+        CharacterController cc = player.GetComponent<CharacterController>();
+        if (cc)
         {
             cc.enabled = false;
-            playerTransform.position = stairwellTarget.position;
-            playerTransform.rotation = stairwellTarget.rotation;
+            player.position = target.position;
+            player.rotation = target.rotation;
             cc.enabled = true;
             return;
         }
 
-        // Handle Rigidbody
-        Rigidbody rb = playerTransform.GetComponent<Rigidbody>();
-        if (rb != null)
+        Rigidbody rb = player.GetComponent<Rigidbody>();
+        if (rb)
         {
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
-            rb.MovePosition(stairwellTarget.position);
-            rb.MoveRotation(stairwellTarget.rotation);
+            rb.MovePosition(target.position);
+            rb.MoveRotation(target.rotation);
             return;
         }
 
-        // Default teleport
-        playerTransform.position = stairwellTarget.position;
-        playerTransform.rotation = stairwellTarget.rotation;
+        player.position = target.position;
+        player.rotation = target.rotation;
     }
 }
