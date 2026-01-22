@@ -228,8 +228,6 @@ public class DeliverySystem : MonoBehaviour
         if (deliveryCompleteSFX)
             audioSource.PlayOneShot(deliveryCompleteSFX);
 
-        StartCoroutine(FadeIn());
-
         statusText.text = $"<color=green>Delivery Completed! +{currentOrderReward}</color>";
 
         PlayerStats.Instance.OnDeliveryCompleted(currentOrderReward, currentDeliveryHP);
@@ -239,7 +237,6 @@ public class DeliverySystem : MonoBehaviour
         phoneUI?.CloseActiveOrderPanel();
 
         UpdateUI();
-        StartCoroutine(FadeOut());
     }
 
     void FailDelivery(string reason)
