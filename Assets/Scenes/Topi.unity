@@ -523,6 +523,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stairwellTarget: {fileID: 1597391607}
   deliverySystem: {fileID: 1575877281}
+  isInStairwell: 0
 --- !u!1 &32850365 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2865229949274085101, guid: 886e39dd451ea7649984cb9ed935590b, type: 3}
@@ -12024,8 +12025,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e0e8864fd3fc014893dd6a5cdef4c1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  teleportManager: {fileID: 25178019}
-  deliverySystem: {fileID: 1575877281}
+  teleportManager: {fileID: 0}
+  deliverySystem: {fileID: 0}
 --- !u!1 &1029258731
 GameObject:
   m_ObjectHideFlags: 0
@@ -22652,9 +22653,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Current
-
-'
+  m_text: Delivery
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -22681,7 +22680,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 23.85
+  m_fontSize: 22.25
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1

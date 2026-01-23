@@ -5,10 +5,19 @@ public class StairwellTeleportManager : MonoBehaviour
     [Header("Teleport Targets")]
     public Transform stairwellTarget; // entry destination
     public DeliverySystem deliverySystem;
+    public bool isInStairwell;
+
+
+    private void Start()
+    {
+        isInStairwell = false;
+    }
 
     public void TeleportToStairwell(Transform player)
     {
         Teleport(player, stairwellTarget);
+        isInStairwell = true;
+        Debug.Log("Player In Stairwell");
     }
 
     public void TeleportToDeliveryZone(Transform player)
@@ -19,6 +28,7 @@ public class StairwellTeleportManager : MonoBehaviour
         if (zone == null) return;
 
         Teleport(player, zone);
+        Debug.Log("Player Not In Stairwell");
     }
 
     private void Teleport(Transform player, Transform target)

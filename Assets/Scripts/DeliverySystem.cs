@@ -123,22 +123,6 @@ public class DeliverySystem : MonoBehaviour
         UpdateUI();
     }
 
-    // Cancels the active order
-    public void CancelOrder()
-    {
-        hasActiveOrder = false;
-        hasPackage = false;
-
-        PlayerStats.Instance.OnOrderDeclined();
-        PlayerStats.Instance.ordersLeft--;
-
-        ClearAllPackages();
-        DisableCompass();
-
-        statusText.text = "No active order!";
-        UpdateUI();
-    }
-
     void UpdateTimer()
     {
         if (!hasActiveOrder)
@@ -254,6 +238,27 @@ public class DeliverySystem : MonoBehaviour
         ClearAllPackages();
         phoneUI?.CloseActiveOrderPanel();
 
+        StartCoroutine(TeleportOutOfStairwell());
+        
+        UpdateUI();
+    }
+
+    // Cancels the active order
+    public void CancelOrder()
+    {
+        hasActiveOrder = false;
+        hasPackage = false;
+
+        PlayerStats.Instance.OnOrderDeclined();
+        PlayerStats.Instance.ordersLeft--;
+
+        DisableAllDeliveryZones();
+        ClearAllPackages();
+        DisableCompass();
+
+        StartCoroutine(TeleportOutOfStairwell());
+
+        statusText.text = "No active order!";
         UpdateUI();
     }
 
@@ -353,6 +358,17 @@ public class DeliverySystem : MonoBehaviour
         yield return StartCoroutine(FadeIn());
 
         isTeleporting = false;
+    }
+
+    private IEnumerator TeleportOutOfStairwell()
+    {
+        if (stairwellTeleportManager.isInStairwell == true)
+        {
+            yield return StartCoroutine(FadeOut());
+            stairwellTeleportManager.TeleportToDeliveryZone(transform);
+            stairwellTeleportManager.isInStairwell = false;
+            yield return StartCoroutine(FadeIn());
+        }
     }
 
     public Transform GetActiveDeliveryExitPoint()
