@@ -10288,6 +10288,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5862575660649689307}
+  - component: {fileID: 1392407190872120496}
   m_Layer: 0
   m_Name: Building 4
   m_TagString: Untagged
@@ -10316,6 +10317,22 @@ Transform:
   - {fileID: 7820335944650456855}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!208 &1392407190872120496
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6015706821387542217}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 9, y: 15, z: 7}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &6146298614962978187
 GameObject:
   m_ObjectHideFlags: 0
