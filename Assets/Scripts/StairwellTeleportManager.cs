@@ -3,10 +3,9 @@ using UnityEngine;
 public class StairwellTeleportManager : MonoBehaviour
 {
     [Header("Teleport Targets")]
-    public Transform stairwellTarget; // entry destination
+    public Transform stairwellTarget;
     public DeliverySystem deliverySystem;
     public bool isInStairwell;
-
 
     private void Start()
     {
@@ -24,10 +23,11 @@ public class StairwellTeleportManager : MonoBehaviour
     {
         if (deliverySystem == null) return;
 
-        Transform zone = deliverySystem.GetActiveDeliveryZoneTransform();
-        if (zone == null) return;
+        Transform exit = deliverySystem.GetActiveDeliveryZoneTransform();
+        if (exit == null) return;
 
-        Teleport(player, zone);
+        Teleport(player, exit);
+        isInStairwell = false;
         Debug.Log("Player Not In Stairwell");
     }
 
