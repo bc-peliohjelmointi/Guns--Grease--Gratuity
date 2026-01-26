@@ -13,6 +13,7 @@ public class ScooterMount : MonoBehaviour
     [Header("Settings")]
     public float mountDistance = 2f;
     public Key mountKey = Key.F;
+    public Key powerKey = Key.E;
 
     private CharacterController playerController;
     private FirstPersonController fpsController;
@@ -39,6 +40,7 @@ public class ScooterMount : MonoBehaviour
     private void Update()
     {
         HandleMountInput();
+        HandlePowerInput();
         UpdateStatusText();
     }
 
@@ -79,6 +81,7 @@ public class ScooterMount : MonoBehaviour
 
         if (scooterControl != null)
             scooterControl.canControl = true;
+            scooterControl.powerOn = false; // power off on mount
 
         // Lock cursor for riding
         Cursor.lockState = CursorLockMode.Locked;
@@ -110,9 +113,18 @@ public class ScooterMount : MonoBehaviour
 
         if (scooterControl != null)
             scooterControl.canControl = false;
+            scooterControl.powerOn = false; // power off on dismount
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = true;
+    }
+
+    private void HandlePowerInput()
+    {
+        if (!isMounted || scooterControl == null) return;
+
+        if (Keyboard.current.eKey.wasPressedThisFrame)
+            scooterControl.powerOn = !scooterControl.powerOn;
     }
 
     private void UpdateStatusText()
@@ -120,10 +132,19 @@ public class ScooterMount : MonoBehaviour
         if (statusText == null) return;
 
         if (isMounted)
-            statusText.text = "[F] Dismount";
+        {
+            if (!scooterControl.powerOn)
+                statusText.text = "[E] Turn Scooter On\n[F] Dismount";
+            else
+                statusText.text = "[F] Dismount";
+        }
         else if (Vector3.Distance(transform.position, scooter.position) < mountDistance)
+        {
             statusText.text = "[F] Mount";
+        }
         else
+        {
             statusText.text = "";
+        }
     }
 }
