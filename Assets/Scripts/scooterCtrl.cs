@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
 public class scooterCtrl : MonoBehaviour
@@ -17,7 +18,8 @@ public class scooterCtrl : MonoBehaviour
     public float leanAmount = 12f;
 
     [Header("Control")]
-    public bool canControl = false;
+    public bool canControl = false; // player mount
+    public bool powerOn = false; // scooter ignition
 
     private float currentSpeed = 0f;
     private Rigidbody rb;
@@ -30,9 +32,14 @@ public class scooterCtrl : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!canControl)
+        // when not mounted nor powered, scooter will coast to stop
+        if (!canControl || !powerOn)
         {
-            currentSpeed = 0f;
+            currentSpeed = Mathf.MoveTowards(currentSpeed, 0f, deceleration * Time.fixedDeltaTime);
+
+            Vector3 stopVel = scooterRoot.forward * currentSpeed;
+            stopVel.y = rb.linearVelocity.y;
+            rb.linearVelocity = stopVel;
             return;
         }
 

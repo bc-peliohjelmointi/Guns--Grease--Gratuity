@@ -9,7 +9,6 @@ public class ExitPointTrigger : MonoBehaviour
 
     private bool playerInside = false;
     private Transform player;
-
     private float processingSeconds = 0.1f;
 
     private void Awake()
@@ -27,6 +26,8 @@ public class ExitPointTrigger : MonoBehaviour
 
         playerInside = true;
         player = other.transform;
+
+        deliverySystem.playerAtExitPoint = true;
     }
 
     private void OnTriggerExit(Collider other)
@@ -35,6 +36,8 @@ public class ExitPointTrigger : MonoBehaviour
 
         playerInside = false;
         player = null;
+
+        deliverySystem.playerAtExitPoint = false;
     }
 
     private void Update()
@@ -51,14 +54,9 @@ public class ExitPointTrigger : MonoBehaviour
         deliverySystem.pendingDelivery = false;
 
         yield return deliverySystem.StartCoroutine(deliverySystem.FadeOut());
-
         teleportManager.TeleportToDeliveryZone(player);
-
         yield return new WaitForSeconds(processingSeconds);
-
         deliverySystem.DeliverPackage();
-
-
         yield return deliverySystem.StartCoroutine(deliverySystem.FadeIn());
     }
 }
