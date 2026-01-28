@@ -105,6 +105,9 @@ public class DeliverySystem : MonoBehaviour
 
     public void AssignOrder(string name, int reward, float timeLimit)
     {
+        pendingDelivery = false;
+        playerAtExitPoint = false;
+
         if (startDeliverySFX) audioSource.PlayOneShot(startDeliverySFX);
 
         hasActiveOrder = true;
@@ -210,7 +213,7 @@ public class DeliverySystem : MonoBehaviour
         // Exit point prompt
         if (pendingDelivery && playerAtExitPoint && teleportManager.isInStairwell)
         {
-            statusText.text = "<color=yellow>[E] Deliver</color>";
+            statusText.text = "<color=yellow>[E] Deliver!</color>";
             return;
         }
 
@@ -389,6 +392,10 @@ public class DeliverySystem : MonoBehaviour
 
             teleportManager.TeleportToDeliveryZone(transform);
             teleportManager.isInStairwell = false;
+
+            pendingDelivery = false;
+            playerAtExitPoint = false;
+
             CleanupAfterCancel();
 
             yield return StartCoroutine(FadeIn());
