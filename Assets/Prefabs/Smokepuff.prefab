@@ -99,6 +99,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 291f4e7ce6cf85a45b1af8a90de12290, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lifetime: 0.4
-  startScale: 0.1
-  endScale: 2
+  lifetime: 0.35
+  startScale: 0.2
+  endScale: 2.5

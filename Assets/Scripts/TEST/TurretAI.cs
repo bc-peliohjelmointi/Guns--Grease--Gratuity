@@ -2,10 +2,16 @@ using UnityEngine;
 
 public class TurretAI : MonoBehaviour
 {
-    [Header("Settings")]
+    [Header("Detection")]
     public float detectionRange = 20f;
     public float rotationSpeed = 8f;
     public float fireRate = 0.5f;
+    public float aimHeight = 1.2f;
+
+    [Header("Raycast Vision")]
+    public LayerMask visionMask;     // Player + Walls
+    public Transform eyePoint;       // Where raycast starts
+    public Transform turretHead;     // Rotating part of the turret
 
     [Header("Bullet")]
     public GameObject bulletPrefab;
@@ -14,22 +20,25 @@ public class TurretAI : MonoBehaviour
     [Header("Audio")]
     public AudioClip shootSound;
 
-    private float fireCooldown = 0f;
+    private float fireCooldown;
     private Transform player;
     private DeliverySystem deliverySystem;
     private AudioSource audioSource;
 
     void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player")?.transform;
-
-        if (player != null)
-            deliverySystem = player.GetComponent<DeliverySystem>();
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+        {
+            player = playerObj.transform;
+            deliverySystem = playerObj.GetComponent<DeliverySystem>();
+        }
 
         audioSource = GetComponent<AudioSource>();
 
-        // Random Y rotation on spawn
-        transform.rotation = Quaternion.Euler(0, Random.Range(0, 360f), 0);
+        // Random Y rotation on spawn (head only)
+        if (turretHead)
+            turretHead.rotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
     }
 
     void Update()
@@ -37,40 +46,104 @@ public class TurretAI : MonoBehaviour
         if (player == null || deliverySystem == null)
             return;
 
-        // SHOOT ONLY IF PLAYER HAS PACKAGE
+        // Tick cooldown FIRST
+        if (fireCooldown > 0f)
+            fireCooldown -= Time.deltaTime;
+
+        // Only active while player has package
         if (!deliverySystem.hasPackage)
             return;
 
-        float distance = Vector3.Distance(transform.position, player.position);
+        Vector3 targetPos = player.position + Vector3.up * aimHeight;
+        float distance = Vector3.Distance(transform.position, targetPos);
 
-        if (distance <= detectionRange)
-        {
-            RotateTowardsPlayer();
+        if (distance > detectionRange)
+            return;
+
+        if (!HasLineOfSight(targetPos, distance))
+            return;
+
+        RotateTowards(targetPos);
+
+        // Optional: only shoot when mostly aimed
+        if (IsAimedAtTarget(targetPos))
             Shoot();
+    }
+
+    // --------------------
+    // LINE OF SIGHT CHECK
+    // --------------------
+    bool HasLineOfSight(Vector3 targetPos, float distance)
+    {
+        Vector3 origin = eyePoint ? eyePoint.position : transform.position;
+        Vector3 dir = (targetPos - origin).normalized;
+
+        if (Physics.Raycast(origin, dir, out RaycastHit hit, distance, visionMask))
+        {
+            return hit.transform.CompareTag("Player");
         }
 
-        if (fireCooldown > 0)
-            fireCooldown -= Time.deltaTime;
+        return false;
     }
 
-    void RotateTowardsPlayer()
+    // --------------------
+    // ROTATION
+    // --------------------
+    void RotateTowards(Vector3 targetPos)
     {
-        Vector3 dir = (player.position - transform.position).normalized;
-        dir.y = 0;
+        if (!turretHead)
+            return;
 
+        Vector3 dir = (targetPos - turretHead.position).normalized;
         Quaternion targetRot = Quaternion.LookRotation(dir);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotationSpeed * Time.deltaTime);
+
+        turretHead.rotation = Quaternion.Slerp(
+            turretHead.rotation,
+            targetRot,
+            rotationSpeed * Time.deltaTime
+        );
     }
 
+    bool IsAimedAtTarget(Vector3 targetPos)
+    {
+        if (!turretHead)
+            return true;
+
+        Vector3 dir = (targetPos - turretHead.position).normalized;
+        float angle = Vector3.Angle(turretHead.forward, dir);
+
+        return angle < 5f; // degrees
+    }
+
+    // --------------------
+    // SHOOTING
+    // --------------------
     void Shoot()
     {
-        if (fireCooldown > 0) return;
+        if (fireCooldown > 0f)
+            return;
 
         Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
 
-        if (shootSound)
+        if (shootSound && audioSource)
             audioSource.PlayOneShot(shootSound);
 
         fireCooldown = fireRate;
+    }
+
+    // --------------------
+    // DEBUG
+    // --------------------
+    void OnDrawGizmosSelected()
+    {
+        GameObject p = GameObject.FindGameObjectWithTag("Player");
+        if (!p)
+            return;
+
+        Vector3 targetPos = p.transform.position + Vector3.up * aimHeight;
+        Vector3 origin = eyePoint ? eyePoint.position : transform.position;
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(origin, targetPos);
     }
 }
