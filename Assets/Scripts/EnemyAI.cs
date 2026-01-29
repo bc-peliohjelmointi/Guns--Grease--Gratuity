@@ -6,7 +6,6 @@ public class EnemyAI : MonoBehaviour
     public NavMeshAgent agent;
     public Transform player;
     public LayerMask whatIsGround, whatIsPlayer;
-
     public float health;
 
     // Patrolling
@@ -18,9 +17,8 @@ public class EnemyAI : MonoBehaviour
     public float timeBetweenAttacks;
     bool alreadyAttacked;
     public GameObject projectile;
-    public Transform firePoint;
 
-    // States
+    //States
     public float sightRange, attackRange;
     public bool playerInSightRange, playerInAttackRange;
 
@@ -28,47 +26,34 @@ public class EnemyAI : MonoBehaviour
     {
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
-
-        agent.updateRotation = false;
     }
 
     private void Update()
     {
+        // check for sight and attack range
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
 
-        if (!playerInSightRange && !playerInAttackRange)
-        {
-            agent.isStopped = false;
-            Patrolling();
-        }
-        else if (playerInSightRange && !playerInAttackRange)
-        {
-            agent.isStopped = false;
-            ChasePlayer();
-        }
-        else if (playerInAttackRange && playerInSightRange)
-        {
-            agent.isStopped = true;
-            AttackPlayer();
-        }
+        if (!playerInSightRange && !playerInAttackRange) Patrolling();
+        if (playerInSightRange && !playerInAttackRange) ChasePlayer();
+        if (playerInAttackRange && playerInSightRange) AttackPlayer();
     }
 
     private void Patrolling()
     {
         if (!walkPointSet) SearchWalkPoint();
-
-        if (walkPointSet)
-            agent.SetDestination(walkPoint);
+        if (walkPointSet) agent.SetDestination(walkPoint);
 
         Vector3 distanceToWalkPoint = transform.position - walkPoint;
 
+        // Walkpoint reached
         if (distanceToWalkPoint.magnitude < 1f)
             walkPointSet = false;
     }
 
     private void SearchWalkPoint()
     {
+        // Calculate random point in range
         float randomZ = Random.Range(-walkPointRange, walkPointRange);
         float randomX = Random.Range(-walkPointRange, walkPointRange);
 
@@ -78,7 +63,7 @@ public class EnemyAI : MonoBehaviour
             transform.position.z + randomZ
         );
 
-        if (Physics.Raycast(walkPoint, Vector3.down, 2f, whatIsGround))
+        if (Physics.Raycast(walkPoint, -transform.up, 2f, whatIsGround))
             walkPointSet = true;
     }
 
@@ -89,28 +74,26 @@ public class EnemyAI : MonoBehaviour
 
     private void AttackPlayer()
     {
-        Vector3 lookDir = player.position - transform.position;
-        lookDir.y = 0f;
-
-        if (lookDir != Vector3.zero)
-            transform.rotation = Quaternion.LookRotation(lookDir);
+        // Make sure enemy doesn't move
+        agent.SetDestination(transform.position);
+        transform.LookAt(player);
 
         if (!alreadyAttacked)
         {
-            Vector3 shootDir = (player.position - firePoint.position).normalized;
-
-            GameObject bullet = Instantiate(
+            //Attack code
+            /*
+            Rigidbody rb = Instantiate(
                 projectile,
-                firePoint.position,
-                Quaternion.LookRotation(shootDir)
-            );
+                transform.position,
+                Quaternion.identity
+            ).GetComponent<Rigidbody>();
 
-            Rigidbody rb = bullet.GetComponent<Rigidbody>();
-            rb.AddForce(shootDir * 32f, ForceMode.Impulse);
-            rb.AddForce(Vector3.up * 8f, ForceMode.Impulse);
+            rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
+            rb.AddForce(transform.up * 8f, ForceMode.Impulse);
 
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
+            */
         }
     }
 
@@ -122,14 +105,13 @@ public class EnemyAI : MonoBehaviour
     public void TakeDamage(int damage)
     {
         health -= damage;
-
-        if (health <= 0)
+        if (health < 0)
             DestroyEnemy();
     }
 
     private void DestroyEnemy()
     {
-        Destroy(gameObject, 0.5f);
+        Destroy((gameObject), 05f);
     }
 
     private void OnDrawGizmosSelected()
