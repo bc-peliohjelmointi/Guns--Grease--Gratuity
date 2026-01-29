@@ -16,3 +16,12 @@ MonoBehaviour:
 
 '
   portrait: {fileID: 21300000, guid: e00b88a4d292d284c8849e4d0e223ec6, type: 3}
+  panelPosition: {x: 0, y: -330}
+  panelSize: {x: 1000, y: 200}
+  textPosition: {x: -110, y: -10}
+  textSize: {x: 200, y: 50}
+  portraitPosition: {x: -400, y: 0}
+  portraitSize: {x: 128, y: 128}
+  anchorMin: {x: 0.5, y: 0.5}
+  anchorMax: {x: 0.5, y: 0.5}
+  skipPosition: {x: 385, y: -75}
