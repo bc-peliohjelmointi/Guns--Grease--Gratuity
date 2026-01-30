@@ -25,6 +25,14 @@ namespace StarterAssets
 		[Tooltip("Acceleration and deceleration")]
 		public float SpeedChangeRate = 10.0f;
 
+		[Header("Player Health")]
+		public float maxHealth = 100f;
+		public float currentHealth;
+		public bool isDead = false;
+		public UnityEngine.UI.Slider healthSlider;
+		public TMPro.TextMeshProUGUI healthText;
+
+
 		[Space(10)]
 		[Tooltip("The height the player can jump")]
 		public float JumpHeight = 1.2f;
@@ -69,7 +77,7 @@ namespace StarterAssets
 		private float _fallTimeoutDelta;
 
 
-	
+
 #if ENABLE_INPUT_SYSTEM
 		private PlayerInput _playerInput;
 #endif
@@ -83,11 +91,11 @@ namespace StarterAssets
 		{
 			get
 			{
-				#if ENABLE_INPUT_SYSTEM
+#if ENABLE_INPUT_SYSTEM
 				return _playerInput.currentControlScheme == "KeyboardMouse";
-				#else
+#else
 				return false;
-				#endif
+#endif
 			}
 		}
 
@@ -111,10 +119,23 @@ namespace StarterAssets
 
 			_jumpTimeoutDelta = JumpTimeout;
 			_fallTimeoutDelta = FallTimeout;
+
+			currentHealth = maxHealth;
+
+			if (healthSlider != null)
+			{
+				healthSlider.maxValue = maxHealth;
+				healthSlider.value = currentHealth;
+			}
+
+			UpdateHealthUI();
+
 		}
 
 		private void Update()
 		{
+			if (isDead) return;
+
 			JumpAndGravity();
 			GroundedCheck();
 			Move();
@@ -122,8 +143,18 @@ namespace StarterAssets
 
 		private void LateUpdate()
 		{
+			if (isDead) return;
 			CameraRotation();
 		}
+
+		private void UpdateHealthUI()
+		{
+            if (healthSlider != null)
+				healthSlider.value = currentHealth;
+
+			if (healthSlider != null)
+				healthText.text = Mathf.CeilToInt(currentHealth) + " / " + maxHealth;
+        }
 
 		private void GroundedCheck()
 		{
@@ -136,7 +167,7 @@ namespace StarterAssets
 			if (_input.look.sqrMagnitude >= _threshold)
 			{
 				float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
-				
+
 				_cinemachineTargetPitch += _input.look.y * RotationSpeed * deltaTimeMultiplier;
 				_rotationVelocity = _input.look.x * RotationSpeed * deltaTimeMultiplier;
 
@@ -239,5 +270,45 @@ namespace StarterAssets
 
 			Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z), GroundedRadius);
 		}
-	}
+
+
+		public void TakeDamage(float damage)
+		{
+			if (isDead) return;
+
+			currentHealth -= damage;
+			currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
+
+			UpdateHealthUI();
+
+			if (currentHealth <= 0f)
+			{
+				Die();
+			}
+		}
+
+        private void Die()
+        {
+            isDead = true;
+
+            // Estä liikkuminen
+            canMove = false;
+
+            // Halutessa: lukitse kamera
+            _input.look = Vector2.zero;
+
+            if (healthSlider != null)
+                healthSlider.gameObject.SetActive(false);
+
+
+            Debug.Log("Player died");
+
+            // Tänne myöhemmin:
+            // - respawn
+            // - game over UI
+            // - päivä epäonnistui
+        }
+
+
+    }
 }
