@@ -4,14 +4,19 @@ public class TurretAI : MonoBehaviour
 {
     [Header("Detection")]
     public float detectionRange = 20f;
-    public float rotationSpeed = 8f;
+    public float yawSpeed = 8f;
+    public float pitchSpeed = 6f;
     public float fireRate = 0.5f;
     public float aimHeight = 1.2f;
+    public float maxPitchAngle = 45f;
 
     [Header("Raycast Vision")]
-    public LayerMask visionMask;     // Player + Walls
-    public Transform eyePoint;       // Where raycast starts
-    public Transform turretHead;     // Rotating part of the turret
+    public LayerMask visionMask;
+    public Transform eyePoint;
+
+    [Header("Turret Parts")]
+    public Transform yawPivot;    // Rotates on Y
+    public Transform pitchPivot;  // Rotates on X
 
     [Header("Bullet")]
     public GameObject bulletPrefab;
@@ -28,7 +33,7 @@ public class TurretAI : MonoBehaviour
     void Start()
     {
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-        if (playerObj != null)
+        if (playerObj)
         {
             player = playerObj.transform;
             deliverySystem = playerObj.GetComponent<DeliverySystem>();
@@ -36,26 +41,24 @@ public class TurretAI : MonoBehaviour
 
         audioSource = GetComponent<AudioSource>();
 
-        // Random Y rotation on spawn (head only)
-        if (turretHead)
-            turretHead.rotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
+        // Random yaw on spawn
+        if (yawPivot)
+            yawPivot.localRotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
     }
 
     void Update()
     {
-        if (player == null || deliverySystem == null)
+        if (!player || !deliverySystem)
             return;
 
-        // Tick cooldown FIRST
         if (fireCooldown > 0f)
             fireCooldown -= Time.deltaTime;
 
-        // Only active while player has package
         if (!deliverySystem.hasPackage)
             return;
 
         Vector3 targetPos = player.position + Vector3.up * aimHeight;
-        float distance = Vector3.Distance(transform.position, targetPos);
+        float distance = Vector3.Distance(eyePoint.position, targetPos);
 
         if (distance > detectionRange)
             return;
@@ -63,25 +66,23 @@ public class TurretAI : MonoBehaviour
         if (!HasLineOfSight(targetPos, distance))
             return;
 
-        RotateTowards(targetPos);
+        RotateYaw(targetPos);
+        RotatePitch(targetPos);
 
-        // Optional: only shoot when mostly aimed
         if (IsAimedAtTarget(targetPos))
             Shoot();
     }
 
     // --------------------
-    // LINE OF SIGHT CHECK
+    // LINE OF SIGHT
     // --------------------
     bool HasLineOfSight(Vector3 targetPos, float distance)
     {
-        Vector3 origin = eyePoint ? eyePoint.position : transform.position;
+        Vector3 origin = eyePoint.position;
         Vector3 dir = (targetPos - origin).normalized;
 
         if (Physics.Raycast(origin, dir, out RaycastHit hit, distance, visionMask))
-        {
             return hit.transform.CompareTag("Player");
-        }
 
         return false;
     }
@@ -89,30 +90,41 @@ public class TurretAI : MonoBehaviour
     // --------------------
     // ROTATION
     // --------------------
-    void RotateTowards(Vector3 targetPos)
+    void RotateYaw(Vector3 targetPos)
     {
-        if (!turretHead)
+        Vector3 flatDir = targetPos - yawPivot.position;
+        flatDir.y = 0f;
+
+        if (flatDir.sqrMagnitude < 0.001f)
             return;
 
-        Vector3 dir = (targetPos - turretHead.position).normalized;
-        Quaternion targetRot = Quaternion.LookRotation(dir);
-
-        turretHead.rotation = Quaternion.Slerp(
-            turretHead.rotation,
+        Quaternion targetRot = Quaternion.LookRotation(flatDir);
+        yawPivot.rotation = Quaternion.Slerp(
+            yawPivot.rotation,
             targetRot,
-            rotationSpeed * Time.deltaTime
+            yawSpeed * Time.deltaTime
+        );
+    }
+
+    void RotatePitch(Vector3 targetPos)
+    {
+        Vector3 localDir = yawPivot.InverseTransformPoint(targetPos);
+        float angle = -Mathf.Atan2(localDir.y, localDir.z) * Mathf.Rad2Deg;
+        angle = Mathf.Clamp(angle, -maxPitchAngle, maxPitchAngle);
+
+        Quaternion targetRot = Quaternion.Euler(angle, 0f, 0f);
+        pitchPivot.localRotation = Quaternion.Slerp(
+            pitchPivot.localRotation,
+            targetRot,
+            pitchSpeed * Time.deltaTime
         );
     }
 
     bool IsAimedAtTarget(Vector3 targetPos)
     {
-        if (!turretHead)
-            return true;
-
-        Vector3 dir = (targetPos - turretHead.position).normalized;
-        float angle = Vector3.Angle(turretHead.forward, dir);
-
-        return angle < 5f; // degrees
+        Vector3 dir = (targetPos - firePoint.position).normalized;
+        float angle = Vector3.Angle(firePoint.forward, dir);
+        return angle < 5f;
     }
 
     // --------------------
@@ -136,14 +148,16 @@ public class TurretAI : MonoBehaviour
     // --------------------
     void OnDrawGizmosSelected()
     {
+        if (!eyePoint)
+            return;
+
         GameObject p = GameObject.FindGameObjectWithTag("Player");
         if (!p)
             return;
 
         Vector3 targetPos = p.transform.position + Vector3.up * aimHeight;
-        Vector3 origin = eyePoint ? eyePoint.position : transform.position;
 
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(origin, targetPos);
+        Gizmos.DrawLine(eyePoint.position, targetPos);
     }
 }

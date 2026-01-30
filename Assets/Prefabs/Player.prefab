@@ -183,7 +183,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8762286023885395322, guid: 9c489a8547f4d9e4387da15a4ff82c81, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.67677
+      value: 3.6767693
       objectReference: {fileID: 0}
     - target: {fileID: 8762286023885395322, guid: 9c489a8547f4d9e4387da15a4ff82c81, type: 3}
       propertyPath: m_LocalPosition.y
@@ -333,6 +333,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1978471637655604388, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
+    - {fileID: 5393215578589016640, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 4135013735270702856, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
@@ -397,8 +398,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 955ae646a3c0bc74395f4940bb3eb322, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  teleportManager: {fileID: 0}
   phoneUI: {fileID: 0}
   itemSpawner: {fileID: 0}
+  playerAtExitPoint: 0
   hasActiveOrder: 0
   currentOrderName: 
   currentOrderReward: 0
@@ -420,6 +423,7 @@ MonoBehaviour:
   startDeliverySFX: {fileID: 8300000, guid: 1214845774359c94db5d72cccfb09194, type: 3}
   pickupPackageSFX: {fileID: 8300000, guid: 81fa433b5d31ac448a66aec0f111feab, type: 3}
   deliveryCompleteSFX: {fileID: 8300000, guid: 904bc13cfeb9cc64895e025631e1c660, type: 3}
+  pendingDelivery: 0
 --- !u!114 &4182661306016418333
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -437,6 +441,7 @@ MonoBehaviour:
   statusText: {fileID: 0}
   mountDistance: 2
   mountKey: 20
+  powerKey: 19
   isMounted: 0
 --- !u!82 &7258631385908644639
 AudioSource:

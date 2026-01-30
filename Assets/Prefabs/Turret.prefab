@@ -175,14 +175,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRange: 25
-  rotationSpeed: 6
+  yawSpeed: 8
+  pitchSpeed: 6
   fireRate: 2
   aimHeight: 1.2
+  maxPitchAngle: 45
   visionMask:
     serializedVersion: 2
     m_Bits: 65
   eyePoint: {fileID: 5892128084793282622}
-  turretHead: {fileID: 8363304114259916862}
+  yawPivot: {fileID: 8363304114259916862}
+  pitchPivot: {fileID: 8363304114259916862}
   bulletPrefab: {fileID: 6064456865497610199, guid: a6565cdd1cd95534ba8dd689b6eb5f40, type: 3}
   firePoint: {fileID: 2882769634224097057}
   shootSound: {fileID: 8300000, guid: 7d7598fcb214ac54eb9e29f71ccbc443, type: 3}
