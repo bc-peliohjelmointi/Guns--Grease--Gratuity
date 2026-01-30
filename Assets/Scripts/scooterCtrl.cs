@@ -21,6 +21,14 @@ public class scooterCtrl : MonoBehaviour
     public bool canControl = false; // player mount
     public bool powerOn = false; // scooter ignition
 
+    [Header("Battery")]
+    public float maxBattery = 100f;
+    public float movingDrainPM = 10f;
+    public float idleDrainPM = 1f;  // when not moving but engine is on
+    public float currentBattery;
+
+    public bool hasBattery => currentBattery > 0.1f;
+
     private float currentSpeed = 0f;
     private Rigidbody rb;
     
@@ -28,12 +36,13 @@ public class scooterCtrl : MonoBehaviour
     {
         rb = scooterRoot.GetComponent<Rigidbody>();
         rb.freezeRotation = true; // We will handle rotation manually
+        currentBattery = maxBattery;
     }
 
     private void FixedUpdate()
     {
         // when not mounted nor powered, scooter will coast to stop
-        if (!canControl || !powerOn)
+        if (!canControl || !powerOn || !hasBattery)
         {
             currentSpeed = Mathf.MoveTowards(currentSpeed, 0f, deceleration * Time.fixedDeltaTime);
 
@@ -49,6 +58,7 @@ public class scooterCtrl : MonoBehaviour
 
     private void HandleMovement()
     {
+        DrainBattery();
         float movementInput = 0f;
         if (UnityEngine.InputSystem.Keyboard.current.wKey.isPressed) movementInput = 1f;
         if (UnityEngine.InputSystem.Keyboard.current.sKey.isPressed) movementInput = -1f;
@@ -114,5 +124,28 @@ public class scooterCtrl : MonoBehaviour
         float lean = -turnInput * leanAmount * Mathf.Clamp01(currentSpeed / maxSpeed);
         Quaternion targetLean = Quaternion.Euler(0f, 0f, lean);
         visualModel.localRotation = Quaternion.Lerp(visualModel.localRotation, targetLean, Time.fixedDeltaTime * 5f);
+    }
+
+    private void DrainBattery()
+    {
+        if (!powerOn || !canControl) return;
+
+        float drainRate = Mathf.Abs(currentSpeed) > 1f ? movingDrainPM : idleDrainPM;
+
+        float drainPerSecond = drainRate / 60f;
+
+        currentBattery -= drainPerSecond * Time.fixedDeltaTime;
+        currentBattery = Mathf.Clamp(currentBattery, 0f,maxBattery);
+
+        if (currentBattery <= 0f && powerOn)
+        {
+            powerOn = false;
+        }
+    }
+
+    private void ChargeBattery(float amount)
+    {
+        currentBattery += amount;
+        currentBattery = Mathf.Clamp(currentBattery, 0f, maxBattery);
     }
 }

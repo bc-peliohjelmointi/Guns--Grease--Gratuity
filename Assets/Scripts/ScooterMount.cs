@@ -137,6 +137,8 @@ public class ScooterMount : MonoBehaviour
                 statusText.text = "[E] Turn Scooter On\n[F] Dismount";
             else
                 statusText.text = "[F] Dismount";
+
+            statusText.text = $"Battery: {Mathf.RoundToInt(scooterControl.currentBattery)}%";
         }
         else if (Vector3.Distance(transform.position, scooter.position) < mountDistance)
         {
