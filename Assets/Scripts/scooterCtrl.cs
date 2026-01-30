@@ -23,8 +23,8 @@ public class scooterCtrl : MonoBehaviour
 
     [Header("Battery")]
     public float maxBattery = 100f;
-    public float movingDrainPM = 10f;
-    public float idleDrainPM = 1f;  // when not moving but engine is on
+    public float movingDrainPM = 20f;
+    public float idleDrainPM = 2f;  // when not moving but engine is on
     public float currentBattery;
 
     public bool hasBattery => currentBattery > 0.1f;
