@@ -1,34 +1,34 @@
 using UnityEngine;
 
+
 public class Projectile : MonoBehaviour
 {
-    public int damage = 10;
-    public float lifeTime = 5f;
-
+    public float damage = 10f;
+    public float deliveryDamage = 15f;
+    public float lifetime = 5f;
 
     private void Start()
     {
-        Destroy(gameObject, lifeTime);
+        Destroy(gameObject, lifetime);
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-        // Enemy ottaa vahinkoa
-        EnemyAI enemy = other.GetComponent<EnemyAI>();
-        if (enemy != null)
+        // Check if hit player
+        StarterAssets.FirstPersonController player = collision.gameObject.GetComponent<StarterAssets.FirstPersonController>();
+        if (player != null)
         {
-            enemy.TakeDamage(damage);
-            Destroy(gameObject);
-            return;
+            player.TakeDamage(damage);
         }
 
-        // Player / Delivery ottaa vahinkoa
-        DeliverySystem delivery = other.GetComponent<DeliverySystem>();
-        if (delivery != null)
+        // Check if player has delivery package
+        DeliverySystem delivery = collision.gameObject.GetComponent<DeliverySystem>();
+        if (delivery != null && delivery.hasPackage)
         {
-            delivery.TakeDamage(damage);
-            Destroy(gameObject);
-            return;
+            delivery.TakeDamage(deliveryDamage);
         }
+
+        // Destroy projectile on impact
+        Destroy(gameObject);
     }
 }

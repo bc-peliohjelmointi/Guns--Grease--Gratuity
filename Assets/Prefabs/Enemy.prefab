@@ -188,16 +188,16 @@ MonoBehaviour:
   whatIsPlayer:
     serializedVersion: 2
     m_Bits: 320
+  maxHealth: 100
   health: 125
-  firePoint: {fileID: 1241779449867714531}
-  walkPoint: {x: 0, y: 0, z: 0}
   walkPointRange: 5
   timeBetweenAttacks: 0.5
+  damageToPlayer: 10
+  damageToDelivery: 15
   projectile: {fileID: 2830964268771592166, guid: 5b02b22c1a6f46f4cad12397f11fb4a5, type: 3}
-  sightRange: 20
-  attackRange: 12
-  playerInSightRange: 0
-  playerInAttackRange: 0
+  attackPoint: {fileID: 1241779449867714531}
+  sightRange: 10
+  attackRange: 5
 --- !u!1 &3388003885875353156
 GameObject:
   m_ObjectHideFlags: 0
