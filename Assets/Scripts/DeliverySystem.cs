@@ -132,7 +132,7 @@ public class DeliverySystem : MonoBehaviour
         if (!hasActiveOrder) return;
 
         currentOrderTimeRemaining -= Time.deltaTime;
-        timerText.text = Mathf.CeilToInt(currentOrderTimeRemaining) + "s";
+        timerText.text = Mathf.CeilToInt(currentOrderTimeRemaining) + "";
 
         if (currentOrderTimeRemaining <= 0)
         {
