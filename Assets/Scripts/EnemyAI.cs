@@ -22,8 +22,8 @@ public class EnemyAI : MonoBehaviour
     public float timeBetweenAttacks = 1.5f;
     public float damageToPlayer = 10f;
     public float damageToDelivery = 15f;
-    public GameObject projectile; // Optional: for projectile attacks
-    public Transform attackPoint; // Optional: where projectiles spawn
+    public GameObject projectile; // for projectile attacks
+    public Transform attackPoint; // where projectiles spawn
     private bool alreadyAttacked;
 
     [Header("Detection Ranges")]

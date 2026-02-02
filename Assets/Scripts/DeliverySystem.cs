@@ -71,24 +71,37 @@ public class DeliverySystem : MonoBehaviour
 
     void Start()
     {
+        // Find all delivery zones in the scene and hide them
         deliveryZones = GameObject.FindGameObjectsWithTag("DeliveryZone");
         foreach (var zone in deliveryZones) zone.SetActive(false);
 
+        // Find all exit points and hide them
         exitPoints = GameObject.FindGameObjectsWithTag("ExitPoint");
         DisableExitPoints();
 
+        // Randomize delivery zone order
         ShuffleDeliveryZones();
         UpdateUI();
     }
 
     void Update()
     {
+        // Update what player should navigate to
         UpdateTargets();
+
+        // Update compass arrow direction
         UpdateCompass();
+
+        // Update status text
         UpdateStatus();
+
+        // Update package health bar
         UpdateHPSlider();
+
+        // Update delivery timer
         UpdateTimer();
 
+        // Check if player can enter delivery building
         if (hasPackage && currentTarget != null)
         {
             float distance = Vector3.Distance(transform.position, currentTarget.transform.position);
@@ -98,12 +111,14 @@ public class DeliverySystem : MonoBehaviour
             }
         }
 
+        // Check if package is destroyed
         if (hasPackage && currentDeliveryHP <= 0)
         {
             FailDelivery("Package destroyed!");
         }
     }
 
+    // Start a new delivery order
     public void AssignOrder(string name, int reward, float timeLimit)
     {
         pendingDelivery = false;
@@ -118,8 +133,10 @@ public class DeliverySystem : MonoBehaviour
         currentOrderTime = timeLimit;
         currentOrderTimeRemaining = timeLimit;
 
+        // Spawn the package in the world
         itemSpawner?.SpawnItem();
 
+        // Choose random delivery zone and activate it
         activeDeliveryZone = deliveryZones[Random.Range(0, deliveryZones.Length)];
         foreach (var zone in deliveryZones)
             zone.SetActive(zone == activeDeliveryZone);
@@ -128,6 +145,7 @@ public class DeliverySystem : MonoBehaviour
         UpdateUI();
     }
 
+    // Countdown delivery timer
     void UpdateTimer()
     {
         if (!hasActiveOrder) return;
@@ -135,16 +153,19 @@ public class DeliverySystem : MonoBehaviour
         currentOrderTimeRemaining -= Time.deltaTime;
         timerText.text = Mathf.CeilToInt(currentOrderTimeRemaining) + "";
 
+        // Fail delivery if time runs out
         if (currentOrderTimeRemaining <= 0)
         {
             FailDelivery("Time ran out!");
         }
     }
 
+    // Update package health slider UI
     void UpdateHPSlider()
     {
         if (hpSlider == null) return;
 
+        // Only show HP bar when carrying package
         hpSlider.gameObject.SetActive(hasPackage);
         if (hasPackage)
         {
@@ -153,24 +174,28 @@ public class DeliverySystem : MonoBehaviour
         }
     }
 
+    // Determine what the player should be navigating to
     void UpdateTargets()
     {
+        // No order active - point to apartment door
         if (!hasActiveOrder)
         {
             currentTarget = GameObject.FindGameObjectWithTag("ApartmentDoor");
             return;
         }
 
+        // Order active but no package - point to package
         if (!hasPackage)
         {
             currentTarget = GameObject.FindGameObjectsWithTag("Package").FirstOrDefault();
             return;
         }
 
-        // when player has package, currentTarget is delivery zone
+        // Has package - point to delivery zone
         currentTarget = activeDeliveryZone;
     }
 
+    // Get the transform the compass should point to
     public Transform GetCompassTarget()
     {
         if (!hasActiveOrder) return GameObject.FindGameObjectWithTag("ApartmentDoor")?.transform;
@@ -178,25 +203,30 @@ public class DeliverySystem : MonoBehaviour
         if (!hasPackage)
             return GameObject.FindGameObjectsWithTag("Package").FirstOrDefault()?.transform;
 
+        // Inside building - point to exit
         if (teleportManager.isInStairwell)
-            return activeExitPoint; // points to exit point while inside
+            return activeExitPoint;
 
+        // Outside - point to delivery zone
         return activeDeliveryZone?.transform;
     }
 
+    // Update compass arrow to point at target
     void UpdateCompass()
     {
         Transform target = GetCompassTarget();
         if (compassArrow == null || target == null) return;
 
+        // Calculate direction to target
         Vector3 dir = (target.position - transform.position).normalized;
-        dir.y = 0f;
+        dir.y = 0f; // Keep arrow flat
 
+        // Calculate angle and rotate arrow
         float angle = Vector3.SignedAngle(transform.forward, dir, Vector3.up);
         compassArrow.localEulerAngles = new Vector3(0, 0, -angle);
     }
 
-
+    // Update status text based on current state
     void UpdateStatus()
     {
         if (!hasActiveOrder)
@@ -211,26 +241,28 @@ public class DeliverySystem : MonoBehaviour
             return;
         }
 
-        // Exit point prompt
+        // At delivery exit point - show deliver prompt
         if (pendingDelivery && playerAtExitPoint && teleportManager.isInStairwell)
         {
             statusText.text = "<color=yellow>[E] Deliver!</color>";
             return;
         }
 
+        // Near delivery zone entrance - show enter prompt
         float distance = Vector3.Distance(transform.position, currentTarget.transform.position);
         statusText.text = distance <= deliveryRange
             ? "<color=yellow>[E] Enter</color>"
             : "Deliver package!";
     }
 
-
+    // Damage the package (called by enemies, hazards, etc.)
     public void TakeDamage(float dmg)
     {
         if (!hasPackage) return;
         currentDeliveryHP = Mathf.Clamp(currentDeliveryHP - dmg, 0, maxDeliveryHP);
     }
 
+    // Complete the delivery successfully
     public void DeliverPackage()
     {
         hasPackage = false;
@@ -240,14 +272,17 @@ public class DeliverySystem : MonoBehaviour
 
         statusText.text = $"<color=green>Delivery Completed! +{currentOrderReward}</color>";
 
+        // Update player stats
         PlayerStats.Instance.OnDeliveryCompleted(currentOrderReward, currentDeliveryHP);
         PlayerStats.Instance.ordersLeft--;
 
+        // Clean up
         DisableAllDeliveryZones();
         phoneUI?.CloseActiveOrderPanel();
         UpdateUI();
     }
 
+    // Fail the current delivery
     void FailDelivery(string reason)
     {
         hasPackage = false;
@@ -255,23 +290,28 @@ public class DeliverySystem : MonoBehaviour
 
         statusText.text = $"<color=red>Delivery failed! {reason}</color>";
 
+        // Update player stats
         PlayerStats.Instance.OnDeliveryFailed();
         PlayerStats.Instance.ordersLeft--;
 
+        // Teleport out if inside building
         if (teleportManager.isInStairwell == true)
         {
             StartCoroutine(TeleportOutOfStairwell());
         }
     }
 
+    // Player cancels the current order
     public void CancelOrder()
     {
         hasActiveOrder = false;
         hasPackage = false;
 
+        // Update player stats
         PlayerStats.Instance.OnOrderDeclined();
         PlayerStats.Instance.ordersLeft--;
 
+        // Teleport out if inside building
         if (teleportManager.isInStairwell == true)
         {
             StartCoroutine(TeleportOutOfStairwell());
@@ -279,6 +319,7 @@ public class DeliverySystem : MonoBehaviour
         }
     }
 
+    // Clean up after canceling order
     private void CleanupAfterCancel()
     {
         DisableAllDeliveryZones();
@@ -289,12 +330,14 @@ public class DeliverySystem : MonoBehaviour
         UpdateUI();
     }
 
+    // Remove all package objects from scene
     public void ClearAllPackages()
     {
         foreach (var pkg in GameObject.FindGameObjectsWithTag("Package"))
             Destroy(pkg);
     }
 
+    // Reset compass arrow
     public void DisableCompass()
     {
         currentTarget = null;
@@ -302,6 +345,7 @@ public class DeliverySystem : MonoBehaviour
             compassArrow.localEulerAngles = Vector3.zero;
     }
 
+    // Detect when player picks up package
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Package") && !hasPackage)
@@ -316,6 +360,7 @@ public class DeliverySystem : MonoBehaviour
         }
     }
 
+    // Update timer UI
     void UpdateUI()
     {
         timerText.text = hasActiveOrder
@@ -323,6 +368,7 @@ public class DeliverySystem : MonoBehaviour
             : "";
     }
 
+    // Randomize delivery zone array order
     void ShuffleDeliveryZones()
     {
         for (int i = 0; i < deliveryZones.Length; i++)
@@ -333,6 +379,7 @@ public class DeliverySystem : MonoBehaviour
         }
     }
 
+    // Deactivate all delivery zones
     void DisableAllDeliveryZones()
     {
         foreach (var zone in deliveryZones)
@@ -342,6 +389,7 @@ public class DeliverySystem : MonoBehaviour
         activeExitPoint = null;
     }
 
+    // Fade screen to black
     public IEnumerator FadeOut()
     {
         float t = 0f;
@@ -355,6 +403,7 @@ public class DeliverySystem : MonoBehaviour
         }
     }
 
+    // Fade screen from black
     public IEnumerator FadeIn()
     {
         yield return new WaitForSeconds(fadeHold);
@@ -370,6 +419,7 @@ public class DeliverySystem : MonoBehaviour
         }
     }
 
+    // Teleport player into delivery building
     private IEnumerator TeleportToEntry()
     {
         isTeleporting = true;
@@ -380,6 +430,7 @@ public class DeliverySystem : MonoBehaviour
 
         teleportManager.TeleportToStairwell(transform);
 
+        // Set up exit point for delivery
         ShuffleExitPoints();
         SelectActiveExitPoint();
         pendingDelivery = true;
@@ -388,6 +439,7 @@ public class DeliverySystem : MonoBehaviour
         isTeleporting = false;
     }
 
+    // Teleport player out of delivery building
     private IEnumerator TeleportOutOfStairwell()
     {
         if (teleportManager.isInStairwell)
@@ -408,6 +460,7 @@ public class DeliverySystem : MonoBehaviour
         }
     }
 
+    // Find the exit point closest to active delivery zone
     public Transform GetActiveDeliveryExitPoint()
     {
         if (activeDeliveryZone == null) return null;
@@ -432,16 +485,19 @@ public class DeliverySystem : MonoBehaviour
         return closest;
     }
 
+    // Get current delivery zone transform
     public Transform GetActiveDeliveryZoneTransform()
     {
         return activeDeliveryZone != null ? activeDeliveryZone.transform : null;
     }
 
+    // Get current exit point transform
     public Transform GetActiveExitPoint()
     {
         return activeExitPoint;
     }
 
+    // Choose and activate a random exit point
     void SelectActiveExitPoint()
     {
         DisableExitPoints();
@@ -454,6 +510,7 @@ public class DeliverySystem : MonoBehaviour
         activeExitPoint.gameObject.SetActive(true);
     }
 
+    // Randomize exit point array order
     void ShuffleExitPoints()
     {
         for (int i = 0; i < exitPoints.Length; i++)
@@ -464,6 +521,7 @@ public class DeliverySystem : MonoBehaviour
         }
     }
 
+    // Deactivate all exit points
     void DisableExitPoints()
     {
         foreach (var zone in exitPoints)
