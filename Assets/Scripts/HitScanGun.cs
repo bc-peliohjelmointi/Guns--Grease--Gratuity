@@ -62,7 +62,7 @@ public class GunHitscan : MonoBehaviour
             ? Mouse.current != null && Mouse.current.leftButton.isPressed
             : Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
 
-        if (firePressed && Time.time >= nextFireTime && currentAmmo > 0 && pullOurScript.gunIsOut==true)
+        if (firePressed && Time.time >= nextFireTime && currentAmmo > 0 && pullOurScript.gunIsOut == true)
         {
             nextFireTime = Time.time + 1f / fireRate;
             Fire();
@@ -120,10 +120,23 @@ public class GunHitscan : MonoBehaviour
                 Destroy(go, 5f);
             }
 
+            // Check for turret
             var turret = hit.collider.GetComponentInParent<TurretHealth>();
             if (turret != null)
             {
-                turret.TakeDamage(Mathf.CeilToInt(damage)); // TurretHealth expects int
+                turret.TakeDamage(Mathf.CeilToInt(damage));
+            }
+
+            // Check for enemy AI
+            var enemy = hit.collider.GetComponent<EnemyAI>();
+            if (enemy == null)
+            {
+                enemy = hit.collider.GetComponentInParent<EnemyAI>();
+            }
+            if (enemy != null)
+            {
+                enemy.TakeDamage(damage);
+                Debug.Log($"Hit enemy for {damage} damage!");
             }
 
             if (hit.rigidbody != null)
@@ -133,7 +146,7 @@ public class GunHitscan : MonoBehaviour
         }
         else
         {
-            // ✅ Proper miss direction — NOT random anymore
+            // Proper miss direction
             tracerEnd = origin + dir * range;
         }
 
