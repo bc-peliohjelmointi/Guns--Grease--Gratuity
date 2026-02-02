@@ -15,6 +15,7 @@ TagManager:
   - Ground
   - DeliveryDoor
   - ExitPoint
+  - Turret
   layers:
   - Default
   - TransparentFX

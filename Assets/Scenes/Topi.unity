@@ -2525,7 +2525,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5390464947672911151, guid: a2e5d7f3efa6e4e4195b32f81cb2d2f9, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3948,7 +3948,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3548073334847131547, guid: 385b5cd34e19bc44e8c8476ec9ccf09c, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7043130257064382682, guid: 385b5cd34e19bc44e8c8476ec9ccf09c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8483,7 +8483,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 762159859532522951, guid: 94d6ab7dd00705a4ca9741e74131e5f7, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5794992006528398747, guid: 94d6ab7dd00705a4ca9741e74131e5f7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8895,6 +8895,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 427317830365735657, guid: 7a0c894705f18a342a815f67cd3ebd1b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1715023201050090038, guid: 7a0c894705f18a342a815f67cd3ebd1b, type: 3}
       propertyPath: m_Name
       value: Stairwell1
@@ -8943,9 +8947,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5724701217848620365, guid: 7a0c894705f18a342a815f67cd3ebd1b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5943331963030443839, guid: 7a0c894705f18a342a815f67cd3ebd1b, type: 3}
       propertyPath: m_Name
       value: Turret Head
+      objectReference: {fileID: 0}
+    - target: {fileID: 8336122542094529968, guid: 7a0c894705f18a342a815f67cd3ebd1b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -10111,7 +10123,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4733918404791593613, guid: eb6f626c9d8abf1488148106c6aa9bad, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6919067894988085271, guid: eb6f626c9d8abf1488148106c6aa9bad, type: 3}
       propertyPath: m_LocalPosition.x
@@ -10824,7 +10836,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 92005816091041231, guid: c41e6d9473fcc6743bf74d950861260a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8328228560357173206, guid: c41e6d9473fcc6743bf74d950861260a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -15492,7 +15504,7 @@ GameObject:
   - component: {fileID: 1779523540}
   m_Layer: 0
   m_Name: CameraTurret
-  m_TagString: Untagged
+  m_TagString: Turret
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -15800,7 +15812,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6015706821387542217, guid: 695d9912ffd843845845d23139dc10d8, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
