@@ -59,6 +59,7 @@ public class scooterCtrl : MonoBehaviour
     private void HandleMovement()
     {
         DrainBattery();
+
         float movementInput = 0f;
         if (UnityEngine.InputSystem.Keyboard.current.wKey.isPressed) movementInput = 1f;
         if (UnityEngine.InputSystem.Keyboard.current.sKey.isPressed) movementInput = -1f;
@@ -99,7 +100,7 @@ public class scooterCtrl : MonoBehaviour
 
     private void HandleTurningAndLean()
     {
-        if (currentSpeed < 0.1f) // Only turn when moving
+        if (Mathf.Abs(currentSpeed) < 0.1f) // Only turn when moving
         {
             // Reset lean
             visualModel.localRotation = Quaternion.Lerp(
@@ -121,9 +122,18 @@ public class scooterCtrl : MonoBehaviour
         }
 
         // Lean visual model
-        float lean = -turnInput * leanAmount * Mathf.Clamp01(currentSpeed / maxSpeed);
+        // Speed sterngth
+        float speedPercent = Mathf.Clamp01(Mathf.Abs(currentSpeed) / maxSpeed);
+
+        // Lean direction flips when reversing
+        float directionMultiplier = currentSpeed >= 0 ? 1f : -1f;
+
+        float lean = -turnInput * directionMultiplier * leanAmount * speedPercent;
+
         Quaternion targetLean = Quaternion.Euler(0f, 0f, lean);
         visualModel.localRotation = Quaternion.Lerp(visualModel.localRotation, targetLean, Time.fixedDeltaTime * 5f);
+
+        // float lean = -turnInput * leanAmount * Mathf.Clamp01(currentSpeed / maxSpeed);
     }
 
     private void DrainBattery()
