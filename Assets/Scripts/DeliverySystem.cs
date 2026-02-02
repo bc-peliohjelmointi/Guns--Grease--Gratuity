@@ -13,6 +13,7 @@ public class DeliverySystem : MonoBehaviour
     public StairwellTeleportManager teleportManager;
     public PhoneUI phoneUI;
     public ItemSpawner itemSpawner;
+    public TurretActivator turretActivator;
     [HideInInspector] public bool playerAtExitPoint = false;
 
     // Current order data
@@ -374,6 +375,9 @@ public class DeliverySystem : MonoBehaviour
         isTeleporting = true;
 
         yield return StartCoroutine(FadeOut());
+
+        turretActivator.SpawnTurrets();
+
         teleportManager.TeleportToStairwell(transform);
 
         ShuffleExitPoints();
@@ -389,6 +393,8 @@ public class DeliverySystem : MonoBehaviour
         if (teleportManager.isInStairwell)
         {
             yield return StartCoroutine(FadeOut());
+
+            turretActivator.DestroyTurrets();
 
             teleportManager.TeleportToDeliveryZone(transform);
             teleportManager.isInStairwell = false;

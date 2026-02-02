@@ -6,6 +6,7 @@ public class ExitPointTrigger : MonoBehaviour
 {
     [SerializeField] private StairwellTeleportManager teleportManager;
     [SerializeField] private DeliverySystem deliverySystem;
+    [SerializeField] private TurretActivator turretActivator;
 
     private bool playerInside = false;
     private Transform player;
@@ -18,6 +19,8 @@ public class ExitPointTrigger : MonoBehaviour
 
         if (deliverySystem == null)
             deliverySystem = FindObjectOfType<DeliverySystem>();
+        if (turretActivator == null)
+            turretActivator = FindObjectOfType<TurretActivator>();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -57,6 +60,7 @@ public class ExitPointTrigger : MonoBehaviour
         teleportManager.TeleportToDeliveryZone(player);
         yield return new WaitForSeconds(processingSeconds);
         deliverySystem.DeliverPackage();
+        turretActivator.DestroyTurrets();
         yield return deliverySystem.StartCoroutine(deliverySystem.FadeIn());
     }
 }

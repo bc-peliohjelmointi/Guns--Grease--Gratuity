@@ -16,6 +16,7 @@ TagManager:
   - DeliveryDoor
   - ExitPoint
   - Turret
+  - TurretSpawnArea
   layers:
   - Default
   - TransparentFX
