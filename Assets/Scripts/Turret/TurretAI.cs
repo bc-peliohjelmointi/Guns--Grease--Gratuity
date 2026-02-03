@@ -1,5 +1,6 @@
 using UnityEngine;
 
+// Controls turret detection, aiming, and shooting behavior
 public class TurretAI : MonoBehaviour
 {
     [Header("Detection")]
@@ -15,8 +16,8 @@ public class TurretAI : MonoBehaviour
     public Transform eyePoint;
 
     [Header("Turret Parts")]
-    public Transform yawPivot;    // Rotates on Y
-    public Transform pitchPivot;  // Rotates on X
+    public Transform yawPivot;    // Rotates horizontally (Y)
+    public Transform pitchPivot;  // Rotates vertically (X)
 
     [Header("Bullet")]
     public GameObject bulletPrefab;
@@ -32,6 +33,7 @@ public class TurretAI : MonoBehaviour
 
     void Start()
     {
+        // Cache player and delivery system
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj)
         {
@@ -41,41 +43,47 @@ public class TurretAI : MonoBehaviour
 
         audioSource = GetComponent<AudioSource>();
 
-        // Random yaw on spawn
+        // Randomize starting yaw
         if (yawPivot)
-            yawPivot.localRotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
+            yawPivot.localRotation =
+                Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
     }
 
     void Update()
     {
+        // Abort if required references are missing
         if (!player || !deliverySystem)
             return;
 
+        // Handle fire cooldown
         if (fireCooldown > 0f)
             fireCooldown -= Time.deltaTime;
 
+        // Only attack when player carries a package
         if (!deliverySystem.hasPackage)
             return;
 
         Vector3 targetPos = player.position + Vector3.up * aimHeight;
         float distance = Vector3.Distance(eyePoint.position, targetPos);
 
+        // Out of range
         if (distance > detectionRange)
             return;
 
+        // Blocked line of sight
         if (!HasLineOfSight(targetPos, distance))
             return;
 
+        // Aim turret
         RotateYaw(targetPos);
         RotatePitch(targetPos);
 
+        // Fire if properly aligned
         if (IsAimedAtTarget(targetPos))
             Shoot();
     }
 
-    // --------------------
-    // LINE OF SIGHT
-    // --------------------
+    // Checks if turret can see the player
     bool HasLineOfSight(Vector3 targetPos, float distance)
     {
         Vector3 origin = eyePoint.position;
@@ -87,9 +95,7 @@ public class TurretAI : MonoBehaviour
         return false;
     }
 
-    // --------------------
-    // ROTATION
-    // --------------------
+    // Rotate turret base horizontally
     void RotateYaw(Vector3 targetPos)
     {
         Vector3 flatDir = targetPos - yawPivot.position;
@@ -106,6 +112,7 @@ public class TurretAI : MonoBehaviour
         );
     }
 
+    // Rotate turret barrel vertically
     void RotatePitch(Vector3 targetPos)
     {
         Vector3 localDir = yawPivot.InverseTransformPoint(targetPos);
@@ -120,16 +127,14 @@ public class TurretAI : MonoBehaviour
         );
     }
 
+    // Check if turret is close enough to fire
     bool IsAimedAtTarget(Vector3 targetPos)
     {
         Vector3 dir = (targetPos - firePoint.position).normalized;
-        float angle = Vector3.Angle(firePoint.forward, dir);
-        return angle < 5f;
+        return Vector3.Angle(firePoint.forward, dir) < 5f;
     }
 
-    // --------------------
-    // SHOOTING
-    // --------------------
+    // Fire a bullet
     void Shoot()
     {
         if (fireCooldown > 0f)
@@ -143,9 +148,7 @@ public class TurretAI : MonoBehaviour
         fireCooldown = fireRate;
     }
 
-    // --------------------
-    // DEBUG
-    // --------------------
+    // Visualize line of sight in editor (Debug)
     void OnDrawGizmosSelected()
     {
         if (!eyePoint)

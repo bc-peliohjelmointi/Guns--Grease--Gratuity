@@ -16,13 +16,12 @@ public class TurretSpawner : MonoBehaviour
 
     void TrySpawnTurrets()
     {
-        // Roll the 25% chance
+        // Roll the chance
         float roll = Random.value;
-
+            
         if (roll > spawnChance)
             return; // No turrets spawn this time
 
-        // If we got here → spawning IS happening
         int amountToSpawn = Random.Range(1, 5); // 1–4
 
         for (int i = 0; i < amountToSpawn; i++)

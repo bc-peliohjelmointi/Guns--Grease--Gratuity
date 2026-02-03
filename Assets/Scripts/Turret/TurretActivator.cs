@@ -49,13 +49,14 @@ public class TurretActivator : MonoBehaviour
                 continue;
             }
 
-            // Pick ONE random box
+            // Pick one random boxcollider on the gameobject
             BoxCollider chosenBox = boxes[Random.Range(0, boxes.Length)];
             Vector3 spawnPos = GetRandomPointInBox(chosenBox);
 
             // For easier visual placing
             spawnPos.y -= 0.4f;
 
+            // Random rotation
             GameObject turret = Instantiate(
                 turretPrefab,
                 spawnPos,
@@ -87,6 +88,8 @@ public class TurretActivator : MonoBehaviour
     // --------------------
     // BOX SPAWN LOGIC
     // --------------------
+
+    // Gets random spawnpoint in the boxcollider (X, Z)
     Vector3 GetRandomPointInBox(BoxCollider box)
     {
         Vector3 center = box.transform.TransformPoint(box.center);
