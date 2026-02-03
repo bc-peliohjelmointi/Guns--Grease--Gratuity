@@ -26,3 +26,4 @@ MonoBehaviour:
   anchorMin: {x: 0.5, y: 0.5}
   anchorMax: {x: 0.5, y: 0.5}
   skipPosition: {x: -45, y: -175}
+  triggerType: 1
