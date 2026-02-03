@@ -146,6 +146,9 @@ public class PhoneUI : MonoBehaviour
         Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;
         Cursor.visible = isOpen;
 
+        TutorialManager.Instance
+            ?.NotifyTrigger(TutorialTriggerType.PhoneOpen);
+
         if (isOpen)
         {
             playerInput.actions["Look"].Disable();

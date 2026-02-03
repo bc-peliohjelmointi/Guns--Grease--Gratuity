@@ -15,6 +15,8 @@ public class StairwellTeleportManager : MonoBehaviour
     public void TeleportToStairwell(Transform player)
     {
         Teleport(player, stairwellTarget);
+        TutorialManager.Instance
+        ?.NotifyTrigger(TutorialTriggerType.InBuilding);
         isInStairwell = true;
         Debug.Log("Player In Stairwell");
     }

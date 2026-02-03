@@ -20,6 +20,8 @@ public class TutorialManager : MonoBehaviour
 
     public TutorialStep1[] steps;
 
+    public static TutorialManager Instance;
+
     private int currentStepIndex = 0;
 
     public float typingSpeed = 0.03f;
@@ -27,7 +29,8 @@ public class TutorialManager : MonoBehaviour
 
     void Start()
     {
-        ShowStep(0);
+        tutorialPanel.SetActive(false);
+        StartTutorial();
     }
 
     void Update()
@@ -80,6 +83,7 @@ public class TutorialManager : MonoBehaviour
         ShowStep(currentStepIndex);
     }
 
+    // Hieno kirjain kerrallaan kirjoitus
     IEnumerator TypeText(string text)
     {
         dialogueText.text = "";
@@ -89,6 +93,27 @@ public class TutorialManager : MonoBehaviour
             dialogueText.text += c;
             yield return new WaitForSeconds(typingSpeed);
         }
+    }
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    public void NotifyTrigger(TutorialTriggerType trigger)
+    {
+        if (currentStepIndex >= steps.Length) return;
+
+        if (steps[currentStepIndex].triggerType == trigger)
+        {
+            NextStep();
+        }
+    }
+
+    public void StartTutorial()
+    {
+        currentStepIndex = 0;
+        ShowStep(0);
     }
 }
 

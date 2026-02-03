@@ -26,4 +26,6 @@ public class TutorialStep1 : ScriptableObject
 
     [Header("Skip text")]
     public Vector2 skipPosition;
+
+    public TutorialTriggerType triggerType;
 }
