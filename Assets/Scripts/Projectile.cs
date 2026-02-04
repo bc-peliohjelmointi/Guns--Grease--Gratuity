@@ -40,7 +40,7 @@ public class Projectile : MonoBehaviour
         // --------------------
         // ENVIRONMENT HIT
         // --------------------
-        if (!collision.collider.isTrigger)
+        if (!collision.collider.isTrigger && !collision.gameObject.CompareTag("Enemy"))
         {
             Destroy(gameObject);
         }

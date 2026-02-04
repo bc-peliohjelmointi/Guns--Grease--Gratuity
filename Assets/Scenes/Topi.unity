@@ -6470,42 +6470,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy
       objectReference: {fileID: 0}
-    - target: {fileID: 1241779449867714531, guid: 3804176987b00c0448c84a9ccf9f03c2, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1241779449867714531, guid: 3804176987b00c0448c84a9ccf9f03c2, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.14
-      objectReference: {fileID: 0}
-    - target: {fileID: 1241779449867714531, guid: 3804176987b00c0448c84a9ccf9f03c2, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.35
-      objectReference: {fileID: 0}
-    - target: {fileID: 1241779449867714531, guid: 3804176987b00c0448c84a9ccf9f03c2, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1241779449867714531, guid: 3804176987b00c0448c84a9ccf9f03c2, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1241779449867714531, guid: 3804176987b00c0448c84a9ccf9f03c2, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1241779449867714531, guid: 3804176987b00c0448c84a9ccf9f03c2, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1241779449867714531, guid: 3804176987b00c0448c84a9ccf9f03c2, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2025763631114463262, guid: 3804176987b00c0448c84a9ccf9f03c2, type: 3}
-      propertyPath: m_IsTrigger
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2534386859496542636, guid: 3804176987b00c0448c84a9ccf9f03c2, type: 3}
       propertyPath: m_LocalPosition.x
       value: -8.64
@@ -6550,14 +6514,6 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 588604331}
-    - target: {fileID: 3863908894672042335, guid: 3804176987b00c0448c84a9ccf9f03c2, type: 3}
-      propertyPath: projectile
-      value: 
-      objectReference: {fileID: 2830964268771592166, guid: 5b02b22c1a6f46f4cad12397f11fb4a5, type: 3}
-    - target: {fileID: 3863908894672042335, guid: 3804176987b00c0448c84a9ccf9f03c2, type: 3}
-      propertyPath: sightRange
-      value: 18
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -151,5 +151,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 10
   deliveryDamage: 15
-  speed: 1
+  speed: 2
   lifetime: 10
