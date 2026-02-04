@@ -1,10 +1,10 @@
 using UnityEngine;
 
-
 public class Projectile : MonoBehaviour
 {
     public float damage = 10f;
     public float deliveryDamage = 15f;
+    public float speed = 20f;
     public float lifetime = 5f;
 
     private void Start()
@@ -14,21 +14,35 @@ public class Projectile : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        // Check if hit player
-        StarterAssets.FirstPersonController player = collision.gameObject.GetComponent<StarterAssets.FirstPersonController>();
-        if (player != null)
+        // --------------------
+        // PLAYER HIT
+        // --------------------
+        if (collision.gameObject.CompareTag("Player"))
         {
-            player.TakeDamage(damage);
+            // Player HP
+            StarterAssets.FirstPersonController player =
+                collision.gameObject.GetComponent<StarterAssets.FirstPersonController>();
+
+            if (player != null)
+                player.TakeDamage(damage);
+
+            // Delivery HP (only if carrying package)
+            DeliverySystem delivery =
+                collision.gameObject.GetComponent<DeliverySystem>();
+
+            if (delivery != null && delivery.hasPackage)
+                delivery.TakeDamage(deliveryDamage);
+
+            Destroy(gameObject);
+            return;
         }
 
-        // Check if player has delivery package
-        DeliverySystem delivery = collision.gameObject.GetComponent<DeliverySystem>();
-        if (delivery != null && delivery.hasPackage)
+        // --------------------
+        // ENVIRONMENT HIT
+        // --------------------
+        if (!collision.collider.isTrigger)
         {
-            delivery.TakeDamage(deliveryDamage);
+            Destroy(gameObject);
         }
-
-        // Destroy projectile on impact
-        Destroy(gameObject);
     }
 }

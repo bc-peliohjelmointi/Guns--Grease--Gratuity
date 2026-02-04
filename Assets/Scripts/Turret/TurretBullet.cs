@@ -16,7 +16,7 @@ public class TurretBullet : MonoBehaviour
         transform.Translate(Vector3.forward * speed * Time.deltaTime);
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider other) 
     {
         // Check if the bullet hits the player
         if (other.CompareTag("Player"))

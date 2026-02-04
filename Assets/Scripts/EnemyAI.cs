@@ -24,6 +24,7 @@ public class EnemyAI : MonoBehaviour
     public float damageToDelivery = 15f;
     public GameObject projectile; // for projectile attacks
     public Transform attackPoint; // where projectiles spawn
+    public float aimHeight = 1.2f; // Aims at player body height
     private bool alreadyAttacked;
 
     [Header("Detection Ranges")]
@@ -127,56 +128,75 @@ public class EnemyAI : MonoBehaviour
 
     private void AttackPlayer()
     {
-        // Stop moving
         agent.SetDestination(transform.position);
 
-        // Face player
-        Vector3 direction = (player.position - transform.position).normalized;
-        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+        Vector3 targetPos = player.position + Vector3.up * aimHeight;
+        float distance = Vector3.Distance(transform.position, player.position);
 
-        if (!alreadyAttacked)
+        // Rotate toward player (Y only)
+        Vector3 direction = targetPos - transform.position;
+        direction.y = 0f;
+        direction.Normalize();
+
+        Quaternion lookRotation = Quaternion.LookRotation(direction);
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            lookRotation,
+            Time.deltaTime * 5f
+        );
+
+        if (alreadyAttacked)
+            return;
+
+        // --------------------
+        // MELEE
+        // --------------------
+        if (distance <= 2f)
         {
-            // MELEE ATTACK - Damage player and delivery directly
             if (playerController != null)
-            {
                 playerController.TakeDamage(damageToPlayer);
-                Debug.Log($"Enemy dealt {damageToPlayer} damage to player!");
-            }
 
             if (deliverySystem != null && deliverySystem.hasPackage)
-            {
                 deliverySystem.TakeDamage(damageToDelivery);
-                Debug.Log($"Enemy dealt {damageToDelivery} damage to delivery!");
+
+            alreadyAttacked = true;
+            Invoke(nameof(ResetAttack), timeBetweenAttacks);
+            return;
+        }
+
+        // --------------------
+        // RANGED
+        // --------------------
+        if (distance <= 8f && projectile != null)
+        {
+            Transform spawnPoint = attackPoint != null ? attackPoint : transform;
+            GameObject proj = Instantiate(projectile, spawnPoint.position, Quaternion.identity);
+
+            Rigidbody rb = proj.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                Vector3 shootDirection =
+                    (targetPos - spawnPoint.position).normalized;
+
+                Projectile projScript = proj.GetComponent<Projectile>();
+                float speed = projScript != null ? projScript.speed : 20f;
+
+                rb.AddForce(shootDirection * speed, ForceMode.Impulse);
             }
 
-            
-            if (projectile != null)
+            Projectile projectileScript = proj.GetComponent<Projectile>();
+            if (projectileScript != null)
             {
-                Transform spawnPoint = attackPoint != null ? attackPoint : transform;
-                GameObject proj = Instantiate(projectile, spawnPoint.position, Quaternion.identity);
-                
-                Rigidbody rb = proj.GetComponent<Rigidbody>();
-                if (rb != null)
-                {
-                    Vector3 shootDirection = (player.position - spawnPoint.position).normalized;
-                    rb.AddForce(shootDirection * 20f, ForceMode.Impulse);
-                }
-                
-                // Add damage component to projectile
-                Projectile projScript = proj.GetComponent<Projectile>();
-                if (projScript != null)
-                {
-                    projScript.damage = damageToPlayer;
-                    projScript.deliveryDamage = damageToDelivery;
-                }
+                projectileScript.damage = damageToPlayer;
+                projectileScript.deliveryDamage = damageToDelivery;
             }
-            
 
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
     }
+
+
 
     private void ResetAttack()
     {
