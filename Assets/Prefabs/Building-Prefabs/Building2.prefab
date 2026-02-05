@@ -7280,6 +7280,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Delivery Zone
       objectReference: {fileID: 0}
+    - target: {fileID: 1480528265308982137, guid: 620f18e0116b7ca4e87a8e5f5fb38969, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1589566360424450847, guid: 620f18e0116b7ca4e87a8e5f5fb38969, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -7318,6 +7322,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1589566360424450847, guid: 620f18e0116b7ca4e87a8e5f5fb38969, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5207681700663902509, guid: 620f18e0116b7ca4e87a8e5f5fb38969, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5793551131833329519, guid: 620f18e0116b7ca4e87a8e5f5fb38969, type: 3}
+      propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7823848515286575597, guid: 620f18e0116b7ca4e87a8e5f5fb38969, type: 3}

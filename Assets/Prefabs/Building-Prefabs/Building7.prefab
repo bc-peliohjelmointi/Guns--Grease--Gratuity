@@ -49814,7 +49814,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7713448610055034356}
-  - component: {fileID: 8718060858140465533}
+  - component: {fileID: 6654687442649069018}
   m_Layer: 0
   m_Name: Building7
   m_TagString: Untagged
@@ -49844,7 +49844,7 @@ Transform:
   - {fileID: 3230651123408891422}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!208 &8718060858140465533
+--- !u!208 &6654687442649069018
 NavMeshObstacle:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -49854,7 +49854,7 @@ NavMeshObstacle:
   m_Enabled: 1
   serializedVersion: 3
   m_Shape: 1
-  m_Extents: {x: 7, y: 17.5, z: 7}
+  m_Extents: {x: 6.5, y: 15, z: 6.5}
   m_MoveThreshold: 0.1
   m_Carve: 1
   m_CarveOnlyStationary: 1
@@ -50667,6 +50667,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Delivery Zone
       objectReference: {fileID: 0}
+    - target: {fileID: 1480528265308982137, guid: 620f18e0116b7ca4e87a8e5f5fb38969, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1589566360424450847, guid: 620f18e0116b7ca4e87a8e5f5fb38969, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.5
@@ -50709,6 +50713,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4495948629077818859, guid: 620f18e0116b7ca4e87a8e5f5fb38969, type: 3}
       propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5207681700663902509, guid: 620f18e0116b7ca4e87a8e5f5fb38969, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5793551131833329519, guid: 620f18e0116b7ca4e87a8e5f5fb38969, type: 3}
+      propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

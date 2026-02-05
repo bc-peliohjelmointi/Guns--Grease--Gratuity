@@ -45,9 +45,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a334dab347665494884b36313cfbad69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  turretPrefab: {fileID: 3187331741464151730, guid: edae7a26f83ce474eb418f7b44348713, type: 3}
+  turretPrefab: {fileID: 856375251735021655, guid: 3804176987b00c0448c84a9ccf9f03c2, type: 3}
   spawnRadius: 6.5
-  spawnChance: 0.35
+  spawnChance: 1
 --- !u!65 &5914885504364987831
 BoxCollider:
   m_ObjectHideFlags: 0

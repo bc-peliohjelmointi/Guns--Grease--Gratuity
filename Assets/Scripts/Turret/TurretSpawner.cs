@@ -22,7 +22,7 @@ public class TurretSpawner : MonoBehaviour
         if (roll > spawnChance)
             return; // No turrets spawn this time
 
-        int amountToSpawn = Random.Range(1, 5); // 1–4
+        int amountToSpawn = Random.Range(1, 3); // 1–4
 
         for (int i = 0; i < amountToSpawn; i++)
         {

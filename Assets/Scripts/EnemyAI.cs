@@ -14,7 +14,7 @@ public class EnemyAI : MonoBehaviour
     public float health = 100f;
 
     [Header("Patrolling")]
-    public float walkPointRange = 10f;
+    public float walkPointRange = 20f;
     private Vector3 walkPoint;
     private bool walkPointSet;
 
@@ -29,7 +29,7 @@ public class EnemyAI : MonoBehaviour
 
     [Header("Detection Ranges")]
     public float sightRange = 15f;
-    public float attackRange = 5f;
+    public float shootRange = 5f;
 
     private bool playerInSightRange;
     private bool playerInAttackRange;
@@ -71,7 +71,7 @@ public class EnemyAI : MonoBehaviour
 
         // Check detection ranges
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
-        playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
+        playerInAttackRange = Physics.CheckSphere(transform.position, shootRange, whatIsPlayer);
 
         // State machine
         if (!playerInSightRange && !playerInAttackRange)
@@ -94,13 +94,16 @@ public class EnemyAI : MonoBehaviour
         }
 
         // Check if reached walk point
-        Vector3 distanceToWalkPoint = transform.position - walkPoint;
-        if (distanceToWalkPoint.magnitude < 1f)
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        {
             walkPointSet = false;
+        }
     }
 
     private void SearchWalkPoint()
     {
+        walkPointRange = Random.Range(5, 20);
+
         // Generate random point around current position
         float randomX = Random.Range(-walkPointRange, walkPointRange);
         float randomZ = Random.Range(-walkPointRange, walkPointRange);
@@ -111,9 +114,10 @@ public class EnemyAI : MonoBehaviour
             transform.position.z + randomZ
         );
 
+
         // Try to find point on NavMesh instead of using ground raycast
         UnityEngine.AI.NavMeshHit hit;
-        if (UnityEngine.AI.NavMesh.SamplePosition(walkPoint, out hit, walkPointRange, UnityEngine.AI.NavMesh.AllAreas))
+        if (UnityEngine.AI.NavMesh.SamplePosition(walkPoint, out hit, walkPointRange, UnityEngine.AI.NavMesh.AllAreas) && Vector3.Distance(transform.position, hit.position) > 5f)
         {
             walkPoint = hit.position;
             walkPointSet = true;
@@ -167,7 +171,7 @@ public class EnemyAI : MonoBehaviour
         // --------------------
         // RANGED
         // --------------------
-        if (distance <= 8f && projectile != null)
+        if (distance <= shootRange + 1 && projectile != null)
         {
             Transform spawnPoint = attackPoint != null ? attackPoint : transform;
             GameObject proj = Instantiate(projectile, spawnPoint.position, Quaternion.identity);
@@ -220,7 +224,7 @@ public class EnemyAI : MonoBehaviour
     {
         // Attack range (red)
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
+        Gizmos.DrawWireSphere(transform.position, shootRange);
 
         // Sight range (yellow)
         Gizmos.color = Color.yellow;
