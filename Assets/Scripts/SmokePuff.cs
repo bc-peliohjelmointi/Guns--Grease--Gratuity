@@ -1,10 +1,14 @@
 using UnityEngine;
+using System.Collections;
 
 public class SmokePuff : MonoBehaviour
 {
     public float lifetime = 0.4f;
     public float startScale = 0.1f;
     public float endScale = 2f;
+
+    public AudioSource audioSource;
+    public AudioClip deathSound;
 
     private float timer = 0f;
     private Material mat;
@@ -16,6 +20,18 @@ public class SmokePuff : MonoBehaviour
 
         mat = GetComponent<MeshRenderer>().material;
         startColor = mat.color;
+    }
+
+    private void Awake()
+    {
+        audioSource.PlayOneShot(deathSound);
+    }
+
+    private IEnumerator soundAndDestroy()   // Waits for the sound to finish before destroying the gameobject
+    {
+        GetComponent<MeshRenderer>().enabled = false;
+        yield return new WaitForSeconds(2f);
+        Destroy(gameObject);
     }
 
     void Update()
@@ -35,6 +51,6 @@ public class SmokePuff : MonoBehaviour
 
         // Destroy when done
         if (timer >= lifetime)
-            Destroy(gameObject);
+            StartCoroutine(soundAndDestroy());
     }
 }

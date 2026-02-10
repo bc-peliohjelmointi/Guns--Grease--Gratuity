@@ -6514,29 +6514,17 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 588604331}
-    - target: {fileID: 5229224701864899483, guid: 3804176987b00c0448c84a9ccf9f03c2, type: 3}
-      propertyPath: m_Type
+    - target: {fileID: 3863908894672042335, guid: 3804176987b00c0448c84a9ccf9f03c2, type: 3}
+      propertyPath: deathSound
+      value: 
+      objectReference: {fileID: 8300000, guid: ebdee644d8a2cfe47bff40e498975b0d, type: 3}
+    - target: {fileID: 3863908894672042335, guid: 3804176987b00c0448c84a9ccf9f03c2, type: 3}
+      propertyPath: visionMask.m_Bits
+      value: 65
+      objectReference: {fileID: 0}
+    - target: {fileID: 3863908894672042335, guid: 3804176987b00c0448c84a9ccf9f03c2, type: 3}
+      propertyPath: repositionCooldown
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5229224701864899483, guid: 3804176987b00c0448c84a9ccf9f03c2, type: 3}
-      propertyPath: m_Intensity
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 5229224701864899483, guid: 3804176987b00c0448c84a9ccf9f03c2, type: 3}
-      propertyPath: m_SpotAngle
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 5229224701864899483, guid: 3804176987b00c0448c84a9ccf9f03c2, type: 3}
-      propertyPath: m_Lightmapping
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 5229224701864899483, guid: 3804176987b00c0448c84a9ccf9f03c2, type: 3}
-      propertyPath: m_InnerSpotAngle
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5229224701864899483, guid: 3804176987b00c0448c84a9ccf9f03c2, type: 3}
-      propertyPath: m_BounceIntensity
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

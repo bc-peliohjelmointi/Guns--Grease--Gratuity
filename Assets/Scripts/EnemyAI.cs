@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
 
 public class EnemyAI : MonoBehaviour
 {
@@ -35,6 +36,26 @@ public class EnemyAI : MonoBehaviour
     private bool playerInAttackRange;
     private StarterAssets.FirstPersonController playerController;
     private DeliverySystem deliverySystem;
+
+    [Header("Vision")]
+    public LayerMask visionMask; // Walls + Player
+
+    [Header("Repositioning")]
+    public float repositionRadius = 6f;
+    public float repositionCooldown = 2f;
+
+    private float lastRepositionTime;
+
+
+    [Header("Sound")]
+    public AudioSource audioSource;
+
+    public AudioClip shootSound;
+    public AudioClip hitSound;
+    public AudioClip deathSound;
+
+    [Header("Effects")]
+    public GameObject deathSmokeEffect;
 
     private void Awake()
     {
@@ -137,6 +158,15 @@ public class EnemyAI : MonoBehaviour
         Vector3 targetPos = player.position + Vector3.up * aimHeight;
         float distance = Vector3.Distance(transform.position, player.position);
 
+        bool hasLOS = HasLineOfSight(targetPos);
+
+        // Reposition if line of sight blocked
+        if (!hasLOS)
+        {
+            Reposition();
+            return;
+        }
+
         // Rotate toward player (Y only)
         Vector3 direction = targetPos - transform.position;
         direction.y = 0f;
@@ -173,6 +203,9 @@ public class EnemyAI : MonoBehaviour
         // --------------------
         if (distance <= shootRange + 1 && projectile != null)
         {
+            if (!HasLineOfSight(targetPos))
+                return;
+
             Transform spawnPoint = attackPoint != null ? attackPoint : transform;
             GameObject proj = Instantiate(projectile, spawnPoint.position, Quaternion.identity);
 
@@ -186,6 +219,7 @@ public class EnemyAI : MonoBehaviour
                 float speed = projScript != null ? projScript.speed : 20f;
 
                 rb.AddForce(shootDirection * speed, ForceMode.Impulse);
+                audioSource.PlayOneShot(shootSound);
             }
 
             Projectile projectileScript = proj.GetComponent<Projectile>();
@@ -200,7 +234,61 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    bool HasLineOfSight(Vector3 targetPos)
+    {
+        Vector3 origin = transform.position + Vector3.up * 1.2f; // enemy eye height
+        Vector3 dir = (targetPos - origin).normalized;
+        float distance = Vector3.Distance(origin, targetPos);
 
+        if (Physics.Raycast(origin, dir, out RaycastHit hit, distance, visionMask))
+        {
+            return hit.transform.CompareTag("Player");
+        }
+
+        return false;
+    }
+
+    bool HasLineOfSightFrom(Vector3 from, Vector3 targetPos)
+    {
+        Vector3 origin = from + Vector3.up * 1.2f;
+        Vector3 dir = (targetPos - origin).normalized;
+        float dist = Vector3.Distance(origin, targetPos);
+
+        if (Physics.Raycast(origin, dir, out RaycastHit hit, dist, visionMask))
+        {
+            return hit.transform.CompareTag("Player");
+        }
+
+        return false;
+    }
+
+
+    void Reposition()
+    {
+        if (Time.time < lastRepositionTime + repositionCooldown)
+            return;
+
+        lastRepositionTime = Time.time;
+
+        for (int i = 0; i < 6; i++) // try multiple spots
+        {
+            Vector3 randomDir = Random.insideUnitSphere * repositionRadius;
+            randomDir.y = 0;
+
+            Vector3 candidate = player.position + randomDir;
+
+            if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+            {
+                Vector3 targetPos = player.position + Vector3.up * aimHeight;
+
+                if (HasLineOfSightFrom(hit.position, targetPos))
+                {
+                    agent.SetDestination(hit.position);
+                    return;
+                }
+            }
+        }
+    }
 
     private void ResetAttack()
     {
@@ -210,13 +298,20 @@ public class EnemyAI : MonoBehaviour
     public void TakeDamage(float damage)
     {
         health -= damage;
+        audioSource.PlayOneShot(hitSound);
 
         if (health <= 0)
-            DestroyEnemy();
+            StartCoroutine(EnemyDie());
+            
     }
 
-    private void DestroyEnemy()
+    private IEnumerator EnemyDie()
     {
+        
+        Instantiate(deathSmokeEffect, transform.position, Quaternion.identity);
+
+        yield return new WaitForSeconds(0.1f);
+
         Destroy(gameObject);
     }
 
