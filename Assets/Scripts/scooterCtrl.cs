@@ -142,6 +142,7 @@ public class scooterCtrl : MonoBehaviour
         if (!powerOn || !canControl) return;
         if (currentBattery <= 0f) return;
 
+        // drain speed / converts drain per second to drain per minute
         float drainRate = Mathf.Abs(currentSpeed) > 1f ? movingDrainPM : idleDrainPM;
 
         float drainPerSecond = drainRate / 60f;
@@ -155,6 +156,7 @@ public class scooterCtrl : MonoBehaviour
         }
     }
 
+    // battery charge from previous battery amount
     public void ChargeBattery(float amount)
     {
         currentBattery += amount;

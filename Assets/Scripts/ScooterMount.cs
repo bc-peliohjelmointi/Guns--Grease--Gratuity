@@ -127,7 +127,7 @@ public class ScooterMount : MonoBehaviour
         Cursor.visible = true;
     }
 
-    // 
+    // Scooter power based on if mounted and if key is pressed
     private void HandlePowerInput()
     {
         if (!isMounted || scooterControl == null) return;
