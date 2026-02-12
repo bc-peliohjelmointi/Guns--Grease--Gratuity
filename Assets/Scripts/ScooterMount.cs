@@ -11,9 +11,14 @@ public class ScooterMount : MonoBehaviour
     public TextMeshProUGUI statusText;
 
     [Header("Settings")]
+    // mount
     public float mountDistance = 2f;
     public Key mountKey = Key.F;
+    // power
     public Key powerKey = Key.E;
+    // battery
+    public float chargeRange = 3.0f;
+    public Key chargeKey = Key.Y;
 
     private CharacterController playerController;
     private FirstPersonController fpsController;
@@ -23,6 +28,8 @@ public class ScooterMount : MonoBehaviour
     private Quaternion cameraOriginalRotation;
 
     [HideInInspector] public bool isMounted = false;
+    [HideInInspector] private bool hasBatteryPack = false;
+    [HideInInspector] private float storedChargeAmount = 0f;
 
     private void Start()
     {
@@ -42,6 +49,7 @@ public class ScooterMount : MonoBehaviour
         HandleMountInput();
         HandlePowerInput();
         UpdateStatusText();
+        HandleScooterCharging();
     }
 
     private void HandleMountInput()
@@ -119,12 +127,50 @@ public class ScooterMount : MonoBehaviour
         Cursor.visible = true;
     }
 
+    // 
     private void HandlePowerInput()
     {
         if (!isMounted || scooterControl == null) return;
 
         if (Keyboard.current.eKey.wasPressedThisFrame)
             scooterControl.powerOn = !scooterControl.powerOn;
+    }
+
+    // battery pack collection
+    public void GetBattery(float amount)
+    {
+        hasBatteryPack = true;
+        storedChargeAmount = amount;
+
+        if (statusText.text != null)
+            statusText.text = "Battery pack collected";
+    }
+
+    public bool HasBattery()
+    {
+        return hasBatteryPack;
+    }
+
+    // Scooter charge control and battery pack usage
+    private void HandleScooterCharging()
+    {
+        if (scooterControl == null) return;
+
+        float distance = Vector3.Distance(transform.position, scooter.position);
+
+        if (!isMounted && hasBatteryPack && distance <= chargeRange)
+        {
+            if (statusText != null)
+                statusText.text = "[Y] Charge Scooter";
+
+            if (Keyboard.current[chargeKey].wasPressedThisFrame)
+            {
+                scooterControl.ChargeBattery(storedChargeAmount);
+
+                hasBatteryPack = false;
+                storedChargeAmount = 0f;
+            }
+        }
     }
 
     private void UpdateStatusText()

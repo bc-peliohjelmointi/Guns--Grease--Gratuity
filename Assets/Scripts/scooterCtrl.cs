@@ -54,6 +54,7 @@ public class scooterCtrl : MonoBehaviour
 
         HandleMovement();
         HandleTurningAndLean();
+        DrainBattery();
     }
 
     private void HandleMovement()
@@ -139,6 +140,7 @@ public class scooterCtrl : MonoBehaviour
     private void DrainBattery()
     {
         if (!powerOn || !canControl) return;
+        if (currentBattery <= 0f) return;
 
         float drainRate = Mathf.Abs(currentSpeed) > 1f ? movingDrainPM : idleDrainPM;
 
@@ -153,7 +155,7 @@ public class scooterCtrl : MonoBehaviour
         }
     }
 
-    private void ChargeBattery(float amount)
+    public void ChargeBattery(float amount)
     {
         currentBattery += amount;
         currentBattery = Mathf.Clamp(currentBattery, 0f, maxBattery);
