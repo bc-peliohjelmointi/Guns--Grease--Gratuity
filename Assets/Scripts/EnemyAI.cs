@@ -19,6 +19,11 @@ public class EnemyAI : MonoBehaviour
     private Vector3 walkPoint;
     private bool walkPointSet;
 
+    [Header("Movement Speeds")]
+    public float patrolSpeed = 2.5f;
+    public float chaseSpeed = 4.5f;
+    public float strafeSpeed = 3.5f;
+
     [Header("Attack Settings")]
     public float timeBetweenAttacks = 1.5f;
     public float damageToPlayer = 10f;
@@ -27,6 +32,11 @@ public class EnemyAI : MonoBehaviour
     public Transform attackPoint; // where projectiles spawn
     public float aimHeight = 1.2f; // Aims at player body height
     private bool alreadyAttacked;
+
+    [Header("Melee Indicator")]
+    public GameObject meleeIndicator;
+    public float meleeIndicatorDuration = 0.4f;
+    public float flickerInterval = 0.08f;
 
     [Header("Detection Ranges")]
     public float sightRange = 15f;
@@ -43,9 +53,27 @@ public class EnemyAI : MonoBehaviour
     [Header("Repositioning")]
     public float repositionRadius = 6f;
     public float repositionCooldown = 2f;
+    public float wallOffset = 1f;
 
     private float lastRepositionTime;
 
+    // [Header("Strafing")]
+    // public float strafeDistance = 2f;
+    // public float strafeSpeed = 3.5f;
+    // public float strafeCooldown = 1.5f;
+
+    [Header("Strafing")]
+    public Vector2 strafeIntervalRange = new Vector2(2f, 5f);
+
+    private float nextStrafeTime;
+    private int strafeSide = 1; // 1 = right, -1 = left
+
+    [Header("Model Rotation")]
+    public Transform upperBody;   // gun / torso
+    public Transform lowerBody;   // wheels / base
+
+    public float bodyTurnSpeed = 8f;
+    public float baseTurnSpeed = 6f;
 
     [Header("Sound")]
     public AudioSource audioSource;
@@ -90,6 +118,11 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
+        if (playerInSightRange)
+        {
+            RotateUpperBodyTowardPlayer();
+        }
+
         // Check detection ranges
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
         playerInAttackRange = Physics.CheckSphere(transform.position, shootRange, whatIsPlayer);
@@ -105,6 +138,8 @@ public class EnemyAI : MonoBehaviour
 
     private void Patrolling()
     {
+        agent.speed = patrolSpeed;
+
         if (!walkPointSet)
             SearchWalkPoint();
 
@@ -148,13 +183,12 @@ public class EnemyAI : MonoBehaviour
 
     private void ChasePlayer()
     {
+        agent.speed = chaseSpeed;
         agent.SetDestination(player.position);
     }
 
     private void AttackPlayer()
     {
-        agent.SetDestination(transform.position);
-
         Vector3 targetPos = player.position + Vector3.up * aimHeight;
         float distance = Vector3.Distance(transform.position, player.position);
 
@@ -163,8 +197,14 @@ public class EnemyAI : MonoBehaviour
         // Reposition if line of sight blocked
         if (!hasLOS)
         {
+            
             Reposition();
             return;
+        }
+
+        if (hasLOS)
+        {
+            Strafe();
         }
 
         // Rotate toward player (Y only)
@@ -172,12 +212,20 @@ public class EnemyAI : MonoBehaviour
         direction.y = 0f;
         direction.Normalize();
 
-        Quaternion lookRotation = Quaternion.LookRotation(direction);
-        transform.rotation = Quaternion.Slerp(
-            transform.rotation,
-            lookRotation,
-            Time.deltaTime * 5f
-        );
+        // Rotate LOWER BODY toward movement direction
+        if (agent.velocity.sqrMagnitude > 0.1f)
+        {
+            Vector3 moveDir = agent.velocity.normalized;
+            moveDir.y = 0f;
+
+            Quaternion baseRot = Quaternion.LookRotation(moveDir);
+            lowerBody.rotation = Quaternion.Slerp(
+                lowerBody.rotation,
+                baseRot,
+                Time.deltaTime * baseTurnSpeed
+            );
+        }
+
 
         if (alreadyAttacked)
             return;
@@ -192,6 +240,8 @@ public class EnemyAI : MonoBehaviour
 
             if (deliverySystem != null && deliverySystem.hasPackage)
                 deliverySystem.TakeDamage(damageToDelivery);
+
+            StartCoroutine(MeleeIndicatorFlicker());
 
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
@@ -234,6 +284,28 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    IEnumerator MeleeIndicatorFlicker()
+    {
+        if (meleeIndicator == null)
+            yield break;
+
+        meleeIndicator.SetActive(true);
+
+        float timer = 0f;
+        bool state = true;
+
+        while (timer < meleeIndicatorDuration)
+        {
+            state = !state;
+            meleeIndicator.SetActive(state);
+
+            yield return new WaitForSeconds(flickerInterval);
+            timer += flickerInterval;
+        }
+
+        meleeIndicator.SetActive(false);
+    }
+
     bool HasLineOfSight(Vector3 targetPos)
     {
         Vector3 origin = transform.position + Vector3.up * 1.2f; // enemy eye height
@@ -270,25 +342,107 @@ public class EnemyAI : MonoBehaviour
 
         lastRepositionTime = Time.time;
 
-        for (int i = 0; i < 6; i++) // try multiple spots
+        Vector3 playerAimPos = player.position + Vector3.up * aimHeight;
+
+        for (int i = 0; i < 8; i++)
         {
             Vector3 randomDir = Random.insideUnitSphere * repositionRadius;
-            randomDir.y = 0;
+            randomDir.y = 0f;
 
             Vector3 candidate = player.position + randomDir;
 
-            if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, 2f, NavMesh.AllAreas))
-            {
-                Vector3 targetPos = player.position + Vector3.up * aimHeight;
+            if (!NavMesh.SamplePosition(candidate, out NavMeshHit navHit, 2f, NavMesh.AllAreas))
+                continue;
 
-                if (HasLineOfSightFrom(hit.position, targetPos))
+            Vector3 rayOrigin = navHit.position + Vector3.up * 1.2f;
+            Vector3 dirToPlayer = (playerAimPos - rayOrigin).normalized;
+            float distance = Vector3.Distance(rayOrigin, playerAimPos);
+
+            // Raycast toward player
+            if (Physics.Raycast(rayOrigin, dirToPlayer, out RaycastHit hit, distance, visionMask))
+            {
+                // Repositions the enemy away from a wall
+                if (!hit.transform.CompareTag("Player"))
                 {
-                    agent.SetDestination(hit.position);
+                    Vector3 offsetPos = hit.point + hit.normal * wallOffset;
+
+                    if (NavMesh.SamplePosition(offsetPos, out NavMeshHit offsetHit, 1.5f, NavMesh.AllAreas))
+                    {
+                        // Final LOS check
+                        if (HasLineOfSightFrom(offsetHit.position, playerAimPos))
+                        {
+                            agent.SetDestination(offsetHit.position);
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    // Direct LOS safe spot
+                    agent.SetDestination(navHit.position);
                     return;
                 }
             }
         }
     }
+
+    void Strafe()
+    {
+        if (Time.time < nextStrafeTime)
+            return;
+
+        // Only strafe if LOS is clear
+        Vector3 targetPos = player.position + Vector3.up * aimHeight;
+        if (!HasLineOfSight(targetPos))
+            return;
+
+        float nextInterval = Random.Range(2f, 5f);
+        nextStrafeTime = Time.time + nextInterval;
+
+        // 33% chance to keep same direction
+        if (Random.value > 0.33f)
+            strafeSide *= -1;
+
+        agent.speed = strafeSpeed;
+
+        Vector3 fromPlayer = (transform.position - player.position).normalized;
+        fromPlayer.y = 0f;
+
+        Vector3 sideDir =
+            Quaternion.Euler(0f, 90f * strafeSide, 0f) * fromPlayer;
+
+        Vector3 desiredPos =
+            player.position + sideDir * shootRange;
+
+        if (NavMesh.SamplePosition(desiredPos, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+        {
+            agent.SetDestination(hit.position);
+        }
+
+        Debug.DrawLine(transform.position, desiredPos, Color.green, 1f);
+    }
+
+
+    void RotateUpperBodyTowardPlayer()
+    {
+        if (upperBody == null || player == null)
+            return;
+
+        Vector3 targetPos = player.position + Vector3.up * aimHeight;
+        Vector3 dir = targetPos - upperBody.position;
+        dir.y = 0f;
+
+        if (dir.sqrMagnitude < 0.001f)
+            return;
+
+        Quaternion targetRot = Quaternion.LookRotation(dir);
+        upperBody.rotation = Quaternion.Slerp(
+            upperBody.rotation,
+            targetRot,
+            Time.deltaTime * bodyTurnSpeed
+        );
+    }
+
 
     private void ResetAttack()
     {
