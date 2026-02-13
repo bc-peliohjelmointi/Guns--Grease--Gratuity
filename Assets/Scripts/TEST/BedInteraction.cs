@@ -32,7 +32,7 @@ public class BedInteraction : MonoBehaviour
 
     void Sleep()
     {
-        Debug.Log("🛏️ Player went to bed.");
+        Debug.Log("Player went to bed.");
         if (sleepPrompt != null)
             sleepPrompt.SetActive(false);
 

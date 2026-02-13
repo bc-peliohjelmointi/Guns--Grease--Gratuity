@@ -13,7 +13,9 @@ namespace StarterAssets
 		public bool jump;
 		public bool sprint;
 
-		[Header("Movement Settings")]
+        public bool interact;	// Lisätty
+
+        [Header("Movement Settings")]
 		public bool analogMovement;
 
 		[Header("Mouse Cursor Settings")]
@@ -43,10 +45,16 @@ namespace StarterAssets
 		{
 			SprintInput(value.isPressed);
 		}
+
+        public void OnInteract(InputValue value)
+        {
+            interact = value.isPressed;
+        }
+
 #endif
 
 
-		public void MoveInput(Vector2 newMoveDirection)
+        public void MoveInput(Vector2 newMoveDirection)
 		{
 			move = newMoveDirection;
 		} 

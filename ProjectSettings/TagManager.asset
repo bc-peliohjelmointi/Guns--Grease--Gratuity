@@ -17,6 +17,8 @@ TagManager:
   - ExitPoint
   - Turret
   - TurretSpawnArea
+  - Debree
+  - DebreeSpawnArea
   layers:
   - Default
   - TransparentFX
@@ -28,7 +30,7 @@ TagManager:
   - Door
   - whatIsGround
   - whatIsPlayer
-  - 
+  - Debree
   - 
   - 
   - 
