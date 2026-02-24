@@ -409,6 +409,7 @@ MonoBehaviour:
   phoneUI: {fileID: 0}
   itemSpawner: {fileID: 0}
   turretActivator: {fileID: 0}
+  debreeSpawner: {fileID: 0}
   playerAtExitPoint: 0
   hasActiveOrder: 0
   currentOrderName: 
@@ -563,7 +564,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerCamera: {fileID: 5844581374230767752}
-  interactDistance: 1
+  interactDistance: 1.5
   holdTime: 3
   interactPrompt: {fileID: 0}
   progressBar: {fileID: 0}

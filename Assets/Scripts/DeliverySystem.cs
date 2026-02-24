@@ -15,6 +15,7 @@ public class DeliverySystem : MonoBehaviour
     public PhoneUI phoneUI;
     public ItemSpawner itemSpawner;
     public TurretActivator turretActivator;
+    public DebreeSpawner debreeSpawner;
     [HideInInspector] public bool playerAtExitPoint = false;
 
     // Current order data
@@ -435,6 +436,7 @@ public class DeliverySystem : MonoBehaviour
         yield return StartCoroutine(FadeOut());
 
         turretActivator.SpawnTurrets();
+        debreeSpawner.SpawnDebree();
 
         teleportManager.TeleportToStairwell(transform);
 
@@ -455,6 +457,7 @@ public class DeliverySystem : MonoBehaviour
             yield return StartCoroutine(FadeOut());
 
             turretActivator.DestroyTurrets();
+            debreeSpawner.DestroyDebree();
 
             teleportManager.TeleportToDeliveryZone(transform);
             teleportManager.isInStairwell = false;

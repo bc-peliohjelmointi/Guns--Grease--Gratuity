@@ -15,7 +15,7 @@ public class DebreeInteractor : MonoBehaviour
     public UnityEngine.UI.Slider progressBar;
 
     private GameObject currentDebree;
-    private float holdTimer;
+    private DebreeProgress currentProgress;
 
     void Update()
     {
@@ -25,11 +25,7 @@ public class DebreeInteractor : MonoBehaviour
         if (Physics.Raycast(ray, out hit, interactDistance) &&
             hit.collider.CompareTag("Debree"))
         {
-            currentDebree = hit.collider.gameObject;
-
-            if (interactPrompt != null)
-                interactPrompt.SetActive(true);
-
+            SetTarget(hit.collider.gameObject);
             HandleHoldInput();
         }
         else
@@ -38,32 +34,41 @@ public class DebreeInteractor : MonoBehaviour
         }
     }
 
+    void SetTarget(GameObject debree)
+    {
+        if (currentDebree == debree)
+            return;
+
+        currentDebree = debree;
+        currentProgress = debree.GetComponent<DebreeProgress>();
+
+        if (interactPrompt != null)
+            interactPrompt.SetActive(true);
+
+        if (progressBar != null && currentProgress != null)
+        {
+            progressBar.gameObject.SetActive(true);
+            progressBar.value = currentProgress.progress;
+        }
+    }
+
     void HandleHoldInput()
     {
+        if (currentProgress == null)
+            return;
+
         if (Keyboard.current.eKey.isPressed)
         {
-            holdTimer += Time.deltaTime;
+            currentProgress.progress += Time.deltaTime / holdTime;
+            currentProgress.progress = Mathf.Clamp01(currentProgress.progress);
 
             if (progressBar != null)
-            {
-                progressBar.gameObject.SetActive(true);
-                progressBar.value = holdTimer / holdTime;
-            }
+                progressBar.value = currentProgress.progress;
 
-            if (holdTimer >= holdTime)
+            if (currentProgress.progress >= 1f)
             {
                 Destroy(currentDebree);
                 ClearTarget();
-            }
-        }
-        else
-        {
-            holdTimer = 0f;
-
-            if (progressBar != null)
-            {
-                progressBar.value = 0f;
-                progressBar.gameObject.SetActive(false);
             }
         }
     }
@@ -71,7 +76,7 @@ public class DebreeInteractor : MonoBehaviour
     void ClearTarget()
     {
         currentDebree = null;
-        holdTimer = 0f;
+        currentProgress = null;
 
         if (interactPrompt != null)
             interactPrompt.SetActive(false);

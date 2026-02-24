@@ -19,11 +19,19 @@ public class DebreeSpawner : MonoBehaviour
     void Start()
     {
         debreeSpawnAreas = GameObject.FindGameObjectsWithTag("DebreeSpawnArea");
-        SpawnDebree();
+        // SpawnDebree();
     }
 
     public void SpawnDebree()
     {
+        debreeSpawnAreas = GameObject.FindGameObjectsWithTag("DebreeSpawnArea");
+
+        if (debreeSpawnAreas.Length == 0)
+        {
+            Debug.LogWarning("DebreeSpawner: No DebreeSpawnArea objects found!");
+            return;
+        }
+
         if (spawnOnlyOnce && hasSpawned)
             return;
 
@@ -33,37 +41,33 @@ public class DebreeSpawner : MonoBehaviour
             return;
         }
 
-        DestroyDebree(); // safety
+        DestroyDebree();
 
         foreach (GameObject spawnArea in debreeSpawnAreas)
         {
             if (!spawnArea)
                 continue;
 
-            // Roll spawn chance
             if (Random.value > debreeSpawnChance)
                 continue;
 
             BoxCollider box = spawnArea.GetComponent<BoxCollider>();
             if (!box)
-            {
-                Debug.LogWarning($"{spawnArea.name} has no BoxCollider!");
                 continue;
-            }
 
             Vector3 spawnPos = GetRandomZInBox(box);
 
             GameObject debree = Instantiate(
                 debreePrefab,
                 spawnPos,
-                Quaternion.Euler(0f, Random.Range(0f, 0f), 0f)
+                Quaternion.identity
             );
 
             spawnedDebree.Add(debree);
         }
 
         hasSpawned = true;
-        Debug.Log("Debree spawned!");
+        Debug.Log($"Debree spawned: {spawnedDebree.Count}");
     }
 
     public void DestroyDebree()
