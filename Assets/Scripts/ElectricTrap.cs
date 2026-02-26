@@ -4,32 +4,35 @@ using System.Collections;
 public class ElectricTrap : MonoBehaviour
 {
     [Header("Damage Settings")]
-    public float damagePerSecond = 20f; // Continuous damage while standing on it
-    public float damageToPlayer = 15f; // Per tick
-    public float damageToDelivery = 20f; // Per tick
-    public float damageTickRate = 0.5f; // How often damage is applied (seconds)
+    public float damageToPlayer = 15f;
+    public float damageToDelivery = 20f;
+    public float damageTickRate = 0.5f;
 
     [Header("Electric Pattern")]
-    public float onDuration = 2f; // How long electricity is ON
-    public float offDuration = 2f; // How long electricity is OFF
-    public float startDelay = 0f; // Delay before first activation (for syncing multiple traps)
-    public bool startActive = false; // Start with electricity on?
+    public float onDuration = 2f;
+    public float offDuration = 2f;
+    public float startDelay = 0f;
+    public bool startActive = false;
 
     [Header("Visual Effects")]
-    public Material electricMaterial; // Material when active
-    public Material normalMaterial; // Material when inactive
-    public GameObject electricEffect; // Particle effect (lightning, sparks, etc.)
+    public Material electricMaterial;
+    public Material normalMaterial;
+    public GameObject electricEffect;
     public Color activeColor = Color.cyan;
     public Color inactiveColor = Color.gray;
 
     [Header("Audio")]
     public AudioSource audioSource;
-    public AudioClip electricSound; // Continuous buzzing sound
-    public AudioClip zapSound; // Sound when player gets zapped
+    public AudioClip electricSound;
+    public AudioClip zapSound;
 
     [Header("Components")]
-    public Renderer floorRenderer; // The visual floor mesh
-    public Light floorLight; // Optional light that pulses
+    public Renderer floorRenderer;
+    public Light floorLight;
+
+    [Header("Detection (Leave at default)")]
+    public float detectionRadius = 5f;
+    public float detectionHeight = 2f;
 
     private bool isActive = false;
     private bool playerOnFloor = false;
@@ -39,11 +42,11 @@ public class ElectricTrap : MonoBehaviour
 
     private void Start()
     {
-        // Auto-find renderer if not assigned
+        Debug.Log("ElectricFloor: START called!");
+
         if (floorRenderer == null)
             floorRenderer = GetComponent<Renderer>();
 
-        // Auto-add audio source if needed
         if (audioSource == null && (electricSound != null || zapSound != null))
         {
             audioSource = gameObject.AddComponent<AudioSource>();
@@ -51,39 +54,117 @@ public class ElectricTrap : MonoBehaviour
             audioSource.playOnAwake = false;
         }
 
-        // Set initial state
         isActive = startActive;
         UpdateVisuals();
 
-        // Start the on/off cycle
         StartCoroutine(ElectricCycle());
     }
 
-    // Main electric on/off cycle
+    private void Update()
+    {
+        // ALWAYS check for player nearby
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+
+        if (player == null)
+        {
+            Debug.LogWarning("ElectricFloor: No player found with 'Player' tag!");
+            return;
+        }
+
+        float distance = Vector3.Distance(transform.position, player.transform.position);
+        float yDiff = Mathf.Abs(player.transform.position.y - transform.position.y);
+
+        // Debug EVERY frame
+        Debug.Log($"ElectricFloor Update: Distance={distance:F2}, YDiff={yDiff:F2}, PlayerOnFloor={playerOnFloor}, IsActive={isActive}");
+
+        // Check if player is on floor
+        bool shouldBeOnFloor = (distance < detectionRadius && yDiff < detectionHeight);
+
+        if (shouldBeOnFloor && !playerOnFloor)
+        {
+            // Player just stepped on floor
+            Debug.Log("ElectricFloor: PLAYER STEPPED ON FLOOR!");
+            playerOnFloor = true;
+            playerController = player.GetComponent<StarterAssets.FirstPersonController>();
+            deliverySystem = player.GetComponent<DeliverySystem>();
+
+            if (playerController == null)
+                Debug.LogError("ElectricFloor: FirstPersonController component NOT FOUND!");
+            else
+                Debug.Log("ElectricFloor: FirstPersonController found!");
+
+            // Start damaging if active
+            if (isActive)
+            {
+                Debug.Log("ElectricFloor: Starting damage (floor is active)");
+                StartDamaging();
+            }
+        }
+        else if (!shouldBeOnFloor && playerOnFloor)
+        {
+            // Player left floor
+            Debug.Log("ElectricFloor: Player LEFT floor");
+            playerOnFloor = false;
+            StopDamaging();
+        }
+        else if (shouldBeOnFloor && playerOnFloor && isActive && damageCoroutine == null)
+        {
+            // Floor became active while player was standing
+            Debug.Log("ElectricFloor: Floor activated while player standing");
+            StartDamaging();
+        }
+        else if (!isActive && damageCoroutine != null)
+        {
+            // Floor deactivated
+            Debug.Log("ElectricFloor: Floor deactivated, stopping damage");
+            StopDamaging();
+        }
+    }
+
+    private void StartDamaging()
+    {
+        if (damageCoroutine != null)
+            StopCoroutine(damageCoroutine);
+        damageCoroutine = StartCoroutine(DamagePlayer());
+    }
+
+    private void StopDamaging()
+    {
+        if (damageCoroutine != null)
+        {
+            StopCoroutine(damageCoroutine);
+            damageCoroutine = null;
+        }
+    }
+
     private IEnumerator ElectricCycle()
     {
-        // Initial delay
         if (startDelay > 0)
+        {
+            Debug.Log($"ElectricFloor: Waiting {startDelay}s before cycle");
             yield return new WaitForSeconds(startDelay);
+        }
+
+        Debug.Log("ElectricFloor: Starting ON/OFF cycle");
 
         while (true)
         {
             // Turn ON
             isActive = true;
             UpdateVisuals();
+            Debug.Log($"ElectricFloor: Turned ON (duration {onDuration}s)");
             yield return new WaitForSeconds(onDuration);
 
             // Turn OFF
             isActive = false;
             UpdateVisuals();
+            Debug.Log($"ElectricFloor: Turned OFF (duration {offDuration}s)");
             yield return new WaitForSeconds(offDuration);
         }
     }
 
-    // Update visual and audio feedback
     private void UpdateVisuals()
     {
-        // Update material
         if (floorRenderer != null)
         {
             if (electricMaterial != null && normalMaterial != null)
@@ -92,11 +173,9 @@ public class ElectricTrap : MonoBehaviour
             }
             else
             {
-                // Use color tinting if no materials assigned
                 floorRenderer.material.color = isActive ? activeColor : inactiveColor;
             }
 
-            // Make it glow when active
             if (isActive)
             {
                 floorRenderer.material.EnableKeyword("_EMISSION");
@@ -108,23 +187,17 @@ public class ElectricTrap : MonoBehaviour
             }
         }
 
-        // Update particle effect
         if (electricEffect != null)
         {
-            if (isActive && !electricEffect.activeSelf)
-                electricEffect.SetActive(true);
-            else if (!isActive && electricEffect.activeSelf)
-                electricEffect.SetActive(false);
+            electricEffect.SetActive(isActive);
         }
 
-        // Update light
         if (floorLight != null)
         {
             floorLight.enabled = isActive;
             floorLight.color = activeColor;
         }
 
-        // Update audio
         if (audioSource != null && electricSound != null)
         {
             if (isActive && !audioSource.isPlaying)
@@ -134,60 +207,12 @@ public class ElectricTrap : MonoBehaviour
         }
     }
 
-    // Detect player entering electric floor
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            playerOnFloor = true;
-            playerController = other.GetComponent<StarterAssets.FirstPersonController>();
-            deliverySystem = other.GetComponent<DeliverySystem>();
-
-            // Start damaging if electricity is active
-            if (isActive)
-            {
-                if (damageCoroutine != null)
-                    StopCoroutine(damageCoroutine);
-                damageCoroutine = StartCoroutine(DamagePlayer());
-            }
-        }
-    }
-
-    // Detect player staying on electric floor
-    private void OnTriggerStay(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            // Start damage if electricity turned on while player was standing
-            if (isActive && damageCoroutine == null)
-            {
-                damageCoroutine = StartCoroutine(DamagePlayer());
-            }
-        }
-    }
-
-    // Detect player leaving electric floor
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            playerOnFloor = false;
-
-            // Stop damaging
-            if (damageCoroutine != null)
-            {
-                StopCoroutine(damageCoroutine);
-                damageCoroutine = null;
-            }
-        }
-    }
-
-    // Continuously damage player while on active floor
     private IEnumerator DamagePlayer()
     {
+        Debug.Log("ElectricFloor: DamagePlayer coroutine STARTED");
+
         while (playerOnFloor && isActive)
         {
-            // Play zap sound
             if (audioSource != null && zapSound != null)
                 audioSource.PlayOneShot(zapSound);
 
@@ -195,40 +220,39 @@ public class ElectricTrap : MonoBehaviour
             if (playerController != null)
             {
                 playerController.TakeDamage(damageToPlayer);
-                Debug.Log($"Electric floor dealt {damageToPlayer} damage to player!");
+                Debug.Log($"ElectricFloor: Dealt {damageToPlayer} damage to player! Current health: {playerController.currentHealth}");
+            }
+            else
+            {
+                Debug.LogError("ElectricFloor: PlayerController is NULL, cannot damage!");
             }
 
             // Damage package
             if (deliverySystem != null && deliverySystem.hasPackage)
             {
                 deliverySystem.TakeDamage(damageToDelivery);
-                Debug.Log($"Electric floor dealt {damageToDelivery} damage to package!");
+                Debug.Log($"ElectricFloor: Dealt {damageToDelivery} damage to package!");
             }
 
-            // Wait before next damage tick
             yield return new WaitForSeconds(damageTickRate);
         }
 
+        Debug.Log("ElectricFloor: DamagePlayer coroutine ENDED");
         damageCoroutine = null;
     }
 
-    // Public method to sync multiple electric floors
     public void SetActive(bool active)
     {
         isActive = active;
         UpdateVisuals();
     }
 
-    // Visualize trigger area in editor
     private void OnDrawGizmos()
     {
         Gizmos.color = isActive ? new Color(0f, 1f, 1f, 0.3f) : new Color(0.5f, 0.5f, 0.5f, 0.3f);
+        Gizmos.DrawSphere(transform.position, detectionRadius);
 
-        // Draw bounds
-        Collider col = GetComponent<Collider>();
-        if (col != null)
-        {
-            Gizmos.DrawCube(col.bounds.center, col.bounds.size);
-        }
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, detectionRadius);
     }
 }
