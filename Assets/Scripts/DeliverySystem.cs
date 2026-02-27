@@ -115,7 +115,7 @@ public class DeliverySystem : MonoBehaviour
             FailDelivery("Package destroyed!");
         }
     }
-
+    
     // Start a new delivery order
     public void AssignOrder(string name, int reward, float timeLimit)
     {
@@ -140,7 +140,6 @@ public class DeliverySystem : MonoBehaviour
         activeDeliveryZone = deliveryZones[Random.Range(0, deliveryZones.Length)];
         foreach (var zone in deliveryZones)
             zone.SetActive(zone == activeDeliveryZone);
-
         UpdateUI();
     }
 
@@ -283,7 +282,6 @@ public class DeliverySystem : MonoBehaviour
             currentOrderReward,
             currentDeliveryHP
         );
-        PlayerStats.Instance.ordersLeft--;
 
         DisableAllDeliveryZones();
         phoneUI?.CloseActiveOrderPanel();
@@ -300,7 +298,6 @@ public class DeliverySystem : MonoBehaviour
             $"<color=red>Delivery failed! {reason}</color>";
 
         PlayerStats.Instance.OnDeliveryFailed();
-        PlayerStats.Instance.ordersLeft--;
 
         phoneUI?.CloseActiveOrderPanel();
 
@@ -317,7 +314,6 @@ public class DeliverySystem : MonoBehaviour
         hasPackage = false;
 
         PlayerStats.Instance.OnOrderDeclined();
-        PlayerStats.Instance.ordersLeft--;
 
         if (teleportManager.isInStairwell)
         {

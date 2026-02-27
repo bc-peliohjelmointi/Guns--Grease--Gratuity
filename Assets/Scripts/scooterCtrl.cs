@@ -59,42 +59,52 @@ public class scooterCtrl : MonoBehaviour
 
     private void HandleMovement()
     {
-        DrainBattery();
+        float input = 0f;
+        if (Keyboard.current.wKey.isPressed) input = 1f;
+        if (Keyboard.current.sKey.isPressed) input = -1f;
 
-        float movementInput = 0f;
-        if (UnityEngine.InputSystem.Keyboard.current.wKey.isPressed) movementInput = 1f;
-        if (UnityEngine.InputSystem.Keyboard.current.sKey.isPressed) movementInput = -1f;
+        bool hardBrake = Keyboard.current.spaceKey.isPressed;
 
-        float movementDirection = Vector3.Dot(rb.linearVelocity, transform.forward);
-
-        // current deceleration speed to deceleration strenght
-        float currentDeceleration = deceleration;
-
-        // braking on opposing input
-        if (movementInput != 0f && movementDirection != 0f && Mathf.Sign(movementInput) != Mathf.Sign(movementDirection))
+        // HARD BRAKE (SPACE) - always wins
+        if (hardBrake)
         {
-            currentDeceleration = brakeDeceleration;
+            currentSpeed = Mathf.MoveTowards(
+                currentSpeed,
+                0f,
+                brakeDeceleration * 3f * Time.fixedDeltaTime
+            );
         }
-
-        // Accelerate when direction is the same as input or when stopped
-        if (movementInput != 0f)
-        {
-            float inputDetermination = movementInput > 0f ? acceleration : deceleration;
-
-            currentSpeed += movementInput * inputDetermination * Time.fixedDeltaTime;
-        }
-
         else
         {
-            // deceleration
-            currentSpeed = Mathf.MoveTowards(currentSpeed, 0f, deceleration * Time.fixedDeltaTime);
+            // Opposite direction braking (soft brake)
+            if (input != 0f && Mathf.Sign(input) != Mathf.Sign(currentSpeed) && Mathf.Abs(currentSpeed) > 0.5f)
+            {
+                currentSpeed = Mathf.MoveTowards(
+                    currentSpeed,
+                    0f,
+                    brakeDeceleration * Time.fixedDeltaTime
+                );
+            }
+            // Normal acceleration (forward OR reverse)
+            else if (input != 0f)
+            {
+                float accel = input > 0 ? acceleration : acceleration;
+                currentSpeed += input * accel * Time.fixedDeltaTime;
+            }
+            // Natural slowdown
+            else
+            {
+                currentSpeed = Mathf.MoveTowards(
+                    currentSpeed,
+                    0f,
+                    deceleration * Time.fixedDeltaTime
+                );
+            }
         }
 
         currentSpeed = Mathf.Clamp(currentSpeed, maxReverse, maxSpeed);
 
-        // Move scooter with Rigidbody for collision
-        // PHYSICS-BASED movement (collision-safe)
-        Vector3 velocity = transform.forward * currentSpeed;
+        Vector3 velocity = scooterRoot.forward * currentSpeed;
         velocity.y = rb.linearVelocity.y;
         rb.linearVelocity = velocity;
     }

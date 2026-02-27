@@ -8,7 +8,8 @@ public class ScooterMount : MonoBehaviour
     [Header("References")]
     public Transform scooter;
     public Transform mountPoint;
-    public TextMeshProUGUI statusText;
+    public TextMeshProUGUI batteryText;
+    public TextMeshProUGUI statusTxt;
 
     [Header("Settings")]
     // mount
@@ -130,10 +131,23 @@ public class ScooterMount : MonoBehaviour
     // Scooter power based on if mounted and if key is pressed
     private void HandlePowerInput()
     {
-        if (!isMounted || scooterControl == null) return;
+        if (statusTxt == null)
+            return;
 
-        if (Keyboard.current.eKey.wasPressedThisFrame)
+        if (!isMounted || scooterControl == null)
+        {
+            statusTxt.text = "";
+            return;
+        }
+
+        if (Keyboard.current[powerKey].wasPressedThisFrame)
+        {
             scooterControl.powerOn = !scooterControl.powerOn;
+        }
+
+        statusTxt.text = scooterControl.powerOn
+            ? ""
+            : "[E] Turn Scooter On";
     }
 
     // battery pack collection
@@ -142,8 +156,8 @@ public class ScooterMount : MonoBehaviour
         hasBatteryPack = true;
         storedChargeAmount = amount;
 
-        if (statusText.text != null)
-            statusText.text = "Battery pack collected";
+        if (batteryText.text != null)
+            batteryText.text = "Battery pack collected";
     }
 
     public bool HasBattery()
@@ -160,8 +174,8 @@ public class ScooterMount : MonoBehaviour
 
         if (!isMounted && hasBatteryPack && distance <= chargeRange)
         {
-            if (statusText != null)
-                statusText.text = "[Y] Charge Scooter";
+            if (batteryText != null)
+                batteryText.text = "[Y] Charge Scooter";
 
             if (Keyboard.current[chargeKey].wasPressedThisFrame)
             {
@@ -175,24 +189,21 @@ public class ScooterMount : MonoBehaviour
 
     private void UpdateStatusText()
     {
-        if (statusText == null) return;
+        if (batteryText == null || scooterControl == null)
+            return;
 
         if (isMounted)
         {
-            if (!scooterControl.powerOn)
-                statusText.text = "[E] Turn Scooter On\n[F] Dismount";
-            else
-                statusText.text = "[F] Dismount";
-
-            statusText.text = $"Battery: {Mathf.RoundToInt(scooterControl.currentBattery)}%";
+            batteryText.text =
+                $"Battery: {Mathf.RoundToInt(scooterControl.currentBattery)}%\n\n[F] Dismount";
         }
         else if (Vector3.Distance(transform.position, scooter.position) < mountDistance)
         {
-            statusText.text = "[F] Mount";
+            batteryText.text = "[F] Mount";
         }
         else
         {
-            statusText.text = "";
+            batteryText.text = "";
         }
     }
 }

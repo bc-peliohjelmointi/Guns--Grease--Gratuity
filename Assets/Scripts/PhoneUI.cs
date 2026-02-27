@@ -17,11 +17,11 @@ public class PhoneUI : MonoBehaviour
     [Header("UI Panels")]
     public GameObject phoneOverlay;
 
-    public GameObject homePanel;          // NEW home screen  
-    public GameObject deliveryPanel;      // was ordersPanel  
+    public GameObject homePanel;            
+    public GameObject deliveryPanel;        
     public GameObject activeOrderPanel;
-    public GameObject statsPanel;         // NEW stats app  
-    public GameObject mapPanel;           // NEW map app
+    public GameObject statsPanel;         
+    public GameObject mapPanel;           
 
     [Header("Home Screen App Buttons")]
     public Button deliveryAppButton;

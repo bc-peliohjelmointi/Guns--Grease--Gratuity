@@ -333,12 +333,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scooterRoot: {fileID: 7205070918609022749}
   visualModel: {fileID: 2069069549783431515}
-  acceleration: 5
+  acceleration: 8
   deceleration: 4
-  maxSpeed: 12
+  brakeDeceleration: 8
+  maxSpeed: 16
+  maxReverse: -10
   turnSpeed: 65
   leanAmount: 15
   canControl: 0
+  powerOn: 0
+  maxBattery: 100
+  movingDrainPM: 7.5
+  idleDrainPM: 1
+  currentBattery: 0
 --- !u!54 &2570781577587025425
 Rigidbody:
   m_ObjectHideFlags: 0

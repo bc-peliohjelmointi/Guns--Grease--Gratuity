@@ -19,6 +19,7 @@ TagManager:
   - TurretSpawnArea
   - Debree
   - DebreeSpawnArea
+  - Scooter
   layers:
   - Default
   - TransparentFX
