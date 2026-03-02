@@ -72,6 +72,8 @@ public class ScooterMount : MonoBehaviour
 
     private void MountScooter()
     {
+        scooter.tag = "Player";
+
         isMounted = true;
         fpsController.canMove = false;
         playerController.enabled = false;
@@ -107,6 +109,8 @@ public class ScooterMount : MonoBehaviour
 
     private void DismountScooter()
     {
+        scooter.tag = "Untagged"; // or "Scooter"
+
         isMounted = false;
         fpsController.canMove = true;
         playerController.enabled = true;
