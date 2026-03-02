@@ -19,6 +19,7 @@ public class GunHitscan : MonoBehaviour
     public float range = 100f;
     public float fireRate = 10f;
     public int magazineSize = 30;
+    public int totalAmmo = 30;
     public float reloadTime = 2f;
     public bool automatic = true;
 
@@ -34,6 +35,7 @@ public class GunHitscan : MonoBehaviour
     bool isReloading;
     Quaternion originalCamRot;
     public float flashTime = 0.2f;
+    private int minusAmmo;
 
     public GameObject tracerPrefab;
     public GunUI ui;
@@ -48,7 +50,7 @@ public class GunHitscan : MonoBehaviour
         if (muzzleFlash)
             muzzleFlash.SetActive(false);
 
-        if (ui) ui.UpdateAmmo(currentAmmo, magazineSize);
+        if (ui) ui.UpdateAmmo(currentAmmo, totalAmmo);
     }
 
     void Update()
@@ -67,7 +69,7 @@ public class GunHitscan : MonoBehaviour
             nextFireTime = Time.time + 1f / fireRate;
             Fire();
         }
-        else if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame && currentAmmo < magazineSize)
+        else if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame && currentAmmo < magazineSize && totalAmmo !=0)
         {
             StartCoroutine(Reload());
         }
@@ -85,7 +87,7 @@ public class GunHitscan : MonoBehaviour
     void Fire()
     {
         currentAmmo--;
-        if (ui) ui.UpdateAmmo(currentAmmo, magazineSize);
+        if (ui) ui.UpdateAmmo(currentAmmo, totalAmmo);
 
         StartCoroutine(Flash());
 
@@ -168,8 +170,9 @@ public class GunHitscan : MonoBehaviour
 
         yield return new WaitForSeconds(reloadTime);
 
+        totalAmmo = totalAmmo - magazineSize;
         currentAmmo = magazineSize;
-        if (ui) ui.UpdateAmmo(currentAmmo, magazineSize);
+        if (ui) ui.UpdateAmmo(currentAmmo, totalAmmo);
 
         isReloading = false;
     }
