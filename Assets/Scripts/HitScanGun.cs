@@ -7,6 +7,7 @@ public class GunHitscan : MonoBehaviour
 {
     [Header("References")]
     public Transform muzzle;
+    public Transform cameraRoot;
     public Camera playerCamera;
     public GameObject muzzleFlash;
     public GameObject impactPrefab;
@@ -93,19 +94,27 @@ public class GunHitscan : MonoBehaviour
 
         if (fireSound) audioSource.PlayOneShot(fireSound);
 
-        Vector3 origin = muzzle ? muzzle.position : transform.position;
+        Vector3 origin;
         Vector3 dir;
 
-        if (playerCamera)
+        Ray camRay = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        RaycastHit camHit;
+
+        Vector3 targetPoint;
+
+        if (Physics.Raycast(camRay, out camHit, range, hitMask, QueryTriggerInteraction.Ignore))
         {
-            Ray camRay = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-            dir = camRay.direction;
-            origin = muzzle ? muzzle.position : origin;
+            targetPoint = camHit.point;
         }
         else
         {
-            dir = muzzle ? muzzle.forward : transform.forward;
+            targetPoint = camRay.origin + camRay.direction * range;
         }
+
+        origin = muzzle.position;
+        dir = (targetPoint - origin).normalized;
+
+
 
         RaycastHit hit;
         bool didHit = Physics.Raycast(origin, dir, out hit, range, hitMask, QueryTriggerInteraction.Ignore);
