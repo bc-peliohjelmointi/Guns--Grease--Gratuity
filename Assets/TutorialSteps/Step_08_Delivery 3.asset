@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Step_08_Delivery 3
   m_EditorClassIdentifier: 
   tutorialText: On your way to the delivery pick up point you might notice those
-    weird balls. They are turrets so it is best to get rid of them sooner rather
-    than later, as they only shoot at you once you have picked up a delivery.
+    odd droids rolling around. They are enemies of the company so it is best to get
+    rid of them sooner rather than later, as they'll start attacking  you once you
+    have picked up a delivery.
   portrait: {fileID: 21300000, guid: e00b88a4d292d284c8849e4d0e223ec6, type: 3}
   panelPosition: {x: 0, y: -330}
   panelSize: {x: 1000, y: 200}
@@ -25,3 +26,4 @@ MonoBehaviour:
   anchorMin: {x: 0.5, y: 0.5}
   anchorMax: {x: 0.5, y: 0.5}
   skipPosition: {x: 385, y: -75}
+  triggerType: 0
