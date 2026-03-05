@@ -10,6 +10,7 @@ public class PhoneUI : MonoBehaviour
     [Header("Links")]
     public DeliverySystem delivery;
     public PlayerInput playerInput;
+    public CompassNavigation compassNavigation;
 
     [Header("Navigation Buttons")]
     public Button homeButton;
@@ -218,6 +219,20 @@ public class PhoneUI : MonoBehaviour
     {
         PlaySound(appOpenSFX);
         SwitchPanel(instructionsPanel);
+    }
+
+    // --------------------------
+    // MAP APP 
+    // --------------------------
+
+    public void OnShopNavPressed()
+    {
+        compassNavigation.NavigateShop();
+    }
+
+    public void OnHomeNavPressed()
+    {
+        compassNavigation.NavigateHome();
     }
 
     // --------------------------

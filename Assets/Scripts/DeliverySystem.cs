@@ -44,6 +44,9 @@ public class DeliverySystem : MonoBehaviour
     public RectTransform compassArrow;
     public TextMeshProUGUI timerText;
 
+    [Header("Compass Navigation")]
+    public CompassNavigation compassNav;
+
     // Screen fade effect settings
     [Header("Fade Panel")]
     public Image fadePanel;
@@ -196,19 +199,12 @@ public class DeliverySystem : MonoBehaviour
         currentTarget = activeDeliveryZone;
     }
 
- 
+
     public Transform GetCompassTarget()
     {
-        if (!hasActiveOrder)
-            return GameObject.FindGameObjectWithTag("ApartmentDoor")?.transform;
-
-        if (!hasPackage)
-            return GameObject.FindGameObjectsWithTag("Package").FirstOrDefault()?.transform;
-
-        if (teleportManager.isInStairwell)
-            return activeExitPoint;
-
-        return activeDeliveryZone?.transform;
+        return compassNav != null
+            ? compassNav.GetCurrentTarget()
+            : null;
     }
 
     // Update compass arrow to point at target
@@ -225,6 +221,29 @@ public class DeliverySystem : MonoBehaviour
         // Calculate angle and rotate arrow
         float angle = Vector3.SignedAngle(transform.forward, dir, Vector3.up);
         compassArrow.localEulerAngles = new Vector3(0, 0, -angle);
+    }
+
+    public Transform GetDeliveryCompassTarget()
+    {
+        // No active order → no delivery target
+        if (!hasActiveOrder)
+            return null;
+
+        // No package yet → point to package
+        if (!hasPackage)
+            return GameObject
+                .FindGameObjectsWithTag("Package")
+                .FirstOrDefault()
+                ?.transform;
+
+        // In stairwell → point to exit
+        if (teleportManager.isInStairwell)
+            return activeExitPoint;
+
+        // Has package → point to delivery zone
+        return activeDeliveryZone != null
+            ? activeDeliveryZone.transform
+            : null;
     }
 
     // Update status text based on current state
