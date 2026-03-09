@@ -352,6 +352,9 @@ PrefabInstance:
       addedObject: {fileID: 1469568962133849383}
     - targetCorrespondingSourceObject: {fileID: 8616685848737228372, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 5231433008958454834}
+    - targetCorrespondingSourceObject: {fileID: 8616685848737228372, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 4182661306016418333}
     - targetCorrespondingSourceObject: {fileID: 8616685848737228372, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
       insertIndex: -1
@@ -425,6 +428,7 @@ MonoBehaviour:
   hpSlider: {fileID: 0}
   compassArrow: {fileID: 0}
   timerText: {fileID: 0}
+  compassNav: {fileID: 5231433008958454834}
   fadePanel: {fileID: 0}
   fadeDuration: 1
   fadeHold: 1.5
@@ -433,6 +437,20 @@ MonoBehaviour:
   pickupPackageSFX: {fileID: 8300000, guid: 81fa433b5d31ac448a66aec0f111feab, type: 3}
   deliveryCompleteSFX: {fileID: 8300000, guid: 904bc13cfeb9cc64895e025631e1c660, type: 3}
   pendingDelivery: 0
+--- !u!114 &5231433008958454834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3213983986020760071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 702ca5b8fbeb82c4392d57fd9a5398b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  deliverySystem: {fileID: 1469568962133849383}
+  currentMode: 0
 --- !u!114 &4182661306016418333
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -447,7 +465,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scooter: {fileID: 0}
   mountPoint: {fileID: 0}
-  statusText: {fileID: 0}
+  batteryText: {fileID: 0}
+  statusTxt: {fileID: 0}
   mountDistance: 2
   mountKey: 20
   powerKey: 19

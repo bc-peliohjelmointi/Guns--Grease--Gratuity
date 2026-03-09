@@ -158,6 +158,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   delivery: {fileID: 1575877281}
   playerInput: {fileID: 1510484461}
+  compassNavigation: {fileID: 1575877284}
   homeButton: {fileID: 849379754}
   phoneOverlay: {fileID: 599313295}
   homePanel: {fileID: 341747065}
@@ -2208,6 +2209,67 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 518779795}
   m_CullTransparentMesh: 1
+--- !u!1001 &523571674
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: a38db7b4cea584b49be848415e605be3, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 17.54
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a38db7b4cea584b49be848415e605be3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a38db7b4cea584b49be848415e605be3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -5.35
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a38db7b4cea584b49be848415e605be3, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a38db7b4cea584b49be848415e605be3, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a38db7b4cea584b49be848415e605be3, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a38db7b4cea584b49be848415e605be3, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a38db7b4cea584b49be848415e605be3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a38db7b4cea584b49be848415e605be3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a38db7b4cea584b49be848415e605be3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a38db7b4cea584b49be848415e605be3, type: 3}
+      propertyPath: m_Name
+      value: SM_Vend
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a38db7b4cea584b49be848415e605be3, type: 3}
+      propertyPath: m_TagString
+      value: Shop
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a38db7b4cea584b49be848415e605be3, type: 3}
 --- !u!1 &551513970
 GameObject:
   m_ObjectHideFlags: 0
@@ -4848,6 +4910,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55919ac34a26952479f3fc91f777b2fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1575877284 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5231433008958454834, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
+  m_PrefabInstance: {fileID: 1656709146040544057}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 702ca5b8fbeb82c4392d57fd9a5398b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1580837203 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7181980255972709588, guid: e863f317eae7a31469eb2c061a1f00e5, type: 3}
@@ -7364,10 +7437,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1953659268}
     - target: {fileID: 4182661306016418333, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
-      propertyPath: statusText
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4182661306016418333, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
       propertyPath: batteryText
       value: 
       objectReference: {fileID: 2073330076}
@@ -7691,6 +7760,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1244945453279124144, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1575877284}
+    - target: {fileID: 2286336590957687052, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1575877284}
     - target: {fileID: 8281658834064297980, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
       propertyPath: m_Name
       value: Phone Canvas
@@ -7811,3 +7888,4 @@ SceneRoots:
   - {fileID: 651400524}
   - {fileID: 1933934590}
   - {fileID: 1803982984}
+  - {fileID: 523571674}

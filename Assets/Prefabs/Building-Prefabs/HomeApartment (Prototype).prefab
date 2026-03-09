@@ -41370,7 +41370,7 @@ GameObject:
   - component: {fileID: 1830789889647008912}
   m_Layer: 7
   m_Name: ApartmentDoor
-  m_TagString: ApartmentDoor
+  m_TagString: Home
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
