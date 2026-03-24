@@ -43,6 +43,15 @@ public class EnemyManager : MonoBehaviour
 
         List<Transform> selectedSpawnPoints = new List<Transform>();
 
+        DeliveryModifierSystem modSystem = FindAnyObjectByType<DeliveryModifierSystem>();
+        int enemyCount = maxEnemies;
+
+        // Check if Enemy Alert is active
+        //if (modSystem != null && modSystem.HasModifier("Enemy Alert"))
+        //{
+          //  enemyCount = Mathf.RoundToInt(enemyCount * 1.5f);
+        //}
+        
         // Satunnaisesti valitaan spawn pointit
         foreach (Transform point in spawnPoints)
         {
