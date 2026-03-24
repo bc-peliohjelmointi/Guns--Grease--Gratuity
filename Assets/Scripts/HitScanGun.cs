@@ -43,6 +43,12 @@ public class GunHitscan : MonoBehaviour
     Vector3 currentRecoil;
     Vector3 targetRecoil;
 
+    [Header("Camera Punch")]
+    public float punchAmount = 2f;
+    public float punchRecovery = 10f;
+
+    Vector3 punchOffset;
+
     AudioSource audioSource;
     int currentAmmo;
     float nextFireTime;
@@ -93,8 +99,11 @@ public class GunHitscan : MonoBehaviour
         // Apply recoil movement
         currentRecoil = Vector3.Slerp(currentRecoil, targetRecoil, recoilSnappiness * Time.deltaTime);
 
+        // Combine recoil + punch
+        Vector3 finalRotation = currentRecoil + punchOffset;
+
         // Apply to camera
-        playerCamera.transform.localRotation = originalCamRot * Quaternion.Euler(-currentRecoil);
+        playerCamera.transform.localRotation = originalCamRot * Quaternion.Euler(-finalRotation);
     }
 
     void Fire()
@@ -104,7 +113,11 @@ public class GunHitscan : MonoBehaviour
 
         StartCoroutine(ShootVFX());
 
-        if (fireSound) audioSource.PlayOneShot(fireSound);
+        audioSource.pitch = Random.Range(0.95f, 1.05f);
+        audioSource.volume = Random.Range(0.9f, 1f);
+        AudioSource.PlayClipAtPoint(fireSound, muzzle.position, 1f);
+
+        StartCoroutine(PlayEcho());
 
         Vector3 origin;
         Vector3 dir;
@@ -185,12 +198,18 @@ public class GunHitscan : MonoBehaviour
         );
 
         GetComponentInChildren<GunSway>()?.AddRecoil(recoilX);
+
+        punchOffset += new Vector3(
+             -punchAmount,
+             Random.Range(-punchAmount * 0.3f, punchAmount * 0.3f),
+             0
+        );
     }
 
     IEnumerator Reload()
     {
         isReloading = true;
-        if (reloadSound) audioSource.PlayOneShot(reloadSound);
+        if (reloadSound) AudioSource.PlayClipAtPoint(reloadSound, muzzle.position, 1f);
 
         yield return new WaitForSeconds(reloadTime);
 
@@ -229,5 +248,11 @@ public class GunHitscan : MonoBehaviour
 
         Destroy(tracer, 0.05f);
         yield return null;
+    }
+
+    IEnumerator PlayEcho()
+    {
+        yield return new WaitForSeconds(0.1f);
+        AudioSource.PlayClipAtPoint(fireSound, muzzle.position, 0.4f);
     }
 }
