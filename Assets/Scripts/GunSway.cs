@@ -17,11 +17,11 @@ public class GunSway : MonoBehaviour
 
     void Update()
     {
-        // Get mouse input (same system you're using)
+        // Get mouse input
         float mouseX = Mouse.current.delta.ReadValue().x * 0.01f;
         float mouseY = Mouse.current.delta.ReadValue().y * 0.01f;
 
-        // --- ROTATION SWAY ---
+        // ROTATION SWAY 
         float rotX = -mouseY * swayAmount;
         float rotY = mouseX * swayAmount;
 
@@ -32,7 +32,7 @@ public class GunSway : MonoBehaviour
 
         currentRotation = Vector3.Lerp(currentRotation, targetRot, Time.deltaTime * smoothSpeed);
 
-        // --- POSITION SWAY ---
+        // POSITION SWAY 
         float posX = -mouseX * positionAmount;
         float posY = -mouseY * positionAmount;
 
@@ -46,5 +46,10 @@ public class GunSway : MonoBehaviour
         // Apply
         transform.localRotation = Quaternion.Euler(currentRotation);
         transform.localPosition = currentPosition;
+    }
+
+    public void AddRecoil(float amount)
+    {
+        currentRotation += new Vector3(-amount * 2f, Random.Range(-amount, amount), 0);
     }
 }

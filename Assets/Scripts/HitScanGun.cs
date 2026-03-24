@@ -14,6 +14,9 @@ public class GunHitscan : MonoBehaviour
     public LayerMask hitMask = ~0;
     public PhoneUI phoneUI;
     public PullOurScript pullOurScript;
+    public GunSlide slide;
+    public GameObject tracerPrefab;
+    public GunUI ui;
 
     [Header("Stats")]
     public float damage = 25f;
@@ -27,8 +30,18 @@ public class GunHitscan : MonoBehaviour
     [Header("Effects")]
     public AudioClip fireSound;
     public AudioClip reloadSound;
-    public float recoilAmount = 1.5f;
-    public float recoilSmooth = 6f;
+    public float tracerSpeed = 200f;
+
+    [Header("Advanced Recoil")]
+    public float recoilX = 2f;
+    public float recoilY = 1f;
+    public float recoilZ = 0.5f;
+
+    public float recoilSnappiness = 6f;
+    public float recoilReturnSpeed = 4f;
+
+    Vector3 currentRecoil;
+    Vector3 targetRecoil;
 
     AudioSource audioSource;
     int currentAmmo;
@@ -38,9 +51,8 @@ public class GunHitscan : MonoBehaviour
     public float flashTime = 0.2f;
     private int minusAmmo;
 
-    public GameObject tracerPrefab;
-    public GunUI ui;
-    public float tracerSpeed = 200f;
+
+
 
     void Start()
     {
@@ -75,14 +87,14 @@ public class GunHitscan : MonoBehaviour
             StartCoroutine(Reload());
         }
 
-        if (playerCamera)
-        {
-            playerCamera.transform.localRotation = Quaternion.Slerp(
-                playerCamera.transform.localRotation,
-                originalCamRot,
-                Time.deltaTime * recoilSmooth
-            );
-        }
+        // Smoothly return recoil
+        targetRecoil = Vector3.Lerp(targetRecoil, Vector3.zero, recoilReturnSpeed * Time.deltaTime);
+
+        // Apply recoil movement
+        currentRecoil = Vector3.Slerp(currentRecoil, targetRecoil, recoilSnappiness * Time.deltaTime);
+
+        // Apply to camera
+        playerCamera.transform.localRotation = originalCamRot * Quaternion.Euler(-currentRecoil);
     }
 
     void Fire()
@@ -90,7 +102,7 @@ public class GunHitscan : MonoBehaviour
         currentAmmo--;
         if (ui) ui.UpdateAmmo(currentAmmo, totalAmmo);
 
-        StartCoroutine(Flash());
+        StartCoroutine(ShootVFX());
 
         if (fireSound) audioSource.PlayOneShot(fireSound);
 
@@ -166,10 +178,13 @@ public class GunHitscan : MonoBehaviour
             StartCoroutine(SpawnTracer(muzzle.position, tracerEnd));
         }
 
-        if (playerCamera)
-        {
-            playerCamera.transform.localRotation *= Quaternion.Euler(-recoilAmount, 0f, 0f);
-        }
+        targetRecoil += new Vector3(
+            recoilX,
+            Random.Range(-recoilY, recoilY),
+            Random.Range(-recoilZ, recoilZ)
+        );
+
+        GetComponentInChildren<GunSway>()?.AddRecoil(recoilX);
     }
 
     IEnumerator Reload()
@@ -186,8 +201,13 @@ public class GunHitscan : MonoBehaviour
         isReloading = false;
     }
 
-    IEnumerator Flash()
+    IEnumerator ShootVFX()
     {
+        if (slide != null)
+        {
+            slide.Kick();
+        }
+
         if (muzzleFlash)
         {
             muzzleFlash.SetActive(true);
