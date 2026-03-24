@@ -197,37 +197,59 @@ public class DeliveryModifierSystem : MonoBehaviour
         Debug.Log($"Applied modifier: {modifier.name}");
     }
 
+    private Coroutine hideCoroutine;
+
     private void ShowModifierNotification()
     {
-        if (modifierNotificationText == null) return;
+        if (modifierNotificationText == null)
+        {
+            Debug.LogWarning("ModifierSystem: No notification text assigned!");
+            return;
+        }
 
-        string notification = "DELIVERY MODIFIERS:\n";
+        // Cancel previous hide coroutine if still running
+        if (hideCoroutine != null)
+        {
+            StopCoroutine(hideCoroutine);
+        }
+
+        // Build notification text
+        string notification = "<size=36><b>DELIVERY MODIFIERS:</b></size>\n\n";
         foreach (var mod in activeModifiers)
         {
             string color = mod.type == ModifierType.Positive ? "green" :
                           mod.type == ModifierType.Negative ? "red" : "yellow";
-            notification += $"<color={color}>{mod.name}</color>: {mod.description}\n";
+            notification += $"<color={color}><b>{mod.name}</b></color>\n{mod.description}\n\n";
         }
 
         modifierNotificationText.text = notification;
+        Debug.Log($"ModifierSystem: Showing notification - {activeModifiers.Count} modifiers");
 
+        // Show panel
         if (modifierPanel != null)
         {
             modifierPanel.SetActive(true);
-            StartCoroutine(HideModifierPanelAfterDelay());
+            Debug.Log($"ModifierSystem: Panel shown, will hide in {notificationDuration} seconds");
+            hideCoroutine = StartCoroutine(HideModifierPanelAfterDelay());
         }
     }
 
     private System.Collections.IEnumerator HideModifierPanelAfterDelay()
     {
+        Debug.Log($"ModifierSystem: Starting hide timer ({notificationDuration}s)");
         yield return new WaitForSeconds(notificationDuration);
+        Debug.Log("ModifierSystem: Hiding panel now");
         HideModifierPanel();
+        hideCoroutine = null;
     }
 
     private void HideModifierPanel()
     {
         if (modifierPanel != null)
+        {
             modifierPanel.SetActive(false);
+            Debug.Log("ModifierSystem: Panel hidden");
+        }
     }
 
     public void ClearAllModifiers()
@@ -238,6 +260,39 @@ public class DeliveryModifierSystem : MonoBehaviour
         }
         activeModifiers.Clear();
         Debug.Log("Cleared all modifiers");
+    }
+
+    // Public methods for checking modifiers
+    public bool HasModifier(string modifierName)
+    {
+        foreach (var mod in activeModifiers)
+        {
+            if (mod.name == modifierName)
+                return true;
+        }
+        return false;
+    }
+
+    public bool IsEnemyAlertActive()
+    {
+        return HasModifier("Enemy Alert");
+    }
+
+    public float GetEnemySpawnMultiplier()
+    {
+        if (IsEnemyAlertActive())
+            return 1.5f; // 50% more enemies
+        return 1.0f;
+    }
+
+    public List<string> GetActiveModifierNames()
+    {
+        List<string> names = new List<string>();
+        foreach (var mod in activeModifiers)
+        {
+            names.Add(mod.name);
+        }
+        return names;
     }
 
     // ==========================================
@@ -318,14 +373,18 @@ public class DeliveryModifierSystem : MonoBehaviour
             playerController.maxHealth = originalMaxHealth;
     }
 
+    private bool enemyAlertActive = false;
+
     private void ApplyEnemyAlert()
     {
-        // This would trigger more enemy spawns - implement in your enemy spawner
-        Debug.Log("Enemy Alert active - spawn more enemies!");
+        enemyAlertActive = true;
+        Debug.Log("Enemy Alert ACTIVE - More enemies will spawn!");
     }
+
     private void RemoveEnemyAlert()
     {
-        // Reset enemy spawn rates
+        enemyAlertActive = false;
+        Debug.Log("Enemy Alert removed");
     }
 
     private int originalMagSize;

@@ -27,6 +27,7 @@ public class MineSpawnerNavMesh : MonoBehaviour
 
     private List<Vector3> spawnedPositions = new List<Vector3>();
 
+
     void Start()
     {
         // Use spawner position if no custom center set
