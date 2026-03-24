@@ -27,6 +27,19 @@ public class scooterCtrl : MonoBehaviour
     public float idleDrainPM = 2f;  // when not moving but engine is on
     public float currentBattery;
 
+    [Header("Audio")]
+    public AudioSource engineSource;
+    public AudioSource sfxSource;
+
+    public AudioClip powerOnClip;
+    public AudioClip powerOffClip;
+    public AudioClip brakeClip;
+    public AudioClip engineLoopClip;
+
+    [Range(0.5f, 2f)]
+    public float minPitch = 0.8f;
+    public float maxPitch = 1.5f;
+
     public bool hasBattery => currentBattery > 0.1f;
 
     private float currentSpeed = 0f;
@@ -37,6 +50,12 @@ public class scooterCtrl : MonoBehaviour
         rb = scooterRoot.GetComponent<Rigidbody>();
         rb.freezeRotation = true; // We will handle rotation manually
         currentBattery = maxBattery;
+
+        if (engineSource != null && engineLoopClip != null)
+        {
+            engineSource.clip = engineLoopClip;
+            engineSource.loop = true;
+        }
     }
 
     private void FixedUpdate()
@@ -55,6 +74,7 @@ public class scooterCtrl : MonoBehaviour
         HandleMovement();
         HandleTurningAndLean();
         DrainBattery();
+        UpdateEngineSound();
     }
 
     private void HandleMovement()
@@ -68,6 +88,11 @@ public class scooterCtrl : MonoBehaviour
         // HARD BRAKE (SPACE) - always wins
         if (hardBrake)
         {
+            if (Mathf.Abs(currentSpeed) > 2f && sfxSource && brakeClip && !sfxSource.isPlaying)
+            {
+                sfxSource.PlayOneShot(brakeClip);
+            }
+
             currentSpeed = Mathf.MoveTowards(
                 currentSpeed,
                 0f,
@@ -171,5 +196,46 @@ public class scooterCtrl : MonoBehaviour
     {
         currentBattery += amount;
         currentBattery = Mathf.Clamp(currentBattery, 0f, maxBattery);
+    }
+
+
+
+    // ----------------------------------
+    // ------   Sound Effects   ---------
+    //-----------------------------------
+
+
+    public void SetPower(bool state)
+    {
+        if (powerOn == state) return;
+
+        powerOn = state;
+
+        if (powerOn)
+        {
+            if (sfxSource && powerOnClip)
+                sfxSource.PlayOneShot(powerOnClip);
+
+            if (engineSource && engineLoopClip)
+                engineSource.Play();
+        }
+        else
+        {
+            if (sfxSource && powerOffClip)
+                sfxSource.PlayOneShot(powerOffClip);
+
+            if (engineSource)
+                engineSource.Stop();
+        }
+    }
+
+    private void UpdateEngineSound()
+    {
+        if (engineSource == null || !engineSource.isPlaying)
+            return;
+
+        float speedPercent = Mathf.Clamp01(Mathf.Abs(currentSpeed) / maxSpeed);
+
+        engineSource.pitch = Mathf.Lerp(minPitch, maxPitch, speedPercent);
     }
 }

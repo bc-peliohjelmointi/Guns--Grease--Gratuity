@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using System.Collections;
 using System.Linq;
+using Unity.VisualScripting;
 
 /// <summary>
 /// Manages delivery orders, package state, UI, and delivery flow
@@ -135,6 +136,12 @@ public class DeliverySystem : MonoBehaviour
         currentOrderReward = reward;
         currentOrderTime = timeLimit;
         currentOrderTimeRemaining = timeLimit;
+
+        DeliveryModifierSystem modSystem = FindFirstObjectByType<DeliveryModifierSystem>();
+        if (modSystem != null)
+        {
+            modSystem.RollModifiers();
+        }
 
         // Spawn the package in the world
         itemSpawner?.SpawnItem();
@@ -281,6 +288,10 @@ public class DeliverySystem : MonoBehaviour
         if (!hasPackage)
             return;
 
+        DeliveryModifierSystem modSystem = FindFirstObjectByType<DeliveryModifierSystem>();
+
+        if (modSystem != null) { dmg *= modSystem.GetPackageDamageMultiplier(); }
+
         currentDeliveryHP = Mathf.Clamp(currentDeliveryHP - dmg, 0, maxDeliveryHP);
     }
 
@@ -295,6 +306,14 @@ public class DeliverySystem : MonoBehaviour
 
         statusText.text =
             $"<color=green>Delivery Completed! +{currentOrderReward}</color>";
+
+
+        DeliveryModifierSystem modSystem = FindFirstObjectByType<DeliveryModifierSystem>();
+
+        if (modSystem != null)
+        {
+            modSystem.ClearAllModifiers();
+        }
 
         // Update player stats
         PlayerStats.Instance.OnDeliveryCompleted(
@@ -315,6 +334,13 @@ public class DeliverySystem : MonoBehaviour
 
         statusText.text =
             $"<color=red>Delivery failed! {reason}</color>";
+
+        DeliveryModifierSystem modSystem = FindFirstObjectByType<DeliveryModifierSystem>();
+
+        if (modSystem != null)
+        {
+            modSystem.ClearAllModifiers();
+        }
 
         PlayerStats.Instance.OnDeliveryFailed();
 

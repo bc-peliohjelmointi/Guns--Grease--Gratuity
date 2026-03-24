@@ -126,7 +126,7 @@ public class ScooterMount : MonoBehaviour
 
         if (scooterControl != null)
             scooterControl.canControl = false;
-            scooterControl.powerOn = false; // power off on dismount
+            scooterControl.SetPower(false); // power off on dismount
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = true;
@@ -146,7 +146,7 @@ public class ScooterMount : MonoBehaviour
 
         if (Keyboard.current[powerKey].wasPressedThisFrame)
         {
-            scooterControl.powerOn = !scooterControl.powerOn;
+            scooterControl.SetPower(!scooterControl.powerOn);
         }
 
         statusTxt.text = scooterControl.powerOn
