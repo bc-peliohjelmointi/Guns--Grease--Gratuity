@@ -7,16 +7,15 @@ public class EnemyManager : MonoBehaviour
 
     [Header("Spawn Rules")]
     [Range(0f, 1f)]
-    public float spawnChance = 0.67f;   // 67% mahdollisuus per spawn point
-
+    public float spawnChance = 0.67f;   // % chance per spawn point
     public int minEnemies = 5;
     public int maxEnemies = 25;
 
-    [Header("Turret Prefabs")]
-    public GameObject[] enemyPrefabs; // lista turretti prefabeista
+    [Header("Enemy Prefabs")]
+    public GameObject[] enemyPrefabs; // list of enemy prefabs
 
     [Header("Spawn Area")]
-    public Transform[] spawnPoints;    // minne turretti voi ilmestyä
+    public Transform[] spawnPoints;    // where enemies can spawn
 
     private List<GameObject> activeEnemies = new List<GameObject>();
 
@@ -31,49 +30,51 @@ public class EnemyManager : MonoBehaviour
         GenerateEnemies();
     }
 
-    // -----------------------
-    // GENERATE enemies
-    // -----------------------
+    // Generate enemies
     public void GenerateEnemies()
     {
-        // Poista vanhat
-        foreach (GameObject turret in activeEnemies)
-            Destroy(turret);
+        // Remove old enemies
+        foreach (GameObject enemy in activeEnemies)
+            Destroy(enemy);
         activeEnemies.Clear();
 
         List<Transform> selectedSpawnPoints = new List<Transform>();
 
-        DeliveryModifierSystem modSystem = FindAnyObjectByType<DeliveryModifierSystem>();
-        int enemyCount = maxEnemies;
+        // ===== ENEMY ALERT =====
+        int adjustedMinEnemies = minEnemies;
+        int adjustedMaxEnemies = maxEnemies;
 
-        // Check if Enemy Alert is active
-        //if (modSystem != null && modSystem.HasModifier("Enemy Alert"))
-        //{
-          //  enemyCount = Mathf.RoundToInt(enemyCount * 1.5f);
-        //}
+        DeliveryModifierSystem modSystem = FindFirstObjectByType<DeliveryModifierSystem>();
+        if (modSystem != null && modSystem.IsEnemyAlertActive())
+        {
+            adjustedMinEnemies = Mathf.RoundToInt(minEnemies * 1.5f);
+            adjustedMaxEnemies = Mathf.RoundToInt(maxEnemies * 1.5f);
+            Debug.Log($"Enemy Alert! Min: {minEnemies}->{adjustedMinEnemies}, Max: {maxEnemies}->{adjustedMaxEnemies}");
+        }
         
-        // Satunnaisesti valitaan spawn pointit
+
+        // Randomly select spawn points
         foreach (Transform point in spawnPoints)
         {
             if (Random.value <= spawnChance)
                 selectedSpawnPoints.Add(point);
         }
 
-        // Varmista MIN
-        while (selectedSpawnPoints.Count < minEnemies && selectedSpawnPoints.Count < spawnPoints.Length)
+        // Ensure MIN 
+        while (selectedSpawnPoints.Count < adjustedMinEnemies && selectedSpawnPoints.Count < spawnPoints.Length)
         {
             Transform randomPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
             if (!selectedSpawnPoints.Contains(randomPoint))
                 selectedSpawnPoints.Add(randomPoint);
         }
 
-        // Varmista MAX
-        while (selectedSpawnPoints.Count > maxEnemies)
+        // Ensure MAX 
+        while (selectedSpawnPoints.Count > adjustedMaxEnemies)
         {
             selectedSpawnPoints.RemoveAt(Random.Range(0, selectedSpawnPoints.Count));
         }
 
-        // Spawn turretti prefabit
+        // Spawn enemy prefabs
         foreach (Transform point in selectedSpawnPoints)
         {
             if (enemyPrefabs.Length == 0) continue;
@@ -83,6 +84,21 @@ public class EnemyManager : MonoBehaviour
             activeEnemies.Add(enemy);
         }
 
-        Debug.Log("Turrets spawned: " + activeEnemies.Count);
+        Debug.Log($"Enemies spawned: {activeEnemies.Count} (Min: {adjustedMinEnemies}, Max: {adjustedMaxEnemies})");
+    }
+
+    // Public method to get active enemy count
+    public int GetActiveEnemyCount()
+    {
+        return activeEnemies.Count;
+    }
+
+    // Public method to clear all enemies 
+    public void ClearAllEnemies()
+    {
+        foreach (GameObject enemy in activeEnemies)
+            Destroy(enemy);
+        activeEnemies.Clear();
+        Debug.Log("All enemies cleared");
     }
 }
