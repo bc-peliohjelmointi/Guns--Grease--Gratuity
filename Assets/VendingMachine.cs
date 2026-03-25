@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
@@ -8,17 +9,20 @@ public class VendingMachine : MonoBehaviour
     [Header("Settings")]
     public float interactDistance = 3f;
     public Key interactKey = Key.E;
-    public int cost = 5;
+    public int batteryCost = 5;
 
     [Header("Battery Spawn")]
     public GameObject batteryPrefab;
-    public Transform spawnPoint;
+    public Transform batterySpawnPoint;
 
     [Header("UI")]
     public TextMeshProUGUI statusText;
 
     private Transform player;
     private PlayerStats stats;
+
+    private bool playerInRange = false;
+    private bool isShowingMessage = false;
 
     private void Start()
     {
@@ -29,33 +33,51 @@ public class VendingMachine : MonoBehaviour
     private void Update()
     {
         float dist = Vector3.Distance(player.position, transform.position);
+        playerInRange = dist <= interactDistance;
 
-        if (dist <= interactDistance)
+        if (!playerInRange)
         {
-            if (statusText != null)
-                statusText.text = $"[E] Buy battery pack ({cost}$)";
-
-            if (Keyboard.current[interactKey].wasPressedThisFrame)
-            {
-                TryPurchase();
-            }
-        }
-    }
-
-    private void TryPurchase()
-    {
-        if (stats.money < cost)
-        {
-            statusText.text = "Not enough money.";
+            statusText.text = "";
             return;
         }
 
-        stats.money -= cost;
-        DispenseBattery();
+        if (!isShowingMessage)
+        {
+            statusText.text = $"[E] Buy battery pack ({batteryCost}$)";
+        }
+
+        if (Keyboard.current.eKey.wasPressedThisFrame)
+        {
+            TryBatteryPurchase();
+        }
+    }
+
+    private void TryBatteryPurchase()
+    {
+        if (stats.money >= batteryCost)
+        {
+            stats.money -= batteryCost;
+            DispenseBattery();
+        }
+
+        else
+        {
+            StartCoroutine(ShowTempMessage("Not enough money."));
+        }
     }
 
     private void DispenseBattery()
     {
-        Instantiate(batteryPrefab, spawnPoint.position, spawnPoint.rotation);
+        Instantiate(batteryPrefab, batterySpawnPoint.position, batterySpawnPoint.rotation);
+    }
+
+    private IEnumerator ShowTempMessage(string message)
+    {
+        isShowingMessage = true;
+        statusText.text = message;
+
+        yield return new WaitForSeconds(1.5f);
+
+        isShowingMessage = false;
     }
 }
