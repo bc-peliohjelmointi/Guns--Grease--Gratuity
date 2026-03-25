@@ -157,7 +157,7 @@ public class PhoneUI : MonoBehaviour
         }
         else
         {
-            playerInput.actions["Look"].Enable();
+            playerInput.SwitchCurrentActionMap("Player");
             PlaySound(phoneCloseSFX);
         }
     }
@@ -445,7 +445,8 @@ public class PhoneUI : MonoBehaviour
 
     IEnumerator AnimatePhone(bool opening)
     {
-        phoneOverlay.SetActive(true);
+        if (opening)
+            phoneOverlay.SetActive(true);
 
         Vector2 start = opening ? phoneHiddenPos : phoneShownPos;
         Vector2 end = opening ? phoneShownPos : phoneHiddenPos;
@@ -456,8 +457,6 @@ public class PhoneUI : MonoBehaviour
         {
             time += Time.unscaledDeltaTime;
             float t = time / phoneAnimDuration;
-
-            // Smooth ease-out
             t = 1f - Mathf.Pow(1f - t, 3f);
 
             phoneTransform.anchoredPosition = Vector2.Lerp(start, end, t);
@@ -467,7 +466,10 @@ public class PhoneUI : MonoBehaviour
         phoneTransform.anchoredPosition = end;
 
         if (!opening)
+        {
             phoneOverlay.SetActive(false);
+            UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
+        }
     }
 
 

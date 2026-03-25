@@ -279,6 +279,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 8616685848737228376, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 5844581374230767752}
     - target: {fileID: 8997996947095583982, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
       propertyPath: m_RootOrder
       value: 4
@@ -612,6 +616,10 @@ PrefabInstance:
       propertyPath: fireSound
       value: 
       objectReference: {fileID: 8300000, guid: 488ab2cdc574b0b468b56d808d0ca874, type: 3}
+    - target: {fileID: 2758822002551651491, guid: ec81deb4449b7cf489f777cca4142876, type: 3}
+      propertyPath: cameraRoot
+      value: 
+      objectReference: {fileID: 5844581374230767759}
     - target: {fileID: 2758822002551651491, guid: ec81deb4449b7cf489f777cca4142876, type: 3}
       propertyPath: reloadSound
       value: 

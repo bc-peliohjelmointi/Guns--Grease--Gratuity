@@ -269,7 +269,7 @@ public class EnemyAI : MonoBehaviour
                 float speed = projScript != null ? projScript.speed : 20f;
 
                 rb.AddForce(shootDirection * speed, ForceMode.Impulse);
-                audioSource.PlayOneShot(shootSound);
+                AudioSource.PlayClipAtPoint(shootSound, upperBody.position, 1f);
             }
 
             Projectile projectileScript = proj.GetComponent<Projectile>();
@@ -452,7 +452,7 @@ public class EnemyAI : MonoBehaviour
     public void TakeDamage(float damage)
     {
         health -= damage;
-        audioSource.PlayOneShot(hitSound);
+        AudioSource.PlayClipAtPoint(hitSound, upperBody.position, 1f);
 
         if (health <= 0)
             StartCoroutine(EnemyDie());

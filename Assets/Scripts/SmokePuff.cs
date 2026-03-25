@@ -24,7 +24,7 @@ public class SmokePuff : MonoBehaviour
 
     private void Awake()
     {
-        audioSource.PlayOneShot(deathSound);
+        AudioSource.PlayClipAtPoint(deathSound, transform.position, 1f);
     }
 
     private IEnumerator soundAndDestroy()   // Waits for the sound to finish before destroying the gameobject
