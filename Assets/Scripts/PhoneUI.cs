@@ -157,7 +157,7 @@ public class PhoneUI : MonoBehaviour
         }
         else
         {
-            playerInput.SwitchCurrentActionMap("Player");
+            playerInput.actions["Look"].Enable();
             PlaySound(phoneCloseSFX);
         }
     }

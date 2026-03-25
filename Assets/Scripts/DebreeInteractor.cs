@@ -17,6 +17,10 @@ public class DebreeInteractor : MonoBehaviour
     private GameObject currentDebree;
     private DebreeProgress currentProgress;
 
+    bool isPlayingSound = false;
+
+
+
     void Update()
     {
         Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
@@ -65,16 +69,31 @@ public class DebreeInteractor : MonoBehaviour
             if (progressBar != null)
                 progressBar.value = currentProgress.progress;
 
+            // START SOUND
+            if (!isPlayingSound && currentProgress.audioSource != null)
+            {
+                currentProgress.audioSource.clip = currentProgress.debreeSound;
+                currentProgress.audioSource.loop = true;
+                currentProgress.audioSource.Play();
+                isPlayingSound = true;
+            }
+
             if (currentProgress.progress >= 1f)
             {
                 Destroy(currentDebree);
                 ClearTarget();
             }
         }
+        else
+        {
+            StopSound();
+        }
     }
 
     void ClearTarget()
     {
+        StopSound();
+
         currentDebree = null;
         currentProgress = null;
 
@@ -86,5 +105,15 @@ public class DebreeInteractor : MonoBehaviour
             progressBar.value = 0f;
             progressBar.gameObject.SetActive(false);
         }
+    }
+
+    void StopSound()
+    {
+        if (isPlayingSound && currentProgress != null && currentProgress.audioSource != null)
+        {
+            currentProgress.audioSource.Stop();
+        }
+
+        isPlayingSound = false;
     }
 }

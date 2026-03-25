@@ -1121,6 +1121,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UpgradeShopCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 7792335990212689896, guid: c76dba83a0e75e249a2e4f0e92dd7524, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9191924682960695829, guid: c76dba83a0e75e249a2e4f0e92dd7524, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -7421,6 +7425,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 25178021}
     - target: {fileID: 1469568962133849383, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
+      propertyPath: openDoorSound
+      value: 
+      objectReference: {fileID: 8300000, guid: a7c65674f161a33439be77f322f3fb00, type: 3}
+    - target: {fileID: 1469568962133849383, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
+      propertyPath: closeDoorSound
+      value: 
+      objectReference: {fileID: 8300000, guid: e80539fc99cca8548b128eb365650dd5, type: 3}
+    - target: {fileID: 1469568962133849383, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
       propertyPath: teleportManager
       value: 
       objectReference: {fileID: 25178019}
@@ -7428,6 +7440,10 @@ PrefabInstance:
       propertyPath: turretActivator
       value: 
       objectReference: {fileID: 25178020}
+    - target: {fileID: 3700896365188619770, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4182661306016418333, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
       propertyPath: scooter
       value: 
@@ -7871,9 +7887,9 @@ SceneRoots:
   m_Roots:
   - {fileID: 1935713841}
   - {fileID: 609389374}
-  - {fileID: 1656709146040544057}
   - {fileID: 1379622744}
   - {fileID: 25178013}
+  - {fileID: 1656709146040544057}
   - {fileID: 142947758}
   - {fileID: 8870710630010593985}
   - {fileID: 165241635}

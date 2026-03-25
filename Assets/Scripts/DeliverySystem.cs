@@ -61,6 +61,10 @@ public class DeliverySystem : MonoBehaviour
     public AudioClip pickupPackageSFX;
     public AudioClip deliveryCompleteSFX;
 
+    [Header("Stairwell Audio")]
+    public AudioClip openDoorSound;
+    public AudioClip closeDoorSound;
+
     // Delivery zone handling
     private GameObject[] deliveryZones;
     private GameObject activeDeliveryZone;
@@ -474,6 +478,7 @@ public class DeliverySystem : MonoBehaviour
     {
         isTeleporting = true;
 
+        audioSource.PlayOneShot(openDoorSound);
         yield return StartCoroutine(FadeOut());
 
         turretActivator.SpawnTurrets();
@@ -486,7 +491,9 @@ public class DeliverySystem : MonoBehaviour
         SelectActiveExitPoint();
         pendingDelivery = true;
 
+        audioSource.PlayOneShot(closeDoorSound);
         yield return StartCoroutine(FadeIn());
+
         isTeleporting = false;
     }
 

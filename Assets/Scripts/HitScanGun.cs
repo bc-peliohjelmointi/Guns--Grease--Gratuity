@@ -62,6 +62,7 @@ public class GunHitscan : MonoBehaviour
 
     void Start()
     {
+        StartCoroutine(StartActive());
         audioSource = GetComponent<AudioSource>();
         currentAmmo = magazineSize;
         if (playerCamera) originalCamRot = playerCamera.transform.localRotation;
@@ -254,5 +255,14 @@ public class GunHitscan : MonoBehaviour
     {
         yield return new WaitForSeconds(0.1f);
         AudioSource.PlayClipAtPoint(fireSound, muzzle.position, 0.4f);
+    }
+
+    IEnumerator StartActive()
+    {
+        enabled = false;
+
+        yield return new WaitForSeconds(0.1f);
+
+        enabled = true;
     }
 }
