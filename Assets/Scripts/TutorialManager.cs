@@ -37,7 +37,12 @@ public class TutorialManager : MonoBehaviour
     {
         if (Keyboard.current.qKey.wasPressedThisFrame)
         {
-            NextStep();
+            // Lock some steps to force an action
+            if (steps[currentStepIndex].isSkippable)
+            {
+                NextStep();
+            }
+           
         }
     }
 
@@ -52,6 +57,16 @@ public class TutorialManager : MonoBehaviour
         tutorialPanel.SetActive(true);
 
         TutorialStep1 step = steps[index];
+
+
+        if (step.isSkippable)
+        {
+            skipText.text = "Press Q to skip";
+        }
+        else
+        {
+            skipText.text = "Complete the action to continue";
+        }
 
         // Layouts
 

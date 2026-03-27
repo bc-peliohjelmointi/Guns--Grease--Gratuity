@@ -24,8 +24,9 @@ public class TutorialStep1 : ScriptableObject
     public Vector2 anchorMin = new Vector2(0.5f, 0.5f);
     public Vector2 anchorMax = new Vector2(0.5f, 0.5f);
 
-    [Header("Skip text")]
+    [Header("Skip options")]
     public Vector2 skipPosition;
+    public bool isSkippable = true;
 
     public TutorialTriggerType triggerType;
 }
