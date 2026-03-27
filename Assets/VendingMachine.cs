@@ -30,6 +30,7 @@ public class VendingMachine : MonoBehaviour
         stats = PlayerStats.Instance;
     }
 
+    // checks player distance and if within required parameter promts text and checks for input to buy
     private void Update()
     {
         float dist = Vector3.Distance(player.position, transform.position);
@@ -52,6 +53,7 @@ public class VendingMachine : MonoBehaviour
         }
     }
 
+    // compares player money to required money to purchase and if not met then starts coroutine for message promt
     private void TryBatteryPurchase()
     {
         if (stats.money >= batteryCost)
@@ -66,11 +68,13 @@ public class VendingMachine : MonoBehaviour
         }
     }
 
+    // creates object (battery)
     private void DispenseBattery()
     {
         Instantiate(batteryPrefab, batterySpawnPoint.position, batterySpawnPoint.rotation);
     }
 
+    // temporary message time
     private IEnumerator ShowTempMessage(string message)
     {
         isShowingMessage = true;
