@@ -202,6 +202,10 @@ MonoBehaviour:
   statsMoneyText: {fileID: 289373074}
   statsReputationText: {fileID: 268557699}
   statsOrdersCompletedText: {fileID: 1332518762}
+  statsLoginPanel: {fileID: 854898687}
+  statsLoadingPanel: {fileID: 486196219}
+  statsLoadingBar: {fileID: 1528735710}
+  statsLoginButton: {fileID: 1870756008}
   instructionsAppButton: {fileID: 1663154542}
   instructionsPanel: {fileID: 1170381227}
   endDayButton: {fileID: 1835971177}
@@ -265,7 +269,14 @@ MonoBehaviour:
   totalMoneyEarned: 0
   phoneUI: {fileID: 25178012}
   delivery: {fileID: 1575877281}
+  resettable: {fileID: 0}
+  scooterCtrl: {fileID: 0}
   fadePanel: {fileID: 623306354}
+  player: {fileID: 0}
+  spawnPoint: {fileID: 0}
+  gun: {fileID: 0}
+  scooter: {fileID: 0}
+  scooterSpawnPoint: {fileID: 0}
 --- !u!114 &25178016
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2077,6 +2088,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5b02b22c1a6f46f4cad12397f11fb4a5, type: 3}
+--- !u!1 &486196219 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5552900872703469158, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
+  m_PrefabInstance: {fileID: 8870710630010593985}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &518779795
 GameObject:
   m_ObjectHideFlags: 0
@@ -2992,6 +3008,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 853100904}
   m_CullTransparentMesh: 1
+--- !u!1 &854898687 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1533943157815567700, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
+  m_PrefabInstance: {fileID: 8870710630010593985}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &867100275
 GameObject:
   m_ObjectHideFlags: 0
@@ -4813,6 +4834,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6286120108335754044, guid: 37e94d28c2825074895df8400af79eaa, type: 3}
   m_PrefabInstance: {fileID: 2016278536}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1528735710 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7516742259146157406, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
+  m_PrefabInstance: {fileID: 8870710630010593985}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1533486251 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7792335990212689896, guid: c76dba83a0e75e249a2e4f0e92dd7524, type: 3}
@@ -6027,6 +6059,17 @@ Transform:
   - {fileID: 1718797038}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1870756008 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2514093347699017322, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
+  m_PrefabInstance: {fileID: 8870710630010593985}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1877374541
 GameObject:
   m_ObjectHideFlags: 0
@@ -7780,6 +7823,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 467344731610959137, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1244945453279124144, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -7791,10 +7838,6 @@ PrefabInstance:
     - target: {fileID: 8281658834064297980, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
       propertyPath: m_Name
       value: Phone Canvas
-      objectReference: {fileID: 0}
-    - target: {fileID: 8281658834064297980, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8654402606744649401, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
       propertyPath: m_Pivot.x

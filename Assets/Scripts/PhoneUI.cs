@@ -52,6 +52,12 @@ public class PhoneUI : MonoBehaviour
     public TMP_Text statsReputationText;
     public TMP_Text statsOrdersCompletedText;
 
+    [Header("Stats App Flow")]
+    public GameObject statsLoginPanel;
+    public GameObject statsLoadingPanel;
+    public Slider statsLoadingBar;
+    public Button statsLoginButton;
+
     [Header("Instructions App")]
     public Button instructionsAppButton;
     public GameObject instructionsPanel;
@@ -108,6 +114,7 @@ public class PhoneUI : MonoBehaviour
         // App buttons
         deliveryAppButton.onClick.AddListener(OpenDeliveryApp);
         statsAppButton.onClick.AddListener(OpenStatsApp);
+        statsLoginButton.onClick.AddListener(OnStatsLoginPressed);
         mapAppButton.onClick.AddListener(OpenMapApp);
         instructionsAppButton.onClick.AddListener(OpenInstructionsApp);
 
@@ -204,9 +211,7 @@ public class PhoneUI : MonoBehaviour
         PlaySound(appOpenSFX);
         SwitchPanel(statsPanel);
 
-        statsMoneyText.text = "$" + PlayerStats.Instance.money.ToString("0.00");
-        statsReputationText.text = PlayerStats.Instance.reputation.ToString("0.0");
-        statsOrdersCompletedText.text = PlayerStats.Instance.deliveriesCompleted.ToString();
+        ShowStatsLogin();
     }
 
     void OpenMapApp()
@@ -367,6 +372,90 @@ public class PhoneUI : MonoBehaviour
 
 
     // --------------------------
+    // STATS APP
+    // --------------------------
+
+    void ShowStatsLogin()
+    {
+        statsLoginPanel.SetActive(true);
+        statsLoadingPanel.SetActive(false);
+        statsMoneyText.transform.parent.gameObject.SetActive(false); // hide stats content
+    }
+
+    void OnStatsLoginPressed()
+    {
+        statsLoginPanel.SetActive(false);
+        statsLoadingPanel.SetActive(true);
+
+        StartCoroutine(StatsLoadingRoutine());
+    }
+
+    IEnumerator StatsLoadingRoutine()
+    {
+        float duration = Random.Range(0.75f, 2f);
+        float time = 0f;
+
+        float displayedProgress = 0f;
+
+        // Random "personality"
+        float stallPoint = Random.Range(0.3f, 0.8f);
+        float stallDuration = Random.Range(0.05f, 0.2f);
+        bool hasStalled = false;
+
+        while (time < duration)
+        {
+            time += Time.unscaledDeltaTime;
+
+            float targetProgress = time / duration;
+
+            // Smooth non-linear movement
+            targetProgress = Mathf.SmoothStep(0f, 1f, targetProgress);
+
+            // Fake stall
+            // if (!hasStalled && targetProgress > stallPoint)
+            // {
+            //     hasStalled = true;
+            //     yield return new WaitForSecondsRealtime(stallDuration);
+            // }
+
+            // Slight jitter / uneven speed
+            float jitter = Random.Range(-0.02f, 0.02f);
+            targetProgress = Mathf.Clamp01(targetProgress + jitter);
+
+            // Smooth toward target (prevents snapping)
+            displayedProgress = Mathf.Lerp(displayedProgress, targetProgress, 10f * Time.unscaledDeltaTime);
+
+            if (statsLoadingBar != null)
+                statsLoadingBar.value = displayedProgress;
+
+            yield return null;
+        }
+
+        // Fake final jump (very common in real apps)
+        if (Random.value > 0.5f)
+        {
+            yield return new WaitForSecondsRealtime(Random.Range(0.05f, 0.15f));
+        }
+
+        if (statsLoadingBar != null)
+            statsLoadingBar.value = 1f;
+
+        yield return new WaitForSecondsRealtime(0.05f);
+
+        statsLoadingPanel.SetActive(false);
+        ShowStatsContent();
+    }
+
+    void ShowStatsContent()
+    {
+        statsMoneyText.transform.parent.gameObject.SetActive(true);
+
+        statsMoneyText.text = "$" + PlayerStats.Instance.money.ToString("0.00");
+        statsReputationText.text = PlayerStats.Instance.reputation.ToString("0.0");
+        statsOrdersCompletedText.text = PlayerStats.Instance.deliveriesCompleted.ToString();
+    }
+
+    // --------------------------
     // END DAY
     // --------------------------
 
@@ -377,6 +466,8 @@ public class PhoneUI : MonoBehaviour
         summaryMoneyText.text = "$" + PlayerStats.Instance.moneyToday.ToString("0.00");
         summaryReputationText.text = PlayerStats.Instance.reputation.ToString("0.0");
     }
+
+    
 
 
     public void CloseEndDayPanel()
@@ -397,6 +488,8 @@ public class PhoneUI : MonoBehaviour
         deliveryPanel.SetActive(true);
         GenerateOrders();
     }
+
+    
 
     //----------------
     //  Animations & Sound
@@ -477,6 +570,8 @@ public class PhoneUI : MonoBehaviour
     //--------------
     // ---SOUNDS----
     //--------------
+    #region Sounds
+
     void PlaySound(AudioClip clip)
     {
         if (clip != null && audioSource != null)
@@ -514,7 +609,7 @@ public class PhoneUI : MonoBehaviour
             click.clickSound = buttonClickSFX;
         }
     }
-
+    #endregion
 
 
 }
