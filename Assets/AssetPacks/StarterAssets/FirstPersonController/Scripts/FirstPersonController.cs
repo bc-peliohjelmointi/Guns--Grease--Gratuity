@@ -63,6 +63,9 @@ namespace StarterAssets
 		[Tooltip("How far in degrees can you move the camera down")]
 		public float BottomClamp = -90.0f;
 
+		[Header("References")]
+		public Respawn respawn;
+
 		// cinemachine
 		private float _cinemachineTargetPitch;
 
@@ -303,6 +306,7 @@ namespace StarterAssets
 
             Debug.Log("Player died");
 
+			respawn.GameOver();
             // Tänne myöhemmin:
             // - respawn
             // - game over UI

@@ -7,6 +7,7 @@ public class scooterCtrl : MonoBehaviour
     [Header("Main")]
     public Transform scooterRoot;
     public Transform visualModel; // Scooter body for leaning
+    public Transform scooterSpawnPoint;
 
     [Header("Movement Settings")]
     public float acceleration = 20f;
@@ -16,6 +17,7 @@ public class scooterCtrl : MonoBehaviour
     public float maxReverse = -30f;
     public float turnSpeed = 65f;
     public float leanAmount = 12f;
+    public bool isResetting = false;
 
     [Header("Control")]
     public bool canControl = false; // player mount
@@ -42,7 +44,7 @@ public class scooterCtrl : MonoBehaviour
 
     public bool hasBattery => currentBattery > 0.1f;
 
-    private float currentSpeed = 0f;
+    public float currentSpeed = 0f;
     private Rigidbody rb;
     
     private void Start()
@@ -60,6 +62,9 @@ public class scooterCtrl : MonoBehaviour
 
     private void FixedUpdate()
     {
+
+        if (isResetting) return;
+
         // when not mounted nor powered, scooter will coast to stop
         if (!canControl || !powerOn || !hasBattery)
         {
@@ -238,4 +243,6 @@ public class scooterCtrl : MonoBehaviour
 
         engineSource.pitch = Mathf.Lerp(minPitch, maxPitch, speedPercent);
     }
+
+
 }

@@ -265,4 +265,9 @@ public class GunHitscan : MonoBehaviour
 
         enabled = true;
     }
+    public void ResetGun()
+    {
+        currentAmmo = magazineSize;
+        isReloading = false;
+    }
 }

@@ -591,4 +591,12 @@ public class DeliverySystem : MonoBehaviour
         foreach (var zone in exitPoints)
             zone.SetActive(false);
     }
+
+    public void ResetDeliveries()
+    {
+        hasActiveOrder = false;
+
+        // clear current orders if needed
+        // reset NPCs / packages
+    }
 }

@@ -112,6 +112,9 @@ public class EnemyAI : MonoBehaviour
 
     private void Update()
     {
+        if (DaySystem.IsResetting)
+            return;
+
         if (player == null)
         {
             Debug.LogWarning("Enemy AI: Player is null!");
@@ -466,7 +469,7 @@ public class EnemyAI : MonoBehaviour
 
         yield return new WaitForSeconds(0.1f);
 
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 
     private void OnDrawGizmosSelected()
@@ -482,5 +485,33 @@ public class EnemyAI : MonoBehaviour
         // Patrol range (blue)
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, walkPointRange);
+    }
+
+    public void ResetEnemy()
+    {
+        // Reset health
+        health = maxHealth;
+
+        // Reset attack state
+        alreadyAttacked = false;
+        CancelInvoke(); // stops Invoke(nameof(ResetAttack))
+
+        // Reset movement
+        if (agent != null)
+        {
+            agent.ResetPath();
+            agent.velocity = Vector3.zero;
+        }
+
+        // Reset patrol
+        walkPointSet = false;
+
+        // Reset timers
+        nextStrafeTime = 0f;
+        lastRepositionTime = 0f;
+
+        transform.rotation = Quaternion.identity;
+
+        Debug.Log("Enemy reset: " + gameObject.name);
     }
 }

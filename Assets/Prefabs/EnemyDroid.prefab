@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 39131759741392543}
   - component: {fileID: 3863908894672042335}
   - component: {fileID: 607668853909997490}
+  - component: {fileID: 5783621054588029258}
   m_Layer: 0
   m_Name: EnemyDroid
   m_TagString: Enemy
@@ -140,7 +141,7 @@ MonoBehaviour:
   chaseSpeed: 7.5
   strafeSpeed: 6.5
   timeBetweenAttacks: 0.5
-  damageToPlayer: 0
+  damageToPlayer: 5
   damageToDelivery: 15
   projectile: {fileID: 2830964268771592166, guid: 5b02b22c1a6f46f4cad12397f11fb4a5, type: 3}
   attackPoint: {fileID: 1241779449867714531}
@@ -263,6 +264,18 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &5783621054588029258
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 856375251735021655}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd9b58fc89b830f4fa4b66683031703d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1113529994898933777
 GameObject:
   m_ObjectHideFlags: 0
