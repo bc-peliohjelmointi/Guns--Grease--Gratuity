@@ -203,7 +203,6 @@ public class DeliveryModifierSystem : MonoBehaviour
     {
         if (modifierNotificationText == null)
         {
-            Debug.LogWarning("ModifierSystem: No notification text assigned!");
             return;
         }
 
