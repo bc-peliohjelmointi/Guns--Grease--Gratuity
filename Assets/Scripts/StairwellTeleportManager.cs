@@ -12,7 +12,7 @@ public class StairwellTeleportManager : MonoBehaviour
         isInStairwell = false;
     }
 
-    public void TeleportToStairwell(Transform player)
+    public void TeleportToStairwell(Transform player)       // Teleports to the entrypoint inside the stairwell (Teleport in to the building)
     {
         Teleport(player, stairwellTarget);
         TutorialManager.Instance
@@ -21,7 +21,7 @@ public class StairwellTeleportManager : MonoBehaviour
         Debug.Log("Player In Stairwell");
     }
 
-    public void TeleportToDeliveryZone(Transform player)
+    public void TeleportToDeliveryZone(Transform player)    // Teleports the player to the delivery zone outside (Out of the building teleport)
     {
         if (deliverySystem == null) return;
 
@@ -33,7 +33,7 @@ public class StairwellTeleportManager : MonoBehaviour
         Debug.Log("Player Not In Stairwell");
     }
 
-    private void Teleport(Transform player, Transform target)
+    private void Teleport(Transform player, Transform target)   // Teleports the player resetting the rigibody and characterController to avoid bugs and conflicts
     {
         if (player == null || target == null) return;
 

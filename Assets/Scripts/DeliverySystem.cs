@@ -354,6 +354,7 @@ public class DeliverySystem : MonoBehaviour
         {
             StartCoroutine(TeleportOutOfStairwell());   // Teleport out if in stairwell
         }
+        CleanupAfterCancel();
     }
 
     // Cancels the current order
@@ -368,6 +369,7 @@ public class DeliverySystem : MonoBehaviour
         {
             StartCoroutine(TeleportOutOfStairwell());   // Teleport out if in stairwell
         }
+        CleanupAfterCancel();
     }
 
     // Clean up after canceling delivery order

@@ -230,12 +230,12 @@ public class PhoneUI : MonoBehaviour
     // MAP APP 
     // --------------------------
 
-    public void OnShopNavPressed()
+    public void OnShopNavPressed()  // Compass navigation points to shop/vending machine
     {
         compassNavigation.NavigateShop();
     }
 
-    public void OnHomeNavPressed()
+    public void OnHomeNavPressed()  // Compass navigation points to Home
     {
         compassNavigation.NavigateHome();
     }
@@ -307,7 +307,7 @@ public class PhoneUI : MonoBehaviour
         GenerateOrdersOnce();
     }
 
-    void UpdateOrderListUI(int count)
+    void UpdateOrderListUI(int count)   // Resets the orders list
     {
         for (int i = 0; i < orderSlots.Length; i++)
         {
@@ -326,7 +326,7 @@ public class PhoneUI : MonoBehaviour
     }
 
 
-    void UpdateExtraOrderUI()
+    void UpdateExtraOrderUI()   // Updates the currentEank & ordersLeftText
     {
         // Orders Left
         ordersLeftText.text = PlayerStats.Instance.ordersLeft.ToString();
@@ -375,7 +375,7 @@ public class PhoneUI : MonoBehaviour
     // STATS APP
     // --------------------------
 
-    void ShowStatsLogin()
+    void ShowStatsLogin()   // Login screen First
     {
         statsLoginPanel.SetActive(true);
         statsLoadingPanel.SetActive(false);
@@ -431,7 +431,7 @@ public class PhoneUI : MonoBehaviour
             yield return null;
         }
 
-        // Fake final jump (very common in real apps)
+        // Small fake delay at end
         if (Random.value > 0.5f)
         {
             yield return new WaitForSecondsRealtime(Random.Range(0.05f, 0.15f));
@@ -446,7 +446,7 @@ public class PhoneUI : MonoBehaviour
         ShowStatsContent();
     }
 
-    void ShowStatsContent()
+    void ShowStatsContent() // Actual statsApp
     {
         statsMoneyText.transform.parent.gameObject.SetActive(true);
 

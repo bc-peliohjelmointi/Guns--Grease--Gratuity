@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Debree health
+/// </summary>
 public class DebreeProgress : MonoBehaviour
 {
     [Range(0f, 1f)]
