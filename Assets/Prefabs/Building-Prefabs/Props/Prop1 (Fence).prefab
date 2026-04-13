@@ -119,6 +119,7 @@ GameObject:
   - component: {fileID: 605399455522814339}
   - component: {fileID: 3912885843929509584}
   - component: {fileID: 8389548408567633288}
+  - component: {fileID: 7193858968139480991}
   m_Layer: 0
   m_Name: Prop1 (Fence)
   m_TagString: Untagged
@@ -153,9 +154,9 @@ NavMeshObstacle:
   m_Enabled: 1
   serializedVersion: 3
   m_Shape: 1
-  m_Extents: {x: 1.5, y: 3, z: 0.25}
+  m_Extents: {x: 2, y: 3, z: 0.5}
   m_MoveThreshold: 0.1
-  m_Carve: 0
+  m_Carve: 1
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 1.5, z: 0}
   m_TimeToStationary: 0.5
@@ -180,6 +181,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.5, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!65 &7193858968139480991
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 500372626366021570}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.5, y: 4, z: 1}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1 &750013699073779746
 GameObject:
   m_ObjectHideFlags: 0
