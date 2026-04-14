@@ -26,6 +26,9 @@ public class TutorialManager : MonoBehaviour
 
     public float typingSpeed = 0.03f;
 
+    bool skipTyping = false;
+
+
 
     void Start()
     {
@@ -37,9 +40,12 @@ public class TutorialManager : MonoBehaviour
     {
         if (Keyboard.current.qKey.wasPressedThisFrame)
         {
+
+
             // Lock some steps to force an action
             if (steps[currentStepIndex].isSkippable)
             {
+
                 NextStep();
             }
            
@@ -102,11 +108,27 @@ public class TutorialManager : MonoBehaviour
     IEnumerator TypeText(string text)
     {
         dialogueText.text = "";
+        bool isInsideTag = false;
 
         foreach (char c in text)
         {
+            if (c == '<')
+            {
+                isInsideTag = true;
+            }
+
             dialogueText.text += c;
-            yield return new WaitForSeconds(typingSpeed);
+
+            if (c == '>')
+            {
+                isInsideTag = false;
+                continue; // don't delay after finishing a tag
+            }
+
+            if (!isInsideTag)
+            {
+                yield return new WaitForSeconds(typingSpeed);
+            }
         }
     }
 
