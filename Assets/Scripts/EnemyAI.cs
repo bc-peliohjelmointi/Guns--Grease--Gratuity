@@ -464,12 +464,27 @@ public class EnemyAI : MonoBehaviour
 
     private IEnumerator EnemyDie()
     {
-        
+        int killReward = GetKillReward();
+        PlayerStats.Instance.AddMoney(killReward);
+
+        Debug.Log("Enemy bonus!");
+
         Instantiate(deathSmokeEffect, transform.position, Quaternion.identity);
 
         yield return new WaitForSeconds(0.1f);
 
         gameObject.SetActive(false);
+    }
+
+    private int GetKillReward()
+    {
+        // roll random number from 0-99 to determine precentage of bonus
+        int roll = Random.Range(0, 100);
+
+        if (roll < 50) return 2; // 50 %
+        else if (roll < 75) return 3; // 25 %
+        else if (roll < 90) return 4; // 15 %
+        else return 5; // 10 %
     }
 
     private void OnDrawGizmosSelected()
