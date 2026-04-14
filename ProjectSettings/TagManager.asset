@@ -23,6 +23,7 @@ TagManager:
   - Projectile
   - Shop
   - Home
+  - PopupAnchor
   layers:
   - Default
   - TransparentFX

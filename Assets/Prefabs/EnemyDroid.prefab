@@ -167,6 +167,8 @@ MonoBehaviour:
   hitSound: {fileID: 8300000, guid: 3292a6421c9fde94a9e88e51532ac93e, type: 3}
   deathSound: {fileID: 8300000, guid: ebdee644d8a2cfe47bff40e498975b0d, type: 3}
   deathSmokeEffect: {fileID: 1315614681493600653, guid: fe87e0d112f55d2468bf7bc68d941781, type: 3}
+  EnemyBonusTextPrefab: {fileID: 5427012736361423700, guid: 3885fe400085f1b40863045c84686a90, type: 3}
+  popupAnchor: {fileID: 0}
 --- !u!82 &607668853909997490
 AudioSource:
   m_ObjectHideFlags: 0

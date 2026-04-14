@@ -85,6 +85,10 @@ public class EnemyAI : MonoBehaviour
     [Header("Effects")]
     public GameObject deathSmokeEffect;
 
+    [Header("UI")]
+    public GameObject EnemyBonusTextPrefab;
+    public Transform popupAnchor;
+
     private void Awake()
     {
         // Find player
@@ -108,6 +112,20 @@ public class EnemyAI : MonoBehaviour
         }
 
         health = maxHealth;
+
+        // Find popup anchor automatically
+        if (popupAnchor == null)
+        {
+            GameObject anchorObj = GameObject.FindGameObjectWithTag("PopupAnchor");
+            if (anchorObj != null)
+            {
+                popupAnchor = anchorObj.transform;
+            }
+            else
+            {
+                Debug.LogWarning("PopupAnchor not found in scene!");
+            }
+        }
     }
 
     private void Update()
@@ -467,13 +485,29 @@ public class EnemyAI : MonoBehaviour
         int killReward = GetKillReward();
         PlayerStats.Instance.AddMoney(killReward);
 
-        Debug.Log("Enemy bonus!");
+        ShowEnemyBonusText(killReward);
 
         Instantiate(deathSmokeEffect, transform.position, Quaternion.identity);
 
         yield return new WaitForSeconds(0.1f);
 
         gameObject.SetActive(false);
+    }
+
+    private void ShowEnemyBonusText(int amount)
+    {
+        if (EnemyBonusTextPrefab == null || popupAnchor == null) return;
+
+        GameObject popup = Instantiate(EnemyBonusTextPrefab, popupAnchor);
+
+        RectTransform rt = popup.GetComponent<RectTransform>();
+        rt.anchoredPosition = Vector2.zero;
+
+        EnemyBonusText ebt = popup.GetComponent<EnemyBonusText>();
+        if (ebt != null)
+        {
+            ebt.SetText($"Enemy bonus!\n+ ${amount}");
+        }
     }
 
     private int GetKillReward()
