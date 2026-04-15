@@ -506,7 +506,7 @@ public class EnemyAI : MonoBehaviour
         EnemyBonusText ebt = popup.GetComponent<EnemyBonusText>();
         if (ebt != null)
         {
-            ebt.SetText($"Enemy bonus!\n+ ${amount}");
+            ebt.SetText($"<color=green>Enemy bonus!\n+ ${amount}</color>");
         }
     }
 
