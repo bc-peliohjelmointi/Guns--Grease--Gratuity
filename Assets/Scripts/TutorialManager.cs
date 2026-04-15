@@ -28,6 +28,14 @@ public class TutorialManager : MonoBehaviour
 
     bool skipTyping = false;
 
+    public AudioSource audioSource;
+    public AudioClip blipSound;
+
+    [Range(0.2f, 0.9f)]
+    public float pitchVariation = 0.1f;
+
+    int soundCounter = 0;
+
 
 
     void Start()
@@ -40,8 +48,6 @@ public class TutorialManager : MonoBehaviour
     {
         if (Keyboard.current.qKey.wasPressedThisFrame)
         {
-
-
             // Lock some steps to force an action
             if (steps[currentStepIndex].isSkippable)
             {
@@ -100,6 +106,7 @@ public class TutorialManager : MonoBehaviour
 
     void NextStep()
     {
+        audioSource.Stop();
         currentStepIndex++;
         ShowStep(currentStepIndex);
     }
@@ -109,6 +116,7 @@ public class TutorialManager : MonoBehaviour
     {
         dialogueText.text = "";
         bool isInsideTag = false;
+        soundCounter = 0; 
 
         foreach (char c in text)
         {
@@ -122,13 +130,39 @@ public class TutorialManager : MonoBehaviour
             if (c == '>')
             {
                 isInsideTag = false;
-                continue; // don't delay after finishing a tag
+                yield return new WaitForSeconds(typingSpeed * 2f);
+                continue;
+            }
+
+            float delay;
+
+            if (isInsideTag)
+            {
+                delay = typingSpeed * Random.Range(0.02f, 0.08f);
+            }
+            else
+            {
+                delay = typingSpeed * Random.Range(0.9f, 1.1f);
             }
 
             if (!isInsideTag)
             {
-                yield return new WaitForSeconds(typingSpeed);
+                if (c == '.' || c == ',' || c == '!')
+                    delay *= 3f;
+                // Teksti ‰‰ni
+                if (!char.IsWhiteSpace(c))
+                {
+                    audioSource.pitch = Random.Range(1f - pitchVariation, 1f + pitchVariation);
+                    soundCounter++;
+
+                    if (soundCounter % 2 == 0)
+                    {
+                        audioSource.PlayOneShot(blipSound, 0.5f);
+                    }
+                }
             }
+            yield return new WaitForSeconds(delay);
+
         }
     }
 
