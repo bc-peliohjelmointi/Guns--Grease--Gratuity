@@ -6,9 +6,9 @@ public class DeliveryModifierSystem : MonoBehaviour
 {
     [Header("Modifier Settings")]
     [Range(0f, 1f)]
-    public float modifierChance = 0.5f; // 50% chance of getting a modifier
-    public bool allowMultipleModifiers = false; // Can stack multiple modifiers?
-    public int maxModifiers = 2; // If multiple allowed
+    public float modifierChance = 0.5f;
+    public bool allowMultipleModifiers = false;
+    public int maxModifiers = 2;
 
     [Header("UI References")]
     public TextMeshProUGUI modifierNotificationText;
@@ -17,18 +17,21 @@ public class DeliveryModifierSystem : MonoBehaviour
 
     [Header("Player References")]
     public StarterAssets.FirstPersonController playerController;
+    public PlayerHealth playerHealth; // NEW: Reference to PlayerHealth component
     public DeliverySystem deliverySystem;
     public GunHitscan playerGun;
 
-    // Current active modifiers
     private List<DeliveryModifier> activeModifiers = new List<DeliveryModifier>();
-
-    // All possible modifiers
     private DeliveryModifier[] allModifiers;
 
     private void Start()
     {
-        // Define all possible modifiers
+        // Auto-find PlayerHealth if not assigned
+        if (playerHealth == null && playerController != null)
+        {
+            playerHealth = playerController.GetComponent<PlayerHealth>();
+        }
+
         allModifiers = new DeliveryModifier[]
         {
             // NEGATIVE MODIFIERS
@@ -126,7 +129,7 @@ public class DeliveryModifierSystem : MonoBehaviour
                 RemoveLuckyDay
             ),
             
-            // NEUTRAL/MIXED MODIFIERS
+            // MIXED MODIFIERS
             new DeliveryModifier(
                 "Glass Cannon",
                 "High risk, high reward! +100% damage, -50% health.",
@@ -147,13 +150,10 @@ public class DeliveryModifierSystem : MonoBehaviour
             modifierPanel.SetActive(false);
     }
 
-    // Call this when a delivery starts
     public void RollModifiers()
     {
-        // Clear previous modifiers
         ClearAllModifiers();
 
-        // Roll for modifiers
         if (allowMultipleModifiers)
         {
             int modifierCount = Random.Range(0, maxModifiers + 1);
@@ -167,14 +167,12 @@ public class DeliveryModifierSystem : MonoBehaviour
         }
         else
         {
-            // Single modifier chance
             if (Random.value <= modifierChance)
             {
                 ApplyRandomModifier();
             }
         }
 
-        // Show notification if any modifiers applied
         if (activeModifiers.Count > 0)
         {
             ShowModifierNotification();
@@ -183,14 +181,11 @@ public class DeliveryModifierSystem : MonoBehaviour
 
     private void ApplyRandomModifier()
     {
-        // Pick random modifier
         DeliveryModifier modifier = allModifiers[Random.Range(0, allModifiers.Length)];
 
-        // Don't apply same modifier twice
         if (activeModifiers.Contains(modifier))
             return;
 
-        // Apply it
         modifier.onApply?.Invoke();
         activeModifiers.Add(modifier);
 
@@ -202,17 +197,13 @@ public class DeliveryModifierSystem : MonoBehaviour
     private void ShowModifierNotification()
     {
         if (modifierNotificationText == null)
-        {
             return;
-        }
 
-        // Cancel previous hide coroutine if still running
         if (hideCoroutine != null)
         {
             StopCoroutine(hideCoroutine);
         }
 
-        // Build notification text
         string notification = "<size=36><b>DELIVERY MODIFIERS:</b></size>\n\n";
         foreach (var mod in activeModifiers)
         {
@@ -222,22 +213,17 @@ public class DeliveryModifierSystem : MonoBehaviour
         }
 
         modifierNotificationText.text = notification;
-        Debug.Log($"ModifierSystem: Showing notification - {activeModifiers.Count} modifiers");
 
-        // Show panel
         if (modifierPanel != null)
         {
             modifierPanel.SetActive(true);
-            Debug.Log($"ModifierSystem: Panel shown, will hide in {notificationDuration} seconds");
             hideCoroutine = StartCoroutine(HideModifierPanelAfterDelay());
         }
     }
 
     private System.Collections.IEnumerator HideModifierPanelAfterDelay()
     {
-        Debug.Log($"ModifierSystem: Starting hide timer ({notificationDuration}s)");
         yield return new WaitForSeconds(notificationDuration);
-        Debug.Log("ModifierSystem: Hiding panel now");
         HideModifierPanel();
         hideCoroutine = null;
     }
@@ -245,10 +231,7 @@ public class DeliveryModifierSystem : MonoBehaviour
     private void HideModifierPanel()
     {
         if (modifierPanel != null)
-        {
             modifierPanel.SetActive(false);
-            Debug.Log("ModifierSystem: Panel hidden");
-        }
     }
 
     public void ClearAllModifiers()
@@ -258,10 +241,8 @@ public class DeliveryModifierSystem : MonoBehaviour
             modifier.onRemove?.Invoke();
         }
         activeModifiers.Clear();
-        Debug.Log("Cleared all modifiers");
     }
 
-    // Public methods for checking modifiers
     public bool HasModifier(string modifierName)
     {
         foreach (var mod in activeModifiers)
@@ -280,25 +261,26 @@ public class DeliveryModifierSystem : MonoBehaviour
     public float GetEnemySpawnMultiplier()
     {
         if (IsEnemyAlertActive())
-            return 1.5f; // 50% more enemies
+            return 1.5f;
         return 1.0f;
     }
 
-    public List<string> GetActiveModifierNames()
+    public float GetPackageDamageMultiplier()
     {
-        List<string> names = new List<string>();
-        foreach (var mod in activeModifiers)
-        {
-            names.Add(mod.name);
-        }
-        return names;
+        return packageDamageMultiplier;
     }
 
     // ==========================================
-    // MODIFIER EFFECTS - NEGATIVE
+    // MODIFIER EFFECTS
     // ==========================================
 
     private float originalGunDamage;
+    private float originalMoveSpeed;
+    private float originalMaxHealth;
+    private int originalMagSize;
+    private float packageDamageMultiplier = 1f;
+
+    // WEAPON MALFUNCTION
     private void ApplyWeaponMalfunction()
     {
         if (playerGun != null)
@@ -313,7 +295,7 @@ public class DeliveryModifierSystem : MonoBehaviour
             playerGun.damage = originalGunDamage;
     }
 
-    private float originalMoveSpeed;
+    // HEAVY PACKAGE
     private void ApplyHeavyPackage()
     {
         if (playerController != null)
@@ -332,7 +314,7 @@ public class DeliveryModifierSystem : MonoBehaviour
         }
     }
 
-    private float packageDamageMultiplier = 1f;
+    // FRAGILE CARGO
     private void ApplyFragileCargo()
     {
         packageDamageMultiplier = 1.5f;
@@ -342,12 +324,11 @@ public class DeliveryModifierSystem : MonoBehaviour
         packageDamageMultiplier = 1f;
     }
 
-    private float originalDeliveryTime;
+    // RUSH ORDER
     private void ApplyRushOrder()
     {
         if (deliverySystem != null)
         {
-            originalDeliveryTime = deliverySystem.currentOrderTime;
             deliverySystem.currentOrderTimeRemaining *= 0.7f;
         }
     }
@@ -356,37 +337,32 @@ public class DeliveryModifierSystem : MonoBehaviour
         // Time doesn't restore
     }
 
-    private float originalMaxHealth;
+    // INJURED - UPDATED for PlayerHealth
     private void ApplyInjured()
     {
-        if (playerController != null)
+        if (playerHealth != null)
         {
-            originalMaxHealth = playerController.maxHealth;
-            playerController.maxHealth *= 0.75f;
-            playerController.currentHealth = Mathf.Min(playerController.currentHealth, playerController.maxHealth);
+            originalMaxHealth = playerHealth.maxHealth;
+            playerHealth.SetMaxHealth(playerHealth.maxHealth * 0.75f);
         }
     }
     private void RemoveInjured()
     {
-        if (playerController != null)
-            playerController.maxHealth = originalMaxHealth;
+        if (playerHealth != null)
+            playerHealth.SetMaxHealth(originalMaxHealth);
     }
 
-    private bool enemyAlertActive = false;
-
+    // ENEMY ALERT
     private void ApplyEnemyAlert()
     {
-        enemyAlertActive = true;
         Debug.Log("Enemy Alert ACTIVE - More enemies will spawn!");
     }
-
     private void RemoveEnemyAlert()
     {
-        enemyAlertActive = false;
         Debug.Log("Enemy Alert removed");
     }
 
-    private int originalMagSize;
+    // LOW AMMO
     private void ApplyLowAmmo()
     {
         if (playerGun != null)
@@ -401,10 +377,7 @@ public class DeliveryModifierSystem : MonoBehaviour
             playerGun.magazineSize = originalMagSize;
     }
 
-    // ==========================================
-    // MODIFIER EFFECTS - POSITIVE
-    // ==========================================
-
+    // ADRENALINE RUSH
     private void ApplyAdrenalineRush()
     {
         if (playerController != null)
@@ -423,6 +396,7 @@ public class DeliveryModifierSystem : MonoBehaviour
         }
     }
 
+    // PREMIUM CLIENT
     private void ApplyPremiumClient()
     {
         if (deliverySystem != null)
@@ -432,9 +406,10 @@ public class DeliveryModifierSystem : MonoBehaviour
     }
     private void RemovePremiumClient()
     {
-        // Reward already modified, no need to remove
+        // Reward already modified
     }
 
+    // ARMORED PACKAGE
     private void ApplyArmoredPackage()
     {
         packageDamageMultiplier = 0.5f;
@@ -444,6 +419,7 @@ public class DeliveryModifierSystem : MonoBehaviour
         packageDamageMultiplier = 1f;
     }
 
+    // EXTENDED DEADLINE
     private void ApplyExtendedDeadline()
     {
         if (deliverySystem != null)
@@ -456,6 +432,7 @@ public class DeliveryModifierSystem : MonoBehaviour
         // Time already extended
     }
 
+    // POWER SURGE
     private void ApplyPowerSurge()
     {
         if (playerGun != null)
@@ -470,34 +447,25 @@ public class DeliveryModifierSystem : MonoBehaviour
             playerGun.damage = originalGunDamage;
     }
 
-    private Coroutine regenCoroutine;
+    // LUCKY DAY - UPDATED for PlayerHealth
     private void ApplyLuckyDay()
     {
-        regenCoroutine = StartCoroutine(HealthRegen());
+        if (playerHealth != null)
+        {
+            playerHealth.enableHealthRegen = true;
+            playerHealth.regenRate = 2f;
+            playerHealth.regenDelay = 3f;
+        }
     }
     private void RemoveLuckyDay()
     {
-        if (regenCoroutine != null)
-            StopCoroutine(regenCoroutine);
-    }
-
-    private System.Collections.IEnumerator HealthRegen()
-    {
-        while (true)
+        if (playerHealth != null)
         {
-            yield return new WaitForSeconds(1f);
-            if (playerController != null && playerController.currentHealth < playerController.maxHealth)
-            {
-                playerController.currentHealth += 2f;
-                playerController.currentHealth = Mathf.Min(playerController.currentHealth, playerController.maxHealth);
-            }
+            playerHealth.enableHealthRegen = false;
         }
     }
 
-    // ==========================================
-    // MODIFIER EFFECTS - MIXED
-    // ==========================================
-
+    // GLASS CANNON - UPDATED for PlayerHealth
     private void ApplyGlassCannon()
     {
         if (playerGun != null)
@@ -505,21 +473,21 @@ public class DeliveryModifierSystem : MonoBehaviour
             originalGunDamage = playerGun.damage;
             playerGun.damage *= 2f;
         }
-        if (playerController != null)
+        if (playerHealth != null)
         {
-            originalMaxHealth = playerController.maxHealth;
-            playerController.maxHealth *= 0.5f;
-            playerController.currentHealth = Mathf.Min(playerController.currentHealth, playerController.maxHealth);
+            originalMaxHealth = playerHealth.maxHealth;
+            playerHealth.SetMaxHealth(playerHealth.maxHealth * 0.5f);
         }
     }
     private void RemoveGlassCannon()
     {
         if (playerGun != null)
             playerGun.damage = originalGunDamage;
-        if (playerController != null)
-            playerController.maxHealth = originalMaxHealth;
+        if (playerHealth != null)
+            playerHealth.SetMaxHealth(originalMaxHealth);
     }
 
+    // SPEED DEMON
     private void ApplySpeedDemon()
     {
         if (playerController != null)
@@ -539,15 +507,8 @@ public class DeliveryModifierSystem : MonoBehaviour
         }
         packageDamageMultiplier = 1f;
     }
-
-    // Public method for DeliverySystem to apply package damage multiplier
-    public float GetPackageDamageMultiplier()
-    {
-        return packageDamageMultiplier;
-    }
 }
 
-// Modifier data structure
 [System.Serializable]
 public class DeliveryModifier
 {

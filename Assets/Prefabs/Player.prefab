@@ -263,6 +263,30 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 7317346411403300045, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
+      propertyPath: deathSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 7e9fff3541ab4e846a5088199c9a5e7b, type: 3}
+    - target: {fileID: 7317346411403300045, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 7258631385908644639}
+    - target: {fileID: 7317346411403300045, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 3213983986020760064}
+    - target: {fileID: 7317346411403300045, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
+      propertyPath: lowHealthHeartbeat
+      value: 
+      objectReference: {fileID: 8300000, guid: 1e540ae258381fd47afd14dce6d3e52b, type: 3}
+    - target: {fileID: 7317346411403300045, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
+      propertyPath: hurtSounds.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7317346411403300045, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
+      propertyPath: 'hurtSounds.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8300000, guid: b739fbda8896bf14595f0af0c3bfddc8, type: 3}
     - target: {fileID: 8616685848737228371, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
       propertyPath: SprintSpeed
       value: 8
@@ -372,6 +396,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8997996947095583982, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
   m_PrefabInstance: {fileID: 6561396423203593299}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3213983986020760064 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8616685848737228371, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
+  m_PrefabInstance: {fileID: 6561396423203593299}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3213983986020760071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55919ac34a26952479f3fc91f777b2fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3213983986020760071 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8616685848737228372, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
@@ -440,6 +475,8 @@ MonoBehaviour:
   startDeliverySFX: {fileID: 8300000, guid: 1214845774359c94db5d72cccfb09194, type: 3}
   pickupPackageSFX: {fileID: 8300000, guid: 81fa433b5d31ac448a66aec0f111feab, type: 3}
   deliveryCompleteSFX: {fileID: 8300000, guid: 904bc13cfeb9cc64895e025631e1c660, type: 3}
+  openDoorSound: {fileID: 0}
+  closeDoorSound: {fileID: 0}
   pendingDelivery: 0
 --- !u!114 &5231433008958454834
 MonoBehaviour:
