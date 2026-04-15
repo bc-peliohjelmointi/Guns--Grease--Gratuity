@@ -62,6 +62,10 @@ public class PhoneUI : MonoBehaviour
     public Button instructionsAppButton;
     public GameObject instructionsPanel;
 
+    [Header("UpgradeShop App")]
+    public Button ShopButton;
+    public GameObject ShopPanel;
+
     [Header("End Day Panel")]
     public Button endDayButton;
     public GameObject endDayPanel;
@@ -117,6 +121,7 @@ public class PhoneUI : MonoBehaviour
         statsLoginButton.onClick.AddListener(OnStatsLoginPressed);
         mapAppButton.onClick.AddListener(OpenMapApp);
         instructionsAppButton.onClick.AddListener(OpenInstructionsApp);
+        ShopButton.onClick.AddListener(OpenShopApp);
 
         homeButton.onClick.AddListener(ShowHomeScreen);
 
@@ -224,6 +229,18 @@ public class PhoneUI : MonoBehaviour
     {
         PlaySound(appOpenSFX);
         SwitchPanel(instructionsPanel);
+    }
+    void OpenShopApp()
+    {
+        PlaySound(appOpenSFX);
+        SwitchPanel(ShopPanel);
+
+        // Refresh shop UI every time it's opened
+        UpgradeShop shop = ShopPanel.GetComponent<UpgradeShop>();
+        if (shop != null)
+        {
+            shop.RefreshUI(); // we’ll add this next
+        }
     }
 
     // --------------------------
@@ -532,6 +549,7 @@ public class PhoneUI : MonoBehaviour
         statsPanel.SetActive(false);
         mapPanel.SetActive(false);
         instructionsPanel.SetActive(false);
+        ShopPanel.SetActive(false);
 
         StartCoroutine(PlayPopTransition(target));
     }

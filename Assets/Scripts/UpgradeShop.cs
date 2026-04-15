@@ -30,11 +30,15 @@ public class UpgradeShop : MonoBehaviour
         UpdateUI();
     }
 
-    private void Update()
+    public void RefreshUI()
     {
-        // Keep money text always correct while shop is open
-        UpdateMoneyOnly();
+        if (stats == null)
+            stats = PlayerStats.Instance;
+
+        UpdateUI();
     }
+
+
 
     // -------------------------
     // BUY METHODS
