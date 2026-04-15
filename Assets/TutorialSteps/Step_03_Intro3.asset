@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7db4fb62fdee2f34291ce87d5351fd5f, type: 3}
   m_Name: Step_03_Intro3
   m_EditorClassIdentifier: 
-  tutorialText: You have been given a company issued phone! You can press TAB on
-    your keyboard to open it!
+  tutorialText: You have been given a company issued phone! You can press <b><color=orange>TAB</color></b>
+    on your keyboard to open it!
   portrait: {fileID: 21300000, guid: e00b88a4d292d284c8849e4d0e223ec6, type: 3}
   panelPosition: {x: 0, y: -330}
   panelSize: {x: 1000, y: 200}
@@ -24,4 +24,5 @@ MonoBehaviour:
   anchorMin: {x: 0.5, y: 0.5}
   anchorMax: {x: 0.5, y: 0.5}
   skipPosition: {x: 385, y: -75}
+  isSkippable: 1
   triggerType: 1
