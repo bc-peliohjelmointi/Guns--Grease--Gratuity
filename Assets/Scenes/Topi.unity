@@ -7897,34 +7897,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 2772520049687709014, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2772520049687709014, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2833634899461386183, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2833634899461386183, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3249522076048268725, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3249522076048268725, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6421271340678427497, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8281658834064297980, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
       propertyPath: m_Name
       value: Phone Canvas
