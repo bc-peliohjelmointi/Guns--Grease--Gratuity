@@ -47,28 +47,23 @@ public class Respawn : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
+        // Reset player health FIRST (before day restart)
+        if (playerHealth != null)
+        {
+            playerHealth.ResetHealth();
+        }
+
         // Restart the day
         if (daySystem != null)
             daySystem.RestartDay();
 
-        // Reset player state
+        // Re-enable player movement
         if (firstPersonController != null)
         {
             firstPersonController.canMove = true;
         }
 
-        // Reset player health
-        if (playerHealth != null)
-        {
-            playerHealth.isDead = false;
-            playerHealth.currentHealth = playerHealth.maxHealth;
-
-            // Show health UI again
-            if (playerHealth.healthSlider != null)
-                playerHealth.healthSlider.gameObject.SetActive(true);
-        }
-
-        Debug.Log("Try again - Player respawned");
+        Debug.Log("Try again - Player respawned with full health");
     }
 
     public void MainMenu()

@@ -343,4 +343,45 @@ public class PlayerHealth : MonoBehaviour
     {
         return GetHealthPercent() <= lowHealthThreshold;
     }
+
+    // Reset player health (for respawn/restart)
+    public void ResetHealth()
+    {
+        isDead = false;
+        currentHealth = maxHealth;
+        targetBloodAlpha = 0f;
+
+        // Clear blood overlay immediately
+        if (bloodOverlay != null)
+        {
+            Color c = bloodOverlay.color;
+            c.a = 0f;
+            bloodOverlay.color = c;
+        }
+
+        // Clear damage flash
+        if (damageFlash != null)
+        {
+            Color c = damageFlash.color;
+            c.a = 0f;
+            damageFlash.color = c;
+        }
+
+        // Stop heartbeat
+        if (audioSource != null && isPlayingHeartbeat)
+        {
+            audioSource.Stop();
+            audioSource.loop = false;
+            isPlayingHeartbeat = false;
+        }
+
+        // Show health UI
+        if (healthSlider != null)
+            healthSlider.gameObject.SetActive(true);
+
+        // Update UI
+        UpdateHealthUI();
+
+        Debug.Log("PlayerHealth: Reset complete");
+    }
 }
