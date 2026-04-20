@@ -137,10 +137,10 @@ MonoBehaviour:
   maxHealth: 100
   health: 125
   walkPointRange: 5
-  patrolSpeed: 3
-  chaseSpeed: 7.5
-  strafeSpeed: 6.5
-  timeBetweenAttacks: 0.5
+  patrolSpeed: 5
+  chaseSpeed: 10
+  strafeSpeed: 8
+  timeBetweenAttacks: 1
   damageToPlayer: 5
   damageToDelivery: 15
   projectile: {fileID: 2830964268771592166, guid: 5b02b22c1a6f46f4cad12397f11fb4a5, type: 3}
@@ -149,7 +149,7 @@ MonoBehaviour:
   meleeIndicator: {fileID: 3979826328414468917}
   meleeIndicatorDuration: 0.4
   flickerInterval: 0.08
-  sightRange: 25
+  sightRange: 45
   shootRange: 10
   visionMask:
     serializedVersion: 2

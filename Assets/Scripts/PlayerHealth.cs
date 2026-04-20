@@ -99,6 +99,7 @@ public class PlayerHealth : MonoBehaviour
         }
 
         // Update blood overlay fade
+        UpdateBloodIntensity();
         UpdateBloodOverlay();
 
         // Low health heartbeat
