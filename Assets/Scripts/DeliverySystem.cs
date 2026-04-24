@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Linq;
 using Unity.VisualScripting;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 
 /// <summary>
 /// Manages delivery orders, package state, UI, and delivery flow
@@ -12,6 +13,7 @@ using Unity.VisualScripting;
 public class DeliverySystem : MonoBehaviour
 {
     [Header("References")]
+    private PlayerStats stats;
     public StairwellTeleportManager teleportManager;
     public PhoneUI phoneUI;
     public ItemSpawner itemSpawner;
@@ -35,7 +37,7 @@ public class DeliverySystem : MonoBehaviour
 
     // Package health values
     [Header("Delivery HP")]
-    public float maxDeliveryHP = 100f;
+    
     public float currentDeliveryHP;
 
     // UI references
@@ -81,6 +83,7 @@ public class DeliverySystem : MonoBehaviour
 
     void Start()
     {
+        stats = PlayerStats.Instance;
         // Find all delivery zones in the scene and hide them
         deliveryZones = GameObject.FindGameObjectsWithTag("DeliveryZone");
         foreach (var zone in deliveryZones)
@@ -104,6 +107,7 @@ public class DeliverySystem : MonoBehaviour
         UpdateStatus();
         UpdateHPSlider();
         UpdateTimer();
+        ApplyUpgrades();
 
         // Check if player can enter delivery building
         if (hasPackage && currentTarget != null)
@@ -122,6 +126,11 @@ public class DeliverySystem : MonoBehaviour
         {
             FailDelivery("Package destroyed!");
         }
+    }
+
+    public void ApplyUpgrades()
+    {
+        stats.maxDeliveryHP = stats.baseDeliveryHP + stats.packageHealthLevel * 20;
     }
     
     // Start a new delivery order
@@ -184,7 +193,7 @@ public class DeliverySystem : MonoBehaviour
 
         if (hasPackage)
         {
-            hpSlider.maxValue = maxDeliveryHP;
+            hpSlider.maxValue = stats.maxDeliveryHP;
             hpSlider.value = currentDeliveryHP;
         }
     }
@@ -296,7 +305,7 @@ public class DeliverySystem : MonoBehaviour
 
         if (modSystem != null) { dmg *= modSystem.GetPackageDamageMultiplier(); }
 
-        currentDeliveryHP = Mathf.Clamp(currentDeliveryHP - dmg, 0, maxDeliveryHP);
+        currentDeliveryHP = Mathf.Clamp(currentDeliveryHP - dmg, 0, stats.maxDeliveryHP);
     }
 
     // Delivery completion
@@ -404,7 +413,7 @@ public class DeliverySystem : MonoBehaviour
         if (other.CompareTag("Package") && !hasPackage)
         {
             hasPackage = true;
-            currentDeliveryHP = maxDeliveryHP;
+            currentDeliveryHP = stats.maxDeliveryHP;
 
             if (pickupPackageSFX)
                 audioSource.PlayOneShot(pickupPackageSFX);

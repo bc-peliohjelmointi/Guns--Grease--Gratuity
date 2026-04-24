@@ -295,16 +295,18 @@ MonoBehaviour:
   deliveriesCompleted: 0
   deliveriesFailed: 0
   ordersLeft: 6
-  money: 0
+  money: 1000
   moneyToday: 0
   reputation: 2.5
   repGain: 0.1
   repLoss: 0.3
-  lastPackageHealth: 100
+  baseDeliveryHP: 100
+  maxDeliveryHP: 100
+  lastPackageHealth: 1000
+  bodyArmorLevel: 0
   weaponDamageLevel: 0
-  deliveryTimeLevel: 0
   scooterSpeedLevel: 0
-  rewardMultiplierLevel: 0
+  packageHealthLevel: 0
 --- !u!82 &25178017
 AudioSource:
   m_ObjectHideFlags: 0
@@ -7505,6 +7507,10 @@ PrefabInstance:
       propertyPath: turretActivator
       value: 
       objectReference: {fileID: 25178020}
+    - target: {fileID: 1741900473291728230, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2869230313555353789, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -7893,9 +7899,21 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1575877284}
-    - target: {fileID: 2708870989903722058, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
+    - target: {fileID: 2772520049687709014, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2833634899461386183, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3249522076048268725, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6421271340678427497, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8281658834064297980, guid: 81ede31e4c0b3c2488cad44b478913cb, type: 3}
       propertyPath: m_Name

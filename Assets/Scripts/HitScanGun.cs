@@ -18,7 +18,10 @@ public class GunHitscan : MonoBehaviour
     public GameObject tracerPrefab;
     public GunUI ui;
 
+    private PlayerStats stats;
+
     [Header("Stats")]
+    public float baseDamage = 25f;
     public float damage = 25f;
     public float range = 100f;
     public float fireRate = 10f;
@@ -62,6 +65,8 @@ public class GunHitscan : MonoBehaviour
 
     void Start()
     {
+        stats = PlayerStats.Instance;
+
         StartCoroutine(StartActive());
         audioSource = GetComponent<AudioSource>();
         currentAmmo = magazineSize;
@@ -75,6 +80,8 @@ public class GunHitscan : MonoBehaviour
 
     void Update()
     {
+        ApplyUpgrades();
+
         if (PhoneUI.AnyOpen)
             return;
 
@@ -105,6 +112,11 @@ public class GunHitscan : MonoBehaviour
 
         // Apply to camera
         playerCamera.transform.localRotation = originalCamRot * Quaternion.Euler(-finalRotation);
+    }
+
+    public void ApplyUpgrades()
+    {
+        damage = baseDamage + stats.weaponDamageLevel * 7.5f;
     }
 
     void Fire()

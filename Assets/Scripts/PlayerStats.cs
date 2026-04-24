@@ -1,5 +1,6 @@
-using UnityEngine;
 using TMPro;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
+using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
 {
@@ -15,7 +16,6 @@ public class PlayerStats : MonoBehaviour
     public float money = 0f;
     public float moneyToday = 0f;
 
-
     [Header("Reputation")]
     [Range(0f, 5f)]
     public float reputation = 2.5f;   // Start neutral
@@ -23,16 +23,18 @@ public class PlayerStats : MonoBehaviour
     public float repLoss = 0.3f;
 
     [Header("Package Health")]
+    public float baseDeliveryHP = 100f;
+    public float maxDeliveryHP = 100f;
     public float lastPackageHealth = 100f;
 
     // ----------------------
     // UPGRADE LEVELS
     // ----------------------
     [Header("Upgrade Levels")]
+    public int bodyArmorLevel = 0;       // Affects delivery time bonus
     public int weaponDamageLevel = 0;       // Affects gun damage
-    public int deliveryTimeLevel = 0;       // Affects delivery time bonus
     public int scooterSpeedLevel = 0;       // Affects scooter speed
-    public int rewardMultiplierLevel = 0;   // Multiplies order rewards
+    public int packageHealthLevel = 0;      // Increases delivery package health
 
 
     private void Awake()
@@ -67,7 +69,6 @@ public class PlayerStats : MonoBehaviour
 
         float finalReward =
             baseReward *
-            (1f + rewardMultiplierLevel * 0.1f) *
             (1f + rankBonus);
 
 

@@ -9,6 +9,8 @@ public class scooterCtrl : MonoBehaviour
     public Transform visualModel; // Scooter body for leaning
     public Transform scooterSpawnPoint;
 
+    private PlayerStats stats;
+
     [Header("Movement Settings")]
     public float acceleration = 20f;
     public float deceleration = 15f;
@@ -18,6 +20,8 @@ public class scooterCtrl : MonoBehaviour
     public float turnSpeed = 65f;
     public float leanAmount = 12f;
     public bool isResetting = false;
+
+    public float upgradeAmount = 0.25f;
 
     [Header("Control")]
     public bool canControl = false; // player mount
@@ -46,18 +50,37 @@ public class scooterCtrl : MonoBehaviour
 
     public float currentSpeed = 0f;
     private Rigidbody rb;
-    
+
+
+    [Header("Base Movement (For upgrades)")]
+    private float baseAcceleration;
+    private float baseDeceleration;
+    private float baseBrakeDeceleration;
+    private float baseMaxSpeed;
+
     private void Start()
     {
+        stats = PlayerStats.Instance;
+
         rb = scooterRoot.GetComponent<Rigidbody>();
         rb.freezeRotation = true; // We will handle rotation manually
         currentBattery = maxBattery;
+
+        baseAcceleration = acceleration;
+        baseDeceleration = deceleration;
+        baseBrakeDeceleration = brakeDeceleration;
+        baseMaxSpeed = maxSpeed;
 
         if (engineSource != null && engineLoopClip != null)
         {
             engineSource.clip = engineLoopClip;
             engineSource.loop = true;
         }
+    }
+
+    private void Update()
+    {
+        ApplyUpgrades();
     }
 
     private void FixedUpdate()
@@ -80,6 +103,18 @@ public class scooterCtrl : MonoBehaviour
         HandleTurningAndLean();
         DrainBattery();
         UpdateEngineSound();
+    }
+
+    private void ApplyUpgrades()
+    {
+        if (stats == null) return;
+
+        float multiplier = 1f + (stats.scooterSpeedLevel * upgradeAmount);
+
+        acceleration = baseAcceleration * multiplier;
+        deceleration = baseDeceleration * multiplier;
+        brakeDeceleration = baseBrakeDeceleration * multiplier;
+        maxSpeed = baseMaxSpeed * multiplier;
     }
 
     private void HandleMovement()
@@ -176,7 +211,7 @@ public class scooterCtrl : MonoBehaviour
 
         // float lean = -turnInput * leanAmount * Mathf.Clamp01(currentSpeed / maxSpeed);
     }
-
+    
     private void DrainBattery()
     {
         if (!powerOn || !canControl) return;

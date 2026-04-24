@@ -1,13 +1,16 @@
+using System.Collections;
+using TMPro;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using System.Collections;
 
 public class PlayerHealth : MonoBehaviour
 {
     [Header("Health Settings")]
     public float maxHealth = 100f;
     public float currentHealth;
+    private float baseHealth;
+    public float upgradeAmount = 20f;
     public bool isDead = false;
 
     [Header("Regeneration")]
@@ -48,6 +51,7 @@ public class PlayerHealth : MonoBehaviour
     [Header("References")]
     public StarterAssets.FirstPersonController playerController;
     public Respawn respawn;
+    private PlayerStats stats;
 
     // Private
     private float targetBloodAlpha = 0f;
@@ -55,6 +59,9 @@ public class PlayerHealth : MonoBehaviour
 
     private void Start()
     {
+        stats = PlayerStats.Instance;
+
+        baseHealth = maxHealth;
         currentHealth = maxHealth;
 
         if (healthSlider != null)
@@ -87,6 +94,8 @@ public class PlayerHealth : MonoBehaviour
 
     private void Update()
     {
+        ApplyUpgrades();
+
         if (isDead) return;
 
         // Health regeneration
@@ -104,6 +113,12 @@ public class PlayerHealth : MonoBehaviour
 
         // Low health heartbeat
         UpdateLowHealthEffects();
+    }
+
+    public void ApplyUpgrades()
+    {
+        float multiplier = stats.bodyArmorLevel * upgradeAmount;
+        maxHealth = baseHealth + multiplier;
     }
 
     public void TakeDamage(float damage)

@@ -1,13 +1,15 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class UpgradeShop : MonoBehaviour
 {
     [Header("Upgrade Prices")]
     public int damagePrice = 100;
-    public int deliveryTimePrice = 50;
+    public int bodyArmorPrice = 50;
     public int scooterSpeedPrice = 50;
     public int rewardMultiplierPrice = 100;
+    private int maxLevel = 5;
 
     [Header("UI")]
     public TextMeshProUGUI moneyText;
@@ -17,6 +19,12 @@ public class UpgradeShop : MonoBehaviour
     public TextMeshProUGUI rewardText;
 
     private PlayerStats stats;
+
+    [Header("Sliders")]
+    public Slider damageSlider;
+    public Slider timeSlider;
+    public Slider speedSlider;
+    public Slider rewardSlider;
 
     private void Start()
     {
@@ -44,9 +52,19 @@ public class UpgradeShop : MonoBehaviour
     // BUY METHODS
     // -------------------------
 
+    public void BuyBodyArmor()
+    {
+        if (stats.money >= bodyArmorPrice && stats.bodyArmorLevel < maxLevel)
+        {
+            stats.money -= bodyArmorPrice;
+            stats.bodyArmorLevel++;
+            UpdateUI();
+        }
+    }
+
     public void BuyDamage()
     {
-        if (stats.money >= damagePrice)
+        if (stats.money >= damagePrice && stats.weaponDamageLevel < maxLevel)
         {
             stats.money -= damagePrice;
             stats.weaponDamageLevel++;
@@ -54,19 +72,9 @@ public class UpgradeShop : MonoBehaviour
         }
     }
 
-    public void BuyDeliveryTime()
-    {
-        if (stats.money >= deliveryTimePrice)
-        {
-            stats.money -= deliveryTimePrice;
-            stats.deliveryTimeLevel++;
-            UpdateUI();
-        }
-    }
-
     public void BuyScooterSpeed()
     {
-        if (stats.money >= scooterSpeedPrice)
+        if (stats.money >= scooterSpeedPrice && stats.scooterSpeedLevel < maxLevel)
         {
             stats.money -= scooterSpeedPrice;
             stats.scooterSpeedLevel++;
@@ -74,12 +82,12 @@ public class UpgradeShop : MonoBehaviour
         }
     }
 
-    public void BuyRewardMultiplier()
+    public void BuyPackageHealth()
     {
-        if (stats.money >= rewardMultiplierPrice)
+        if (stats.money >= rewardMultiplierPrice && stats.packageHealthLevel < maxLevel)
         {
             stats.money -= rewardMultiplierPrice;
-            stats.rewardMultiplierLevel++;
+            stats.packageHealthLevel++;
             UpdateUI();
         }
     }
@@ -100,9 +108,35 @@ public class UpgradeShop : MonoBehaviour
 
         UpdateMoneyOnly();
 
-        damageText.text = $"Level {stats.weaponDamageLevel} (Cost ${damagePrice})";
-        timeText.text = $"Level {stats.deliveryTimeLevel} (Cost ${deliveryTimePrice})";
-        speedText.text = $"Level {stats.scooterSpeedLevel} (Cost ${scooterSpeedPrice})";
-        rewardText.text = $"Level {stats.rewardMultiplierLevel} (Cost ${rewardMultiplierPrice})";
+        // Prices update
+        damageText.text = $"${damagePrice}";
+        timeText.text = $"${bodyArmorPrice}";
+        speedText.text = $"${scooterSpeedPrice}";
+        rewardText.text = $"${rewardMultiplierPrice}";
+
+        // Sliders logic
+        if (damageSlider != null)
+        {
+            damageSlider.maxValue = maxLevel;
+            damageSlider.value = stats.weaponDamageLevel;
+        }
+
+        if (timeSlider != null)
+        {
+            timeSlider.maxValue = maxLevel;
+            timeSlider.value = stats.bodyArmorLevel;
+        }
+
+        if (speedSlider != null)
+        {
+            speedSlider.maxValue = maxLevel;
+            speedSlider.value = stats.scooterSpeedLevel;
+        }
+
+        if (rewardSlider != null)
+        {
+            rewardSlider.maxValue = maxLevel;
+            rewardSlider.value = stats.packageHealthLevel;
+        }
     }
 }
