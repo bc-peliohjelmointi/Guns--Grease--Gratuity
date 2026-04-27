@@ -24,6 +24,7 @@ TagManager:
   - Shop
   - Home
   - PopupAnchor
+  - PlayerScooter
   layers:
   - Default
   - TransparentFX

@@ -10,6 +10,7 @@ public class Projectile : MonoBehaviour
     private void Start()
     {
         Destroy(gameObject, lifetime);
+
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -17,21 +18,26 @@ public class Projectile : MonoBehaviour
         // --------------------
         // PLAYER HIT
         // --------------------
-        if (collision.gameObject.CompareTag("Player"))
+
+
+        // Try parent first
+        var player = collision.gameObject.GetComponentInParent<StarterAssets.FirstPersonController>();
+
+        // If not found, try children
+        if (player == null)
         {
-            // Player HP
-            StarterAssets.FirstPersonController player =
-                collision.gameObject.GetComponent<StarterAssets.FirstPersonController>();
+            player = collision.gameObject.GetComponentInChildren<StarterAssets.FirstPersonController>();
+        }
 
-            if (player != null)
-                player.TakeDamage(damage);
+        if (player != null)
+        {
+            player.TakeDamage(damage);
 
-            // Delivery HP (only if carrying package)
-            DeliverySystem delivery =
-                collision.gameObject.GetComponent<DeliverySystem>();
-
+            var delivery = player.GetComponent<DeliverySystem>();
             if (delivery != null && delivery.hasPackage)
+            {
                 delivery.TakeDamage(deliveryDamage);
+            }
 
             Destroy(gameObject);
             return;

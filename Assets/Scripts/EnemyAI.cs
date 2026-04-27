@@ -335,7 +335,7 @@ public class EnemyAI : MonoBehaviour
 
         if (Physics.Raycast(origin, dir, out RaycastHit hit, distance, visionMask))
         {
-            return hit.transform.CompareTag("Player");
+            return hit.transform.CompareTag("Player") || hit.transform.CompareTag("PlayerScooter");
         }
 
         return false;
@@ -349,7 +349,7 @@ public class EnemyAI : MonoBehaviour
 
         if (Physics.Raycast(origin, dir, out RaycastHit hit, dist, visionMask))
         {
-            return hit.transform.CompareTag("Player");
+            return hit.transform.CompareTag("Player") || hit.transform.CompareTag("PlayerScooter");
         }
 
         return false;
