@@ -25,7 +25,7 @@ public class scooterCtrl : MonoBehaviour
 
     [Header("Control")]
     public bool canControl = false; // player mount
-    public bool powerOn = false; // scooter ignition
+    //public bool powerOn = false; // scooter ignition
 
     [Header("Battery")]
     public float maxBattery = 100f;
@@ -89,7 +89,7 @@ public class scooterCtrl : MonoBehaviour
         if (isResetting) return;
 
         // when not mounted nor powered, scooter will coast to stop
-        if (!canControl || !powerOn || !hasBattery)
+        if (!canControl || !hasBattery) // || !powerOn
         {
             currentSpeed = Mathf.MoveTowards(currentSpeed, 0f, deceleration * Time.fixedDeltaTime);
 
@@ -214,7 +214,7 @@ public class scooterCtrl : MonoBehaviour
     
     private void DrainBattery()
     {
-        if (!powerOn || !canControl) return;
+        if (!canControl) return; //!powerOn || 
         if (currentBattery <= 0f) return;
 
         // drain speed / converts drain per second to drain per minute
@@ -225,10 +225,10 @@ public class scooterCtrl : MonoBehaviour
         currentBattery -= drainPerSecond * Time.fixedDeltaTime;
         currentBattery = Mathf.Clamp(currentBattery, 0f,maxBattery);
 
-        if (currentBattery <= 0f && powerOn)
-        {
-            powerOn = false;
-        }
+        //if (currentBattery <= 0f && powerOn)
+        //{
+        //    powerOn = false;
+        //}
     }
 
     // battery charge from previous battery amount
@@ -245,29 +245,29 @@ public class scooterCtrl : MonoBehaviour
     //-----------------------------------
 
 
-    public void SetPower(bool state)
-    {
-        if (powerOn == state) return;
+    //public void SetPower(bool state)
+    //{
+    //    if (powerOn == state) return;
 
-        powerOn = state;
+    //    powerOn = state;
 
-        if (powerOn)
-        {
-            if (sfxSource && powerOnClip)
-                sfxSource.PlayOneShot(powerOnClip);
+    //    if (powerOn)
+    //    {
+    //        if (sfxSource && powerOnClip)
+    //            sfxSource.PlayOneShot(powerOnClip);
 
-            if (engineSource && engineLoopClip)
-                engineSource.Play();
-        }
-        else
-        {
-            if (sfxSource && powerOffClip)
-                sfxSource.PlayOneShot(powerOffClip);
+    //        if (engineSource && engineLoopClip)
+    //            engineSource.Play();
+    //    }
+    //    else
+    //    {
+    //        if (sfxSource && powerOffClip)
+    //            sfxSource.PlayOneShot(powerOffClip);
 
-            if (engineSource)
-                engineSource.Stop();
-        }
-    }
+    //        if (engineSource)
+    //            engineSource.Stop();
+    //    }
+    //}
 
     private void UpdateEngineSound()
     {
