@@ -60,7 +60,7 @@ public class GunHitscan : MonoBehaviour
     public float flashTime = 0.2f;
     private int minusAmmo;
 
-
+    public Animator animator;
 
 
     void Start()
@@ -223,6 +223,10 @@ public class GunHitscan : MonoBehaviour
     {
         isReloading = true;
         if (reloadSound) AudioSource.PlayClipAtPoint(reloadSound, muzzle.position, 1f);
+
+        if (animator)
+            animator.SetTrigger("Reload");
+            Debug.Log("Reload anim triggered");
 
         yield return new WaitForSeconds(reloadTime);
 

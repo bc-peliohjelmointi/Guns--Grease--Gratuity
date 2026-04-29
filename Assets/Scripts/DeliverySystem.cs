@@ -50,6 +50,11 @@ public class DeliverySystem : MonoBehaviour
     [Header("Compass Navigation")]
     public CompassNavigation compassNav;
 
+    [Header("Compass Icon")]
+    public Image compassIcon;
+    public Sprite packageSprite;
+    public Sprite deliverySprite;
+
     // Screen fade effect settings
     [Header("Fade Panel")]
     public Image fadePanel;
@@ -104,6 +109,7 @@ public class DeliverySystem : MonoBehaviour
     {
         UpdateTargets();
         UpdateCompass();
+        UpdateCompassIcon();
         UpdateStatus();
         UpdateHPSlider();
         UpdateTimer();
@@ -265,6 +271,39 @@ public class DeliverySystem : MonoBehaviour
             ? activeDeliveryZone.transform
             : null;
     }
+
+    void UpdateCompassIcon()
+    {
+        if (compassIcon == null)
+            return;
+
+        // No active order → no icon
+        if (!hasActiveOrder)
+        {
+            compassIcon.enabled = false;
+            return;
+        }
+
+        // Order active but no package yet → show package icon
+        if (!hasPackage)
+        {
+            compassIcon.enabled = true;
+            compassIcon.sprite = packageSprite;
+            return;
+        }
+
+        // Has package → show delivery icon
+        if (hasPackage)
+        {
+            compassIcon.enabled = true;
+            compassIcon.sprite = deliverySprite;
+            return;
+        }
+
+        // Fallback (shouldn't really happen)
+        compassIcon.enabled = false;
+    }
+
 
     // Update status text based on current state
     void UpdateStatus()
