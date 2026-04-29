@@ -48,7 +48,7 @@ public class ScooterMount : MonoBehaviour
     private void Update()
     {
         HandleMountInput();
-        HandlePowerInput();
+        //HandlePowerInput();
         UpdateStatusText();
         HandleScooterCharging();
     }
@@ -92,7 +92,7 @@ public class ScooterMount : MonoBehaviour
 
         if (scooterControl != null)
             scooterControl.canControl = true;
-            scooterControl.powerOn = false; // power off on mount
+            //scooterControl.powerOn = false; // power off on mount
 
         // Lock cursor for riding
         Cursor.lockState = CursorLockMode.Locked;
@@ -126,33 +126,33 @@ public class ScooterMount : MonoBehaviour
 
         if (scooterControl != null)
             scooterControl.canControl = false;
-            scooterControl.SetPower(false); // power off on dismount
+            //scooterControl.SetPower(false); // power off on dismount
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = true;
     }
 
     // Scooter power based on if mounted and if key is pressed
-    private void HandlePowerInput()
-    {
-        if (statusTxt == null)
-            return;
+    //private void HandlePowerInput()
+    //{
+    //    if (statusTxt == null)
+    //        return;
 
-        if (!isMounted || scooterControl == null)
-        {
-            statusTxt.text = "";
-            return;
-        }
+    //    if (!isMounted || scooterControl == null)
+    //    {
+    //        statusTxt.text = "";
+    //        return;
+    //    }
 
-        if (Keyboard.current[powerKey].wasPressedThisFrame)
-        {
-            scooterControl.SetPower(!scooterControl.powerOn);
-        }
+    //    if (Keyboard.current[powerKey].wasPressedThisFrame)
+    //    {
+    //        scooterControl.SetPower(!scooterControl.powerOn);
+    //    }
 
-        statusTxt.text = scooterControl.powerOn
-            ? ""
-            : "[E] Turn Scooter On";
-    }
+    //    statusTxt.text = scooterControl.powerOn
+    //        ? ""
+    //        : "[E] Turn Scooter On";
+    //}
 
     // battery pack collection
     public void GetBattery(float amount)
