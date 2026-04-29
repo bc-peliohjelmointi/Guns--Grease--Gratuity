@@ -1,6 +1,5 @@
 using System.Collections;
 using TMPro;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -341,7 +340,7 @@ public class PlayerHealth : MonoBehaviour
 
         // Trigger respawn/game over
         if (respawn != null)
-            respawn.GameOver();
+            respawn.GameOver("FLATLINED");
     }
 
     // Public helper methods
