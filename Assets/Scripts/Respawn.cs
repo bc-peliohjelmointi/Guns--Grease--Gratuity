@@ -19,8 +19,7 @@ public class Respawn : MonoBehaviour
     public GameObject gameOverPanel;
 
     [Header("Game Over Screen Elements")]
-    public TMP_Text gameOverTitleText;
-    public TMP_Text gameOverSubtitleText;  
+    public TMP_Text gameOverTitleText;  
     public Button tryAgainButton;
     public Button mainMenuButton;
 
@@ -125,10 +124,7 @@ public class Respawn : MonoBehaviour
 
         // Set text
         if (gameOverTitleText != null)
-            gameOverTitleText.text = "GAME OVER";
-
-        if (gameOverSubtitleText != null)
-            gameOverSubtitleText.text = reason;
+            gameOverTitleText.text = "FLATLINED";
 
         // Show panel
         if (gameOverPanel != null)
