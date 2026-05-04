@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4835885766206087095
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 95069487767921955}
+  - component: {fileID: 2376430455594441767}
+  - component: {fileID: 2087215155320369696}
+  m_Layer: 0
+  m_Name: MenuManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &95069487767921955
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4835885766206087095}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2376430455594441767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4835885766206087095}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc945d2208e6e5d448eee851894612de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  firstPersonController: {fileID: 0}
+  playerHealth: {fileID: 0}
+  daySystem: {fileID: 0}
+  pauseMenu: {fileID: 2087215155320369696}
+  gameOverPanel: {fileID: 0}
+  gameOverTitleText: {fileID: 0}
+  tryAgainButton: {fileID: 0}
+  mainMenuButton: {fileID: 0}
+  gameOverDelay: 1.2
+  mainMenuSceneName: MainMenu
+--- !u!114 &2087215155320369696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4835885766206087095}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d702a761f299bd40913ab37401021c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  firstPersonController: {fileID: 0}
+  pauseMenuPanel: {fileID: 0}
+  controlsPanel: {fileID: 0}
+  resumeButton: {fileID: 0}
+  controlsButton: {fileID: 0}
+  mainMenuButton: {fileID: 0}
+  controlsBackButton: {fileID: 0}
+  pauseCanvas: {fileID: 0}
+  mainMenuSceneName: MainMenu
+  pauseCanvasSortOrder: 10
+  pausingAllowed: 1
