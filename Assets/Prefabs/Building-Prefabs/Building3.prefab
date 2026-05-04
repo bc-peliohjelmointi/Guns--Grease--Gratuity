@@ -3787,7 +3787,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 420591559950138560}
-  - component: {fileID: 8571334113351684291}
+  - component: {fileID: 7939442992601549677}
   m_Layer: 0
   m_Name: Building3
   m_TagString: Untagged
@@ -3821,7 +3821,7 @@ Transform:
   - {fileID: 8080386265909565519}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!208 &8571334113351684291
+--- !u!208 &7939442992601549677
 NavMeshObstacle:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3831,7 +3831,7 @@ NavMeshObstacle:
   m_Enabled: 1
   serializedVersion: 3
   m_Shape: 1
-  m_Extents: {x: 7.5, y: 15, z: 7}
+  m_Extents: {x: 6.5, y: 15, z: 6.5}
   m_MoveThreshold: 0.1
   m_Carve: 1
   m_CarveOnlyStationary: 1
@@ -7491,6 +7491,14 @@ PrefabInstance:
       value: Sidewalk
       objectReference: {fileID: 0}
     - target: {fileID: 2894907467158931017, guid: 15d424345603902419b0f4f083bc26ea, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3879629372824619794, guid: 15d424345603902419b0f4f083bc26ea, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5595444382457821281, guid: 15d424345603902419b0f4f083bc26ea, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}

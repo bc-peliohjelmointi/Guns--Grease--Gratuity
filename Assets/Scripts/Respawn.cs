@@ -12,7 +12,7 @@ public class Respawn : MonoBehaviour
     public PlayerHealth playerHealth;
     public DaySystem daySystem;
 
-    [Header("Pause Menu (to disable ESC during Game Over)")]
+    [Header("Pause Menu")]
     public PauseMenu pauseMenu;
 
     [Header("UI Panels")]

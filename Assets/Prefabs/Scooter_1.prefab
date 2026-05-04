@@ -335,13 +335,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scooterRoot: {fileID: 7205070918609022749}
   visualModel: {fileID: 2069069549783431515}
+  scooterSpawnPoint: {fileID: 0}
   acceleration: 8
   deceleration: 4
   brakeDeceleration: 8
-  maxSpeed: 16
+  maxSpeed: 15
   maxReverse: -10
-  turnSpeed: 65
+  turnSpeed: 90
   leanAmount: 15
+  isResetting: 0
+  upgradeAmount: 0.25
   canControl: 0
   powerOn: 0
   maxBattery: 100
@@ -356,6 +359,7 @@ MonoBehaviour:
   engineLoopClip: {fileID: 8300000, guid: 1d6d480ccf68a9e4687e2c35ce4f3d36, type: 3}
   minPitch: 0.8
   maxPitch: 1.5
+  currentSpeed: 0
 --- !u!54 &2570781577587025425
 Rigidbody:
   m_ObjectHideFlags: 0

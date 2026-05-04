@@ -1045,7 +1045,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5794992006528398747}
-  - component: {fileID: 8940540321578780503}
+  - component: {fileID: 5469058313644969079}
   m_Layer: 0
   m_Name: Building5
   m_TagString: Untagged
@@ -1078,7 +1078,7 @@ Transform:
   - {fileID: 4045741942237759395}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!208 &8940540321578780503
+--- !u!208 &5469058313644969079
 NavMeshObstacle:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20746,6 +20746,14 @@ PrefabInstance:
     - target: {fileID: 2894907467158931017, guid: 15d424345603902419b0f4f083bc26ea, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3879629372824619794, guid: 15d424345603902419b0f4f083bc26ea, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5595444382457821281, guid: 15d424345603902419b0f4f083bc26ea, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7846040394928123809, guid: 15d424345603902419b0f4f083bc26ea, type: 3}
       propertyPath: m_LocalPosition.x

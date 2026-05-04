@@ -92,7 +92,7 @@ public class ScooterMount : MonoBehaviour
 
         if (scooterControl != null)
             scooterControl.canControl = true;
-            //scooterControl.powerOn = false; // power off on mount
+            scooterControl.powerOn = false; // power off on mount
 
         // Lock cursor for riding
         Cursor.lockState = CursorLockMode.Locked;
@@ -100,11 +100,11 @@ public class ScooterMount : MonoBehaviour
 
         // Disable gun while riding
         var gunScript = GetComponentInChildren<PullOurScript>();
-        if (gunScript != null)
-        {
-            gunScript.gunIsOut = false;
-            gunScript.animator.SetBool("GunOut", false);
-        }
+        // if (gunScript != null)
+        // {
+        //     gunScript.gunIsOut = false;
+        //     gunScript.animator.SetBool("GunOut", false);
+        // }
     }
 
     private void DismountScooter()
@@ -133,26 +133,26 @@ public class ScooterMount : MonoBehaviour
     }
 
     // Scooter power based on if mounted and if key is pressed
-    //private void HandlePowerInput()
-    //{
-    //    if (statusTxt == null)
-    //        return;
+    private void HandlePowerInput()
+    {
+        if (statusTxt == null)
+            return;
 
-    //    if (!isMounted || scooterControl == null)
-    //    {
-    //        statusTxt.text = "";
-    //        return;
-    //    }
+        if (!isMounted || scooterControl == null)
+        {
+            statusTxt.text = "";
+            return;
+        }
 
-    //    if (Keyboard.current[powerKey].wasPressedThisFrame)
-    //    {
-    //        scooterControl.SetPower(!scooterControl.powerOn);
-    //    }
+        if (Keyboard.current[powerKey].wasPressedThisFrame)
+        {
+            scooterControl.SetPower(!scooterControl.powerOn);
+        }
 
-    //    statusTxt.text = scooterControl.powerOn
-    //        ? ""
-    //        : "[E] Turn Scooter On";
-    //}
+        statusTxt.text = scooterControl.powerOn
+            ? ""
+            : "[E] Turn Scooter On";
+    }
 
     // battery pack collection
     public void GetBattery(float amount)
@@ -191,6 +191,7 @@ public class ScooterMount : MonoBehaviour
         }
     }
 
+    // .
     private void UpdateStatusText()
     {
         if (batteryText == null || scooterControl == null)
@@ -198,16 +199,23 @@ public class ScooterMount : MonoBehaviour
 
         if (isMounted)
         {
-            batteryText.text =
-                $"Battery: {Mathf.RoundToInt(scooterControl.currentBattery)}%\n\n[F] Dismount";
+            // Show battery
+            batteryText.text = $"{Mathf.RoundToInt(scooterControl.currentBattery)}";
+
+            // CLEAR status text when mounted
+            statusTxt.text = "";
+            return;
         }
-        else if (Vector3.Distance(transform.position, scooter.position) < mountDistance)
+
+        float distance = Vector3.Distance(transform.position, scooter.position);
+
+        if (distance < mountDistance)
         {
-            batteryText.text = "[F] Mount";
+            statusTxt.text = "[F] Mount";
         }
         else
         {
-            batteryText.text = "";
+            statusTxt.text = "";
         }
     }
 }
