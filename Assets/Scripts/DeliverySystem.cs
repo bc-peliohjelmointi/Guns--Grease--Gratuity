@@ -402,7 +402,6 @@ public class DeliverySystem : MonoBehaviour
         {
             StartCoroutine(TeleportOutOfStairwell());   // Teleport out if in stairwell
         }
-        CleanupAfterCancel();
     }
 
     // Cancels the current order
@@ -559,6 +558,8 @@ public class DeliverySystem : MonoBehaviour
 
             teleportManager.TeleportToDeliveryZone(transform);
             teleportManager.isInStairwell = false;
+
+            // yield return new WaitForSeconds(0.1f);
 
             pendingDelivery = false;
             playerAtExitPoint = false;
