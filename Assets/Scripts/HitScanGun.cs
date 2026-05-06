@@ -183,9 +183,9 @@ public class GunHitscan : MonoBehaviour
             }
 
             // Check for mine trap
-            var mine = hit.collider.GetComponent<MineTrap>();
+            var mine = hit.collider.GetComponent<Mine>();
             if (mine == null)
-                mine = hit.collider.GetComponentInParent<MineTrap>();
+                mine = hit.collider.GetComponentInParent<Mine>();
 
             if (mine != null)
             {
