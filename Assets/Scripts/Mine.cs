@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class MineTrap : MonoBehaviour
+public class Mine : MonoBehaviour
 {
     [Header("Damage Settings")]
     public float damageToPlayer = 25f;
@@ -8,8 +8,12 @@ public class MineTrap : MonoBehaviour
     public float explosionRadius = 3f;
 
     [Header("Trigger Settings")]
-    public float triggerDelay = 0.5f; // Time before explosion after trigger
-    public bool oneTimeUse = true; // Destroy after exploding?
+    public float triggerDelay = 0.5f;
+    public bool oneTimeUse = true;
+
+    [Header("Shoot-to-Destroy Settings")]
+    public float mineHealth = 1f;       // How many bullets it takes (1 = one shot kill)
+    public bool explodeWhenShot = true; // true = shot triggers explosion, false = silent destroy
 
     [Header("Visual Effects")]
     public GameObject explosionEffect;
@@ -25,24 +29,54 @@ public class MineTrap : MonoBehaviour
 
     private bool isTriggered = false;
     private bool hasExploded = false;
+    private float currentHealth;
 
+    private void Start()
+    {
+        currentHealth = mineHealth;
+    }
+
+    // ?? Called by your bullet/projectile script on hit ?????????????????????
+    public void TakeDamage(float damage)
+    {
+        if (hasExploded || isTriggered) return;
+
+        currentHealth -= damage;
+
+        if (currentHealth <= 0f)
+        {
+            if (explodeWhenShot)
+            {
+                // Triggers full explosion — damages player/packages in radius
+                isTriggered = true;
+                if (audioSource && triggerSound)
+                    audioSource.PlayOneShot(triggerSound);
+                Invoke(nameof(Explode), triggerDelay);
+            }
+            else
+            {
+                // Silent destroy — mine is disarmed, no explosion
+                DestroyMine();
+            }
+        }
+    }
+
+    // ?? Player steps on mine ???????????????????????????????????????????????
     private void OnTriggerEnter(Collider other)
     {
-        // Check if player stepped on mine
         if (other.CompareTag("Player") && !isTriggered && !hasExploded)
         {
             Debug.Log("Mine triggered by player!");
             isTriggered = true;
 
-            // Play trigger sound
             if (audioSource && triggerSound)
                 audioSource.PlayOneShot(triggerSound);
 
-            // Start explosion countdown
             Invoke(nameof(Explode), triggerDelay);
         }
     }
 
+    // ?? Explosion ??????????????????????????????????????????????????????????
     private void Explode()
     {
         if (hasExploded) return;
@@ -50,27 +84,23 @@ public class MineTrap : MonoBehaviour
 
         Debug.Log("Mine exploded!");
 
-        // Play explosion sound
         if (audioSource && explosionSound)
             audioSource.PlayOneShot(explosionSound);
 
-        // Spawn visual effect
         if (explosionEffect != null)
         {
             GameObject effect = Instantiate(explosionEffect, transform.position, Quaternion.identity);
             Destroy(effect, effectLifetime);
         }
 
-        // Find all objects in explosion radius
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, explosionRadius);
-
         foreach (Collider hit in hitColliders)
         {
-            // Damage player
-            StarterAssets.FirstPersonController player = hit.GetComponent<StarterAssets.FirstPersonController>();
-            if (player != null)
+            // Damage player via PlayerHealth
+            PlayerHealth playerHealth = hit.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
             {
-                player.TakeDamage(damageToPlayer);
+                playerHealth.TakeDamage(damageToPlayer);
                 Debug.Log($"Mine dealt {damageToPlayer} damage to player!");
             }
 
@@ -83,27 +113,30 @@ public class MineTrap : MonoBehaviour
             }
         }
 
-        // Destroy mine if one-time use
         if (oneTimeUse)
-        {
             Destroy(gameObject, explosionSound != null ? explosionSound.length : 0.5f);
-        }
         else
         {
-            // Reset for reuse
             isTriggered = false;
             hasExploded = false;
+            currentHealth = mineHealth;
         }
     }
 
-    // Visualize explosion radius in editor
+    // ?? Silent disarm ??????????????????????????????????????????????????????
+    private void DestroyMine()
+    {
+        Debug.Log("Mine disarmed by bullet!");
+        // Optionally spawn a small puff effect here instead of explosion
+        Destroy(gameObject);
+    }
+
     private void OnDrawGizmos()
     {
         if (showRadius)
         {
             Gizmos.color = new Color(1f, 0f, 0f, 0.3f);
             Gizmos.DrawSphere(transform.position, explosionRadius);
-
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, explosionRadius);
         }

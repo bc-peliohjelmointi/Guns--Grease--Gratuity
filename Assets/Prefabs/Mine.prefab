@@ -216,6 +216,8 @@ MonoBehaviour:
   explosionRadius: 3
   triggerDelay: 0
   oneTimeUse: 1
+  mineHealth: 1
+  explodeWhenShot: 1
   explosionEffect: {fileID: 1121192042590650, guid: e1b08032bec16ba4eb1ae23cbd572664, type: 3}
   effectLifetime: 2
   audioSource: {fileID: 3084555696947998432}

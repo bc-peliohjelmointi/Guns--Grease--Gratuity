@@ -96,7 +96,7 @@ public class GunHitscan : MonoBehaviour
             nextFireTime = Time.time + 1f / fireRate;
             Fire();
         }
-        else if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame && currentAmmo < magazineSize && totalAmmo !=0)
+        else if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame && currentAmmo < magazineSize && totalAmmo != 0)
         {
             StartCoroutine(Reload());
         }
@@ -132,9 +132,6 @@ public class GunHitscan : MonoBehaviour
 
         StartCoroutine(PlayEcho());
 
-        Vector3 origin;
-        Vector3 dir;
-
         Ray camRay = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         RaycastHit camHit;
 
@@ -149,10 +146,8 @@ public class GunHitscan : MonoBehaviour
             targetPoint = camRay.origin + camRay.direction * range;
         }
 
-        origin = muzzle.position;
-        dir = (targetPoint - origin).normalized;
-
-
+        Vector3 origin = muzzle.position;
+        Vector3 dir = (targetPoint - origin).normalized;
 
         RaycastHit hit;
         bool didHit = Physics.Raycast(origin, dir, out hit, range, hitMask, QueryTriggerInteraction.Ignore);
@@ -179,13 +174,23 @@ public class GunHitscan : MonoBehaviour
             // Check for enemy AI
             var enemy = hit.collider.GetComponent<EnemyAI>();
             if (enemy == null)
-            {
                 enemy = hit.collider.GetComponentInParent<EnemyAI>();
-            }
+
             if (enemy != null)
             {
                 enemy.TakeDamage(damage);
                 Debug.Log($"Hit enemy for {damage} damage!");
+            }
+
+            // Check for mine trap
+            var mine = hit.collider.GetComponent<MineTrap>();
+            if (mine == null)
+                mine = hit.collider.GetComponentInParent<MineTrap>();
+
+            if (mine != null)
+            {
+                mine.TakeDamage(damage);
+                Debug.Log($"Shot mine for {damage} damage!");
             }
 
             if (hit.rigidbody != null)
@@ -195,7 +200,6 @@ public class GunHitscan : MonoBehaviour
         }
         else
         {
-            // Proper miss direction
             tracerEnd = origin + dir * range;
         }
 
@@ -226,7 +230,7 @@ public class GunHitscan : MonoBehaviour
 
         if (animator)
             animator.SetTrigger("Reload");
-            Debug.Log("Reload anim triggered");
+        Debug.Log("Reload anim triggered");
 
         yield return new WaitForSeconds(reloadTime);
 
@@ -276,11 +280,10 @@ public class GunHitscan : MonoBehaviour
     IEnumerator StartActive()
     {
         enabled = false;
-
         yield return new WaitForSeconds(0.1f);
-
         enabled = true;
     }
+
     public void ResetGun()
     {
         currentAmmo = magazineSize;

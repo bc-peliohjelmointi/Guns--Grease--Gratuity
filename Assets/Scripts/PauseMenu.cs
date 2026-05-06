@@ -15,15 +15,11 @@ public class PauseMenu : MonoBehaviour
 
     [Header("UI Panels")]
     public GameObject pauseMenuPanel;
-    public GameObject controlsPanel;
-
+    
     [Header("Pause Menu Buttons")]
     public Button resumeButton;
-    public Button controlsButton;
+    public Button tutorialButton;
     public Button mainMenuButton;
-
-    [Header("Controls Panel Buttons")]
-    public Button controlsBackButton;
 
     [Header("Canvas (for sort order fix)")]
     public Canvas pauseCanvas;
@@ -60,19 +56,15 @@ public class PauseMenu : MonoBehaviour
         if (pauseMenuPanel != null)
             pauseMenuPanel.SetActive(false);
 
-        if (controlsPanel != null)
-            controlsPanel.SetActive(false);
-
         // Wire buttons
         if (resumeButton != null) resumeButton.onClick.AddListener(Resume);
-        if (controlsButton != null) controlsButton.onClick.AddListener(ShowControls);
         if (mainMenuButton != null) mainMenuButton.onClick.AddListener(GoToMainMenu);
-        if (controlsBackButton != null) controlsBackButton.onClick.AddListener(HideControls);
+       
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (UnityEngine.InputSystem.Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             Debug.Log($"[PauseMenu] ESC pressed — pausingAllowed={pausingAllowed}, IsPaused={IsPaused}");
 
@@ -139,21 +131,9 @@ public class PauseMenu : MonoBehaviour
         }
 
         if (pauseMenuPanel != null) pauseMenuPanel.SetActive(false);
-        if (controlsPanel != null) controlsPanel.SetActive(false);
+        
 
         Debug.Log("[PauseMenu] Resumed.");
-    }
-
-    public void ShowControls()
-    {
-        if (pauseMenuPanel != null) pauseMenuPanel.SetActive(false);
-        if (controlsPanel != null) controlsPanel.SetActive(true);
-    }
-
-    public void HideControls()
-    {
-        if (controlsPanel != null) controlsPanel.SetActive(false);
-        if (pauseMenuPanel != null) pauseMenuPanel.SetActive(true);
     }
 
     public void GoToMainMenu()
