@@ -172,6 +172,7 @@ MonoBehaviour:
   minHumPitch: 0.8
   maxHumPitch: 1.5
   deathSmokeEffect: {fileID: 1315614681493600653, guid: fe87e0d112f55d2468bf7bc68d941781, type: 3}
+  deathFlashEffect: {fileID: 1828176872806910, guid: 64891a0eb28db934898420d80ca07cb3, type: 3}
   EnemyBonusTextPrefab: {fileID: 5427012736361423700, guid: 3885fe400085f1b40863045c84686a90, type: 3}
   popupAnchor: {fileID: 0}
 --- !u!82 &607668853909997490

@@ -310,7 +310,7 @@ public class DeliverySystem : MonoBehaviour
     {
         if (!hasActiveOrder)
         {
-            statusText.text = "No active order!";
+            statusText.text = "";
             return;
         }
 
@@ -429,7 +429,7 @@ public class DeliverySystem : MonoBehaviour
         ClearAllPackages();
         DisableCompass();
 
-        statusText.text = "No active order!";
+        statusText.text = "";
         UpdateUI();
     }
 
