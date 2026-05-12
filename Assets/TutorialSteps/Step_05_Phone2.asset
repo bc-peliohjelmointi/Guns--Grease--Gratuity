@@ -13,18 +13,19 @@ MonoBehaviour:
   m_Name: Step_05_Phone2
   m_EditorClassIdentifier: 
   tutorialText: "In the Current app you can pick any delivery you'd like to do and
-    accept it simply by clicking the \"Accept\" button! \n\nEach delivery has a timer
-    that will help you tell what time the parcel must be delivered by! You can close
-    the phone by pressing \"TAB\" again!"
+    accept it simply by clicking the <color=green><b>\"Accept\"</color></b> button!
+    \n\nEach delivery has a timer that will help you tell what time the parcel must
+    be delivered by! You can close the phone by pressing <color=orange><b>\"TAB\"</color></b>
+    again!"
   portrait: {fileID: 21300000, guid: e00b88a4d292d284c8849e4d0e223ec6, type: 3}
-  panelPosition: {x: -720, y: -35}
-  panelSize: {x: 400, y: 500}
+  panelPosition: {x: -670, y: 175}
+  panelSize: {x: 350, y: 450}
   textPosition: {x: -150, y: -64}
   textSize: {x: 50, y: 200}
   portraitPosition: {x: -110, y: 165}
-  portraitSize: {x: 128, y: 128}
+  portraitSize: {x: 100, y: 100}
   anchorMin: {x: 0.5, y: 0.5}
   anchorMax: {x: 0.5, y: 0.5}
-  skipPosition: {x: -45, y: -175}
-  isSkippable: 1
+  skipPosition: {x: -45, y: -240}
+  isSkippable: 0
   triggerType: 1

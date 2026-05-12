@@ -12,17 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7db4fb62fdee2f34291ce87d5351fd5f, type: 3}
   m_Name: Step_04_Phone1
   m_EditorClassIdentifier: 
-  tutorialText: Once you have opened your phone, click on the Current app icon! This
-    will bring you to the possible deliveries for you to do!
+  tutorialText: "Once you have opened your phone, click on the <color=lightblue><b>\"Current\"</color></b>
+    app icon! \n\nThis will bring you to the possible deliveries for you to do!"
   portrait: {fileID: 21300000, guid: e00b88a4d292d284c8849e4d0e223ec6, type: 3}
-  panelPosition: {x: -720, y: -35}
-  panelSize: {x: 400, y: 500}
+  panelPosition: {x: -670, y: 175}
+  panelSize: {x: 350, y: 450}
   textPosition: {x: -150, y: -64}
   textSize: {x: 50, y: 200}
   portraitPosition: {x: -110, y: 165}
-  portraitSize: {x: 128, y: 128}
+  portraitSize: {x: 100, y: 100}
   anchorMin: {x: 0.5, y: 0.5}
   anchorMax: {x: 0.5, y: 0.5}
-  skipPosition: {x: -45, y: -105}
+  skipPosition: {x: -45, y: -240}
   isSkippable: 1
   triggerType: 0

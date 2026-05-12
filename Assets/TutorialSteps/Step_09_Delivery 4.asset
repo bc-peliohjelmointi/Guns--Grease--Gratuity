@@ -12,18 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7db4fb62fdee2f34291ce87d5351fd5f, type: 3}
   m_Name: Step_09_Delivery 4
   m_EditorClassIdentifier: 
-  tutorialText: Some roads might be closed due to the random roadworks that seem
-    to change every day for some reason, so you might have to get creative to get
-    to the delivery point in time!
+  tutorialText: 'Look for <color=yellow>yellow</color> circles on the ground! They
+    will help you pinpoint the location of the recepient!
+
+
+    Head inside when
+    you''ve located the correct door!'
   portrait: {fileID: 21300000, guid: e00b88a4d292d284c8849e4d0e223ec6, type: 3}
   panelPosition: {x: 0, y: -330}
   panelSize: {x: 1000, y: 200}
-  textPosition: {x: -110, y: -10}
+  textPosition: {x: -110, y: -70}
   textSize: {x: 200, y: 50}
-  portraitPosition: {x: -400, y: 0}
-  portraitSize: {x: 128, y: 128}
+  portraitPosition: {x: -300, y: -50}
+  portraitSize: {x: 100, y: 100}
   anchorMin: {x: 0.5, y: 0.5}
   anchorMax: {x: 0.5, y: 0.5}
-  skipPosition: {x: 385, y: -75}
-  isSkippable: 1
-  triggerType: 0
+  skipPosition: {x: 385, y: -125}
+  isSkippable: 0
+  triggerType: 2

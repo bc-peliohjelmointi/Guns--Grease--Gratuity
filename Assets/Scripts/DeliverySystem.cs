@@ -353,6 +353,9 @@ public class DeliverySystem : MonoBehaviour
         hasPackage = false;
         hasActiveOrder = false;
 
+        TutorialManager.Instance
+        ?.NotifyTrigger(TutorialTriggerType.DeliveryComplete);
+
         if (deliveryCompleteSFX)
             audioSource.PlayOneShot(deliveryCompleteSFX);
 

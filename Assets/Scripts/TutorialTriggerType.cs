@@ -6,5 +6,6 @@ public enum TutorialTriggerType
     PhoneOpen,
     InBuilding,
     Interacted,
+    DeliveryComplete,
     CustomEvent
 }
