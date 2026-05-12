@@ -9,7 +9,8 @@ public class UpgradeShop : MonoBehaviour
     public int bodyArmorPrice = 50;
     public int scooterSpeedPrice = 50;
     public int rewardMultiplierPrice = 100;
-    private int maxLevel = 5;
+
+    [SerializeField] private int maxLevel = 5;
 
     [Header("UI")]
     public TextMeshProUGUI moneyText;
@@ -18,24 +19,51 @@ public class UpgradeShop : MonoBehaviour
     public TextMeshProUGUI speedText;
     public TextMeshProUGUI rewardText;
 
-    private PlayerStats stats;
-
     [Header("Sliders")]
     public Slider damageSlider;
     public Slider timeSlider;
     public Slider speedSlider;
     public Slider rewardSlider;
 
+    [Header("Confirmation Popup")]
+    public GameObject confirmPanel;
+    public Button yesButton;
+    public Button noButton;
+    public TMP_Text confirmText;
+
+    [Header("Audio")]
+    public AudioSource audioSource;
+
+    public AudioClip buySuccessSFX;
+    public AudioClip buyFailSFX;
+    public AudioClip popupOpenSFX;
+
+    private PlayerStats stats;
+
+    // FIXED: Missing variable
+    private System.Action pendingPurchase;
+
     private void Start()
     {
-        // Cache PlayerStats once it definitely exists
         stats = PlayerStats.Instance;
+
         UpdateUI();
+
+        // Hide popup at start
+        if (confirmPanel != null)
+            confirmPanel.SetActive(false);
+
+        // Button listeners
+        if (yesButton != null)
+            yesButton.onClick.AddListener(ConfirmPurchase);
+
+        if (noButton != null)
+            noButton.onClick.AddListener(CancelPurchase);
     }
 
     private void OnEnable()
     {
-        UpdateUI();
+        RefreshUI();
     }
 
     public void RefreshUI()
@@ -46,50 +74,108 @@ public class UpgradeShop : MonoBehaviour
         UpdateUI();
     }
 
-
-
     // -------------------------
     // BUY METHODS
     // -------------------------
 
-    public void BuyBodyArmor()
-    {
-        if (stats.money >= bodyArmorPrice && stats.bodyArmorLevel < maxLevel)
-        {
-            stats.money -= bodyArmorPrice;
-            stats.bodyArmorLevel++;
-            UpdateUI();
-        }
-    }
-
     public void BuyDamage()
     {
-        if (stats.money >= damagePrice && stats.weaponDamageLevel < maxLevel)
+        AskForConfirmation("Weapon Damage", () =>
         {
-            stats.money -= damagePrice;
-            stats.weaponDamageLevel++;
-            UpdateUI();
-        }
+            if (stats.weaponDamageLevel >= maxLevel)
+            {
+                PlaySound(buyFailSFX);
+                return;
+            }
+
+            if (stats.money >= damagePrice)
+            {
+                stats.money -= damagePrice;
+                stats.weaponDamageLevel++;
+
+                PlaySound(buySuccessSFX);
+                UpdateUI();
+            }
+            else
+            {
+                PlaySound(buyFailSFX);
+            }
+        });
+    }
+
+    public void BuyBodyArmor()
+    {
+        AskForConfirmation("Body Armor", () =>
+        {
+            if (stats.bodyArmorLevel >= maxLevel)
+            {
+                PlaySound(buyFailSFX);
+                return;
+            }
+
+            if (stats.money >= bodyArmorPrice)
+            {
+                stats.money -= bodyArmorPrice;
+                stats.bodyArmorLevel++;
+
+                PlaySound(buySuccessSFX);
+                UpdateUI();
+            }
+            else
+            {
+                PlaySound(buyFailSFX);
+            }
+        });
     }
 
     public void BuyScooterSpeed()
     {
-        if (stats.money >= scooterSpeedPrice && stats.scooterSpeedLevel < maxLevel)
+        AskForConfirmation("Scooter Speed", () =>
         {
-            stats.money -= scooterSpeedPrice;
-            stats.scooterSpeedLevel++;
-            UpdateUI();
-        }
+            if (stats.scooterSpeedLevel >= maxLevel)
+            {
+                PlaySound(buyFailSFX);
+                return;
+            }
+
+            if (stats.money >= scooterSpeedPrice)
+            {
+                stats.money -= scooterSpeedPrice;
+                stats.scooterSpeedLevel++;
+
+                PlaySound(buySuccessSFX);
+                UpdateUI();
+            }
+            else
+            {
+                PlaySound(buyFailSFX);
+            }
+        });
     }
 
     public void BuyPackageHealth()
     {
-        if (stats.money >= rewardMultiplierPrice && stats.packageHealthLevel < maxLevel)
+        AskForConfirmation("Package Health", () =>
         {
-            stats.money -= rewardMultiplierPrice;
-            stats.packageHealthLevel++;
-            UpdateUI();
-        }
+            if (stats.packageHealthLevel >= maxLevel)
+            {
+                PlaySound(buyFailSFX);
+                return;
+            }
+
+            if (stats.money >= rewardMultiplierPrice)
+            {
+                stats.money -= rewardMultiplierPrice;
+                stats.packageHealthLevel++;
+
+                PlaySound(buySuccessSFX);
+                UpdateUI();
+            }
+            else
+            {
+                PlaySound(buyFailSFX);
+            }
+        });
     }
 
     // -------------------------
@@ -99,6 +185,7 @@ public class UpgradeShop : MonoBehaviour
     void UpdateMoneyOnly()
     {
         if (stats == null) return;
+
         moneyText.text = $"Money: ${Mathf.FloorToInt(stats.money)}";
     }
 
@@ -108,13 +195,13 @@ public class UpgradeShop : MonoBehaviour
 
         UpdateMoneyOnly();
 
-        // Prices update
+        // Price labels
         damageText.text = $"${damagePrice}";
         timeText.text = $"${bodyArmorPrice}";
         speedText.text = $"${scooterSpeedPrice}";
         rewardText.text = $"${rewardMultiplierPrice}";
 
-        // Sliders logic
+        // Sliders
         if (damageSlider != null)
         {
             damageSlider.maxValue = maxLevel;
@@ -137,6 +224,53 @@ public class UpgradeShop : MonoBehaviour
         {
             rewardSlider.maxValue = maxLevel;
             rewardSlider.value = stats.packageHealthLevel;
+        }
+    }
+
+    // -------------------------
+    // CONFIRMATION POPUP
+    // -------------------------
+
+    void AskForConfirmation(string upgradeName, System.Action purchaseAction)
+    {
+        pendingPurchase = purchaseAction;
+
+        if (confirmPanel != null)
+            confirmPanel.SetActive(true);
+
+        if (confirmText != null)
+            confirmText.text = $"Buy {upgradeName}?";
+
+        PlaySound(popupOpenSFX);
+    }
+
+    void ConfirmPurchase()
+    {
+        if (confirmPanel != null)
+            confirmPanel.SetActive(false);
+
+        pendingPurchase?.Invoke();
+
+        pendingPurchase = null;
+    }
+
+    void CancelPurchase()
+    {
+        if (confirmPanel != null)
+            confirmPanel.SetActive(false);
+
+        pendingPurchase = null;
+    }
+
+    // -------------------------
+    // AUDIO
+    // -------------------------
+
+    void PlaySound(AudioClip clip)
+    {
+        if (audioSource != null && clip != null)
+        {
+            audioSource.PlayOneShot(clip);
         }
     }
 }

@@ -26,6 +26,7 @@ public class scooterCtrl : MonoBehaviour
     [Header("Control")]
     public bool canControl = false; // player mount
     public bool powerOn = false; // scooter ignition
+    private bool wasMountedLastFrame = false;
 
     [Header("Battery")]
     public float maxBattery = 100f;
@@ -81,6 +82,8 @@ public class scooterCtrl : MonoBehaviour
     private void Update()
     {
         ApplyUpgrades();
+
+        HandlePowerInput();
     }
 
     private void FixedUpdate()
@@ -89,7 +92,7 @@ public class scooterCtrl : MonoBehaviour
         if (isResetting) return;
 
         // when not mounted nor powered, scooter will coast to stop
-        if (!canControl || !hasBattery) // || !powerOn
+        if (!canControl || !powerOn || !hasBattery) // || !powerOn
         {
             currentSpeed = Mathf.MoveTowards(currentSpeed, 0f, deceleration * Time.fixedDeltaTime);
 
@@ -174,6 +177,33 @@ public class scooterCtrl : MonoBehaviour
         rb.linearVelocity = velocity;
     }
 
+    private void HandlePowerInput()
+    {
+        // Automatically turn OFF if player gets off scooter
+        if (wasMountedLastFrame && !canControl)
+        {
+            SetPower(false);
+        }
+
+        wasMountedLastFrame = canControl;
+
+        // Can't interact if not mounted
+        if (!canControl)
+            return;
+
+        // Press W to turn ON scooter
+        if (Keyboard.current.wKey.wasPressedThisFrame && !powerOn && hasBattery)
+        {
+            SetPower(true);
+        }
+
+        // Press E to turn OFF scooter
+        if (Keyboard.current.eKey.wasPressedThisFrame && powerOn)
+        {
+            SetPower(false);
+        }
+    }
+
     private void HandleTurningAndLean()
     {
         if (Mathf.Abs(currentSpeed) < 0.1f) // Only turn when moving
@@ -214,7 +244,7 @@ public class scooterCtrl : MonoBehaviour
     
     private void DrainBattery()
     {
-        if (!canControl) return; //!powerOn || 
+        if (!powerOn || !canControl) return; //!powerOn || 
         if (currentBattery <= 0f) return;
 
         // drain speed / converts drain per second to drain per minute

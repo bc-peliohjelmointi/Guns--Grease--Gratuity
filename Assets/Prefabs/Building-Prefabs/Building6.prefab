@@ -154,7 +154,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7043130257064382682}
   - component: {fileID: 2840009646870538688}
-  - component: {fileID: 6465289245468662970}
   m_Layer: 0
   m_Name: Building6
   m_TagString: Untagged
@@ -201,28 +200,6 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0, z: 0}
   m_TimeToStationary: 0.5
---- !u!64 &6465289245468662970
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3548073334847131547}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
 --- !u!1 &3632638551656773114
 GameObject:
   m_ObjectHideFlags: 0
@@ -441,7 +418,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: 4300000, guid: b8d8dcb9a3a9deb4c909b62dfe1a76ba, type: 2}
 --- !u!1 &5693534738152817274
 GameObject:
   m_ObjectHideFlags: 0

@@ -528,7 +528,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3446240796348000340}
   - {fileID: 1150210612833813977}
   - {fileID: 1159866019425224887}
   - {fileID: 3680452520204936858}
@@ -708,7 +707,7 @@ GameObject:
   - component: {fileID: 1150210612833813977}
   - component: {fileID: 984805848700445129}
   - component: {fileID: 2106706449212686057}
-  - component: {fileID: 6302782809429656220}
+  - component: {fileID: 328576751494827073}
   m_Layer: 0
   m_Name: Building3 (Structure)
   m_TagString: Untagged
@@ -790,8 +789,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &6302782809429656220
-BoxCollider:
+--- !u!64 &328576751494827073
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -808,9 +807,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: ebd0214c5ca7c1d438eef0f4eb9a121b, type: 2}
 --- !u!1 &6867649779803758655
 GameObject:
   m_ObjectHideFlags: 0
@@ -879,37 +879,6 @@ Transform:
   - {fileID: 7574617804950951748}
   m_Father: {fileID: 6934009522134200065}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
---- !u!1 &7023993265160555911
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3446240796348000340}
-  m_Layer: 0
-  m_Name: Doorstep (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3446240796348000340
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7023993265160555911}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.26, z: -5.549999}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 420591559950138560}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7412822038444314425
 GameObject:
   m_ObjectHideFlags: 0

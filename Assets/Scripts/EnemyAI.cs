@@ -82,6 +82,19 @@ public class EnemyAI : MonoBehaviour
     public AudioClip hitSound;
     public AudioClip deathSound;
 
+    [Header("Enemy Audio")]
+
+    public AudioClip alertSound;
+    public AudioClip meleeAttackSound;
+    public AudioClip hummingLoop;
+
+    [Range(0.5f, 2f)]
+    public float minHumPitch = 0.8f;
+
+    public float maxHumPitch = 1.5f;
+
+    private bool hasPlayedAlert = false;
+
     [Header("Effects")]
     public GameObject deathSmokeEffect;
 
@@ -126,6 +139,14 @@ public class EnemyAI : MonoBehaviour
                 Debug.LogWarning("PopupAnchor not found in scene!");
             }
         }
+
+        // Setup humming loop
+        if (audioSource != null && hummingLoop != null)
+        {
+            audioSource.clip = hummingLoop;
+            audioSource.loop = true;
+            audioSource.Play();
+        }
     }
 
     private void Update()
@@ -142,6 +163,16 @@ public class EnemyAI : MonoBehaviour
         if (playerInSightRange)
         {
             RotateUpperBodyTowardPlayer();
+
+            if (!hasPlayedAlert)
+            {
+                PlayOneShot(alertSound);
+                hasPlayedAlert = true;
+            }
+        }
+        else
+        {
+            hasPlayedAlert = false;
         }
 
         // Check detection ranges
@@ -155,6 +186,8 @@ public class EnemyAI : MonoBehaviour
             ChasePlayer();
         else if (playerInAttackRange && playerInSightRange)
             AttackPlayer();
+
+        UpdateHumSound();
     }
 
     private void Patrolling()
@@ -256,6 +289,8 @@ public class EnemyAI : MonoBehaviour
         // --------------------
         if (distance <= 2f)
         {
+            PlayOneShot(meleeAttackSound);
+
             if (playerController != null)
                 playerController.TakeDamage(damageToPlayer);
 
@@ -562,5 +597,27 @@ public class EnemyAI : MonoBehaviour
         transform.rotation = Quaternion.identity;
 
         Debug.Log("Enemy reset: " + gameObject.name);
+    }
+
+    void UpdateHumSound()
+    {
+        if (audioSource == null || !audioSource.isPlaying || agent == null)
+            return;
+
+        float speedPercent = Mathf.Clamp01(agent.velocity.magnitude / chaseSpeed);
+
+        audioSource.pitch = Mathf.Lerp(
+            minHumPitch,
+            maxHumPitch,
+            speedPercent
+        );
+    }
+
+    void PlayOneShot(AudioClip clip)
+    {
+        if (audioSource != null && clip != null)
+        {
+            audioSource.PlayOneShot(clip);
+        }
     }
 }

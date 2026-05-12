@@ -166,6 +166,11 @@ MonoBehaviour:
   shootSound: {fileID: 8300000, guid: 7d7598fcb214ac54eb9e29f71ccbc443, type: 3}
   hitSound: {fileID: 8300000, guid: 3292a6421c9fde94a9e88e51532ac93e, type: 3}
   deathSound: {fileID: 8300000, guid: ebdee644d8a2cfe47bff40e498975b0d, type: 3}
+  alertSound: {fileID: 8300000, guid: 35c6a0c8536296b4989ceda7b170f459, type: 3}
+  meleeAttackSound: {fileID: 8300000, guid: d74bf50c1074cae49a1047477a3d48a2, type: 3}
+  hummingLoop: {fileID: 8300000, guid: e5b0ab801a2932a48bebecdf4969d8dd, type: 3}
+  minHumPitch: 0.8
+  maxHumPitch: 1.5
   deathSmokeEffect: {fileID: 1315614681493600653, guid: fe87e0d112f55d2468bf7bc68d941781, type: 3}
   EnemyBonusTextPrefab: {fileID: 5427012736361423700, guid: 3885fe400085f1b40863045c84686a90, type: 3}
   popupAnchor: {fileID: 0}
