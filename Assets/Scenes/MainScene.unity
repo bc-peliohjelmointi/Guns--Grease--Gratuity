@@ -96068,6 +96068,7 @@ GameObject:
   - component: {fileID: 930845288}
   - component: {fileID: 930845289}
   - component: {fileID: 930845291}
+  - component: {fileID: 930845292}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -96415,6 +96416,18 @@ MonoBehaviour:
   scooterUI: {fileID: 6893246793627839364}
   speedText: {fileID: 6893246793627839362}
   batterySlider: {fileID: 6893246793627839365}
+--- !u!114 &930845292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 930845280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dea236011d9d2df4a973f14e196d6cad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &931494074
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -198499,7 +198512,7 @@ MonoBehaviour:
   autoSetControlPoints: 0
   points:
   - {x: -67.683334, y: 0, z: -6.8666687}
-  - {x: -67.683334, y: 0, z: -7.5209284}
+  - {x: -67.683334, y: 0, z: -7.5209312}
   - {x: -68.69346, y: 0.044613708, z: -11.615651}
   - {x: -67.38326, y: 0.059412647, z: -16.476467}
   - {x: -66.690056, y: 0.06724252, z: -19.048246}
@@ -213895,7 +213908,7 @@ MonoBehaviour:
   autoSetControlPoints: 0
   points:
   - {x: -4.75, y: 0, z: 2.7833328}
-  - {x: -4.75, y: 0, z: 2.191503}
+  - {x: -4.75, y: 0, z: 2.1915016}
   - {x: -5.177961, y: 0.05, z: 2.5441349}
   - {x: -5.227905, y: 0.05, z: -0.60020655}
   - {x: -5.262367, y: 0.05, z: -2.7698257}
