@@ -26,13 +26,29 @@ public class VendingMachine : MonoBehaviour
 
     private void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+
+        if (playerObj != null)
+        {
+            player = playerObj.transform;
+        }
+        else
+        {
+            Debug.LogError("No object with Player tag found!");
+        }
+
         stats = PlayerStats.Instance;
+
+        if (statusText != null)
+            statusText.text = "";
     }
 
     // checks player distance and if within required parameter promts text and checks for input to buy
     private void Update()
     {
+        if (player == null || statusText == null)
+            return;
+
         float dist = Vector3.Distance(player.position, transform.position);
         playerInRange = dist <= interactDistance;
 
@@ -44,7 +60,7 @@ public class VendingMachine : MonoBehaviour
 
         if (!isShowingMessage)
         {
-            statusText.text = $"[E] Buy battery pack ({batteryCost}$)";
+            statusText.text = $"[E] Buy battery pack (${batteryCost})";
         }
 
         if (Keyboard.current.eKey.wasPressedThisFrame)
