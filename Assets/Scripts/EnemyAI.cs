@@ -98,6 +98,8 @@ public class EnemyAI : MonoBehaviour
     [Header("Effects")]
     public GameObject deathSmokeEffect;
 
+    public GameObject deathFlashEffect;
+
     [Header("UI")]
     public GameObject EnemyBonusTextPrefab;
     public Transform popupAnchor;
@@ -522,7 +524,21 @@ public class EnemyAI : MonoBehaviour
 
         ShowEnemyBonusText(killReward);
 
-        Instantiate(deathSmokeEffect, transform.position, Quaternion.identity);
+        // Existing smoke effect
+        if (deathSmokeEffect != null)
+        {
+            Instantiate(deathSmokeEffect, transform.position, Quaternion.identity);
+        }
+
+        // NEW extra death effect
+        if (deathFlashEffect != null)
+        {
+            Instantiate(
+                deathFlashEffect,
+                transform.position + Vector3.up * 1f, // optional height offset
+                Quaternion.identity
+            );
+        }
 
         yield return new WaitForSeconds(0.1f);
 
