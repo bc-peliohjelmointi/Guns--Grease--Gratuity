@@ -1,12 +1,14 @@
-﻿using TMPro;
+﻿using System.Collections;
+using TMPro;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using System.Collections;
 
 public class TutorialManager : MonoBehaviour
 {
     public GameObject tutorialPanel;
+    public GameObject tutorialDonePanel;
     public Image portraitImage;
     public TextMeshProUGUI dialogueText;
     public TextMeshProUGUI skipText;
@@ -176,8 +178,17 @@ public class TutorialManager : MonoBehaviour
 
         if (steps[currentStepIndex].triggerType == trigger)
         {
+            if (steps[currentStepIndex].triggerType == TutorialTriggerType.DeliveryComplete)
+            {
+                tutorialDonePanel.SetActive(true);
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+
             NextStep();
+
         }
+
     }
 
     public void StartTutorial()
