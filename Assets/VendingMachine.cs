@@ -1,6 +1,5 @@
 using System.Collections;
 using TMPro;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,7 +7,6 @@ public class VendingMachine : MonoBehaviour
 {
     [Header("Settings")]
     public float interactDistance = 3f;
-    public Key interactKey = Key.E;
     public int batteryCost = 5;
 
     [Header("Battery Spawn")]
@@ -21,8 +19,10 @@ public class VendingMachine : MonoBehaviour
     private Transform player;
     private PlayerStats stats;
 
-    private bool playerInRange = false;
     private bool isShowingMessage = false;
+
+    // Tracks the current active vending machine
+    private static VendingMachine currentMachine;
 
     private void Start()
     {
@@ -32,10 +32,6 @@ public class VendingMachine : MonoBehaviour
         {
             player = playerObj.transform;
         }
-        else
-        {
-            Debug.LogError("No object with Player tag found!");
-        }
 
         stats = PlayerStats.Instance;
 
@@ -43,57 +39,78 @@ public class VendingMachine : MonoBehaviour
             statusText.text = "";
     }
 
-    // checks player distance and if within required parameter promts text and checks for input to buy
     private void Update()
     {
         if (player == null || statusText == null)
             return;
 
-        float dist = Vector3.Distance(player.position, transform.position);
-        playerInRange = dist <= interactDistance;
+        float distance = Vector3.Distance(player.position, transform.position);
 
-        if (!playerInRange)
+        bool inRange = distance <= interactDistance;
+
+        // If not in range and THIS machine owns the UI, clear it
+        if (!inRange)
         {
-            statusText.text = "";
+            if (currentMachine == this)
+            {
+                statusText.text = "";
+                currentMachine = null;
+            }
+
             return;
         }
 
-        if (!isShowingMessage)
+        // If another closer machine is already active, ignore
+        if (currentMachine != null && currentMachine != this)
         {
-            statusText.text = $"[E] Buy battery pack (${batteryCost})";
+            float currentDist =
+                Vector3.Distance(player.position, currentMachine.transform.position);
+
+            // Only replace if THIS machine is closer
+            if (distance >= currentDist)
+                return;
         }
 
+        // Become active machine
+        currentMachine = this;
+
+        // Show prompt
+        if (!isShowingMessage)
+        {
+            statusText.text = $"[E] Buy Battery (${batteryCost})";
+        }
+
+        // Purchase
         if (Keyboard.current.eKey.wasPressedThisFrame)
         {
             TryBatteryPurchase();
         }
     }
 
-    // compares player money to required money to purchase and if not met then starts coroutine for message promt
     private void TryBatteryPurchase()
     {
         if (stats.money >= batteryCost)
         {
             stats.money -= batteryCost;
-            DispenseBattery();
-        }
 
+            Instantiate(
+                batteryPrefab,
+                batterySpawnPoint.position,
+                batterySpawnPoint.rotation
+            );
+
+            StartCoroutine(ShowTempMessage("Battery Purchased!"));
+        }
         else
         {
             StartCoroutine(ShowTempMessage("Not enough money."));
         }
     }
 
-    // creates object (battery)
-    private void DispenseBattery()
-    {
-        Instantiate(batteryPrefab, batterySpawnPoint.position, batterySpawnPoint.rotation);
-    }
-
-    // temporary message time
     private IEnumerator ShowTempMessage(string message)
     {
         isShowingMessage = true;
+
         statusText.text = message;
 
         yield return new WaitForSeconds(1.5f);

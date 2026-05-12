@@ -1,8 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// Handles player-selected compass navigation targets (Home, Shop, etc.)
-/// DeliverySystem can override this when needed.
+/// Handles player-selected compass navigation targets
 /// </summary>
 public class CompassNavigation : MonoBehaviour
 {
@@ -11,20 +10,33 @@ public class CompassNavigation : MonoBehaviour
         None,
         Home,
         Shop,
-        Delivery   // overridden externally
+        Delivery
     }
 
     [Header("References")]
     public DeliverySystem deliverySystem;
+    public Transform player;
 
     [Header("Current Navigation")]
     public NavMode currentMode = NavMode.None;
 
     private Transform cachedTarget;
 
+    private void Start()
+    {
+        // Auto-find player if not assigned
+        if (player == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+
+            if (playerObj != null)
+                player = playerObj.transform;
+        }
+    }
+
     void Update()
     {
-        // Delivery ALWAYS overrides manual navigation
+        // Delivery overrides everything
         if (deliverySystem != null && deliverySystem.hasActiveOrder)
         {
             currentMode = NavMode.Delivery;
@@ -38,11 +50,11 @@ public class CompassNavigation : MonoBehaviour
         switch (currentMode)
         {
             case NavMode.Home:
-                cachedTarget = FindTargetWithTag("Home");
+                cachedTarget = FindClosestTargetWithTag("Home");
                 break;
 
             case NavMode.Shop:
-                cachedTarget = FindTargetWithTag("Shop");
+                cachedTarget = FindClosestTargetWithTag("Shop");
                 break;
 
             case NavMode.Delivery:
@@ -55,14 +67,35 @@ public class CompassNavigation : MonoBehaviour
         }
     }
 
-    Transform FindTargetWithTag(string tag)
+    Transform FindClosestTargetWithTag(string tag)
     {
-        GameObject obj = GameObject.FindGameObjectWithTag(tag);
-        return obj != null ? obj.transform : null;
+        GameObject[] objs = GameObject.FindGameObjectsWithTag(tag);
+
+        if (objs.Length == 0 || player == null)
+            return null;
+
+        Transform closest = null;
+        float closestDistance = Mathf.Infinity;
+
+        foreach (GameObject obj in objs)
+        {
+            float dist = Vector3.Distance(
+                player.position,
+                obj.transform.position
+            );
+
+            if (dist < closestDistance)
+            {
+                closestDistance = dist;
+                closest = obj.transform;
+            }
+        }
+
+        return closest;
     }
 
     /// <summary>
-    /// Used by DeliverySystem to get the final compass target
+    /// Used by DeliverySystem
     /// </summary>
     public Transform GetCurrentTarget()
     {

@@ -2011,7 +2011,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactDistance: 3
-  interactKey: 19
   batteryCost: 5
   batteryPrefab: {fileID: 3781310754408438129, guid: 5d01b94e65bdf5e409b04166af9290cd, type: 3}
   batterySpawnPoint: {fileID: 1742553055}
@@ -2306,7 +2305,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactDistance: 3
-  interactKey: 19
   batteryCost: 5
   batteryPrefab: {fileID: 3781310754408438129, guid: 5d01b94e65bdf5e409b04166af9290cd, type: 3}
   batterySpawnPoint: {fileID: 102933896}
@@ -32944,6 +32942,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 663736691}
     - target: {fileID: 6272221261361129766, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
+      propertyPath: slide
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6272221261361129766, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
       propertyPath: phoneUI
       value: 
       objectReference: {fileID: 930845285}
@@ -40183,7 +40185,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactDistance: 3
-  interactKey: 19
   batteryCost: 5
   batteryPrefab: {fileID: 3781310754408438129, guid: 5d01b94e65bdf5e409b04166af9290cd, type: 3}
   batterySpawnPoint: {fileID: 977182571}
@@ -51234,7 +51235,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactDistance: 3
-  interactKey: 19
   batteryCost: 5
   batteryPrefab: {fileID: 3781310754408438129, guid: 5d01b94e65bdf5e409b04166af9290cd, type: 3}
   batterySpawnPoint: {fileID: 1494136387}
@@ -59093,7 +59093,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactDistance: 3
-  interactKey: 19
   batteryCost: 5
   batteryPrefab: {fileID: 3781310754408438129, guid: 5d01b94e65bdf5e409b04166af9290cd, type: 3}
   batterySpawnPoint: {fileID: 1263876330}
@@ -67356,7 +67355,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactDistance: 3
-  interactKey: 19
   batteryCost: 5
   batteryPrefab: {fileID: 3781310754408438129, guid: 5d01b94e65bdf5e409b04166af9290cd, type: 3}
   batterySpawnPoint: {fileID: 1503207779}
@@ -179766,7 +179764,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactDistance: 3
-  interactKey: 19
   batteryCost: 5
   batteryPrefab: {fileID: 3781310754408438129, guid: 5d01b94e65bdf5e409b04166af9290cd, type: 3}
   batterySpawnPoint: {fileID: 1160581935}
@@ -196604,7 +196601,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactDistance: 3
-  interactKey: 19
   batteryCost: 5
   batteryPrefab: {fileID: 3781310754408438129, guid: 5d01b94e65bdf5e409b04166af9290cd, type: 3}
   batterySpawnPoint: {fileID: 23577262}
@@ -198512,7 +198508,7 @@ MonoBehaviour:
   autoSetControlPoints: 0
   points:
   - {x: -67.683334, y: 0, z: -6.8666687}
-  - {x: -67.683334, y: 0, z: -7.5209312}
+  - {x: -67.683334, y: 0, z: -7.5209346}
   - {x: -68.69346, y: 0.044613708, z: -11.615651}
   - {x: -67.38326, y: 0.059412647, z: -16.476467}
   - {x: -66.690056, y: 0.06724252, z: -19.048246}
@@ -201864,7 +201860,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactDistance: 3
-  interactKey: 19
   batteryCost: 5
   batteryPrefab: {fileID: 3781310754408438129, guid: 5d01b94e65bdf5e409b04166af9290cd, type: 3}
   batterySpawnPoint: {fileID: 1463076417}
@@ -213908,7 +213903,7 @@ MonoBehaviour:
   autoSetControlPoints: 0
   points:
   - {x: -4.75, y: 0, z: 2.7833328}
-  - {x: -4.75, y: 0, z: 2.1915016}
+  - {x: -4.75, y: 0, z: 2.1915}
   - {x: -5.177961, y: 0.05, z: 2.5441349}
   - {x: -5.227905, y: 0.05, z: -0.60020655}
   - {x: -5.262367, y: 0.05, z: -2.7698257}
@@ -217294,7 +217289,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactDistance: 3
-  interactKey: 19
   batteryCost: 5
   batteryPrefab: {fileID: 3781310754408438129, guid: 5d01b94e65bdf5e409b04166af9290cd, type: 3}
   batterySpawnPoint: {fileID: 1254417513}
@@ -235077,7 +235071,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactDistance: 3
-  interactKey: 19
   batteryCost: 5
   batteryPrefab: {fileID: 3781310754408438129, guid: 5d01b94e65bdf5e409b04166af9290cd, type: 3}
   batterySpawnPoint: {fileID: 1971922232}
@@ -235907,6 +235900,26 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6597441256927437952, guid: 3351d90e1fb6566468109bb712a86eac, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6667942359354212702, guid: 3351d90e1fb6566468109bb712a86eac, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 2824e5a9ba5685848968b4bf27d4e6dc, type: 2}
+    - target: {fileID: 6667942359354212702, guid: 3351d90e1fb6566468109bb712a86eac, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: -2930851247460999743, guid: 2824e5a9ba5685848968b4bf27d4e6dc, type: 2}
+    - target: {fileID: 6667942359354212702, guid: 3351d90e1fb6566468109bb712a86eac, type: 3}
+      propertyPath: m_VerticalAlignment
+      value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 6667942359354212702, guid: 3351d90e1fb6566468109bb712a86eac, type: 3}
+      propertyPath: m_HorizontalAlignment
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6667942359354212702, guid: 3351d90e1fb6566468109bb712a86eac, type: 3}
+      propertyPath: m_hasFontAssetChanged
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
