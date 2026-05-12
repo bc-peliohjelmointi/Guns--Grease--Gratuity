@@ -1856,15 +1856,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3670582161677248123, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.6767726
+      value: -202.75906
       objectReference: {fileID: 0}
     - target: {fileID: 3670582161677248123, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.875
+      value: -13.436002
       objectReference: {fileID: 0}
     - target: {fileID: 3670582161677248123, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.2637308
+      value: -143.75682
+      objectReference: {fileID: 0}
+    - target: {fileID: 4504352254718759070, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5231433008958454834, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
+      propertyPath: deliverySystem
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5237295084521875432, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
       propertyPath: m_RenderPostProcessing
@@ -1939,6 +1947,7 @@ PrefabInstance:
     - {fileID: 3213983986020760075, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
     m_RemovedGameObjects:
     - {fileID: 3700896365188619770, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
+    - {fileID: 3213983986020760071, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
