@@ -17,8 +17,8 @@ public class scooterCtrl : MonoBehaviour
     public float brakeDeceleration = 30f;
     public float maxSpeed = 30f;
     public float maxReverse = -30f;
-    public float turnSpeed = 65f;
-    public float leanAmount = 12f;
+    public float turnSpeed = 30f;
+    public float leanAmount = 30f;
     public bool isResetting = false;
 
     public float upgradeAmount = 0.25f;
