@@ -6,7 +6,7 @@ public class scooterCtrl : MonoBehaviour
 {
     [Header("Main")]
     public Transform scooterRoot;
-    public Transform visualModel; // Scooter body for leaning
+    public Transform visualModel;
     public Transform scooterSpawnPoint;
 
     private PlayerStats stats;
@@ -15,23 +15,29 @@ public class scooterCtrl : MonoBehaviour
     public float acceleration = 20f;
     public float deceleration = 15f;
     public float brakeDeceleration = 30f;
+
     public float maxSpeed = 30f;
     public float maxReverse = -30f;
+
     public float turnSpeed = 30f;
     public float leanAmount = 30f;
-    public bool isResetting = false;
 
+    public bool isResetting = false;
     public float upgradeAmount = 0.25f;
 
+    [Header("Ground")]
+    public LayerMask groundMask;
+    public float heightOffset = 0.15f;
+
     [Header("Control")]
-    public bool canControl = false; // player mount
-    public bool powerOn = false; // scooter ignition
+    public bool canControl = false;
+    public bool powerOn = false;
     private bool wasMountedLastFrame = false;
 
     [Header("Battery")]
     public float maxBattery = 100f;
     public float movingDrainPM = 20f;
-    public float idleDrainPM = 2f;  // when not moving but engine is on
+    public float idleDrainPM = 2f;
     public float currentBattery;
 
     [Header("Audio")]
@@ -52,7 +58,6 @@ public class scooterCtrl : MonoBehaviour
     public float currentSpeed = 0f;
     private Rigidbody rb;
 
-
     [Header("Base Movement (For upgrades)")]
     private float baseAcceleration;
     private float baseDeceleration;
@@ -64,7 +69,11 @@ public class scooterCtrl : MonoBehaviour
         stats = PlayerStats.Instance;
 
         rb = scooterRoot.GetComponent<Rigidbody>();
-        rb.freezeRotation = true; // We will handle rotation manually
+        rb.freezeRotation = true;
+
+        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+
         currentBattery = maxBattery;
 
         baseAcceleration = acceleration;
@@ -82,17 +91,14 @@ public class scooterCtrl : MonoBehaviour
     private void Update()
     {
         ApplyUpgrades();
-
         HandlePowerInput();
     }
 
     private void FixedUpdate()
     {
-
         if (isResetting) return;
 
-        // when not mounted nor powered, scooter will coast to stop
-        if (!canControl || !powerOn || !hasBattery) // || !powerOn
+        if (!canControl || !powerOn || !hasBattery)
         {
             currentSpeed = Mathf.MoveTowards(currentSpeed, 0f, deceleration * Time.fixedDeltaTime);
 
@@ -103,6 +109,7 @@ public class scooterCtrl : MonoBehaviour
         }
 
         HandleMovement();
+        ApplyGroundAssist();
         HandleTurningAndLean();
         DrainBattery();
         UpdateEngineSound();
@@ -128,14 +135,8 @@ public class scooterCtrl : MonoBehaviour
 
         bool hardBrake = Keyboard.current.spaceKey.isPressed;
 
-        // HARD BRAKE (SPACE) - always wins
         if (hardBrake)
         {
-            if (Mathf.Abs(currentSpeed) > 2f && sfxSource && brakeClip && !sfxSource.isPlaying)
-            {
-                sfxSource.PlayOneShot(brakeClip);
-            }
-
             currentSpeed = Mathf.MoveTowards(
                 currentSpeed,
                 0f,
@@ -144,22 +145,10 @@ public class scooterCtrl : MonoBehaviour
         }
         else
         {
-            // Opposite direction braking (soft brake)
-            if (input != 0f && Mathf.Sign(input) != Mathf.Sign(currentSpeed) && Mathf.Abs(currentSpeed) > 0.5f)
+            if (input != 0f)
             {
-                currentSpeed = Mathf.MoveTowards(
-                    currentSpeed,
-                    0f,
-                    brakeDeceleration * Time.fixedDeltaTime
-                );
+                currentSpeed += input * acceleration * Time.fixedDeltaTime;
             }
-            // Normal acceleration (forward OR reverse)
-            else if (input != 0f)
-            {
-                float accel = input > 0 ? acceleration : acceleration;
-                currentSpeed += input * accel * Time.fixedDeltaTime;
-            }
-            // Natural slowdown
             else
             {
                 currentSpeed = Mathf.MoveTowards(
@@ -173,42 +162,31 @@ public class scooterCtrl : MonoBehaviour
         currentSpeed = Mathf.Clamp(currentSpeed, maxReverse, maxSpeed);
 
         Vector3 velocity = scooterRoot.forward * currentSpeed;
-        velocity.y = rb.linearVelocity.y;
+        velocity.y = rb.linearVelocity.y; // keep gravity working
         rb.linearVelocity = velocity;
     }
 
-    private void HandlePowerInput()
+    private void ApplyGroundAssist()
     {
-        // Automatically turn OFF if player gets off scooter
-        if (wasMountedLastFrame && !canControl)
+        Vector3 origin = rb.position + Vector3.up * 0.2f;
+
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 1.5f, groundMask))
         {
-            SetPower(false);
-        }
+            Vector3 pos = rb.position;
 
-        wasMountedLastFrame = canControl;
+            // gently follow ground but NEVER hard snap
+            float targetY = hit.point.y + heightOffset;
 
-        // Can't interact if not mounted
-        if (!canControl)
-            return;
+            pos.y = Mathf.Lerp(pos.y, targetY, 0.05f);
 
-        // Press W to turn ON scooter
-        if (Keyboard.current.wKey.wasPressedThisFrame && !powerOn && hasBattery)
-        {
-            SetPower(true);
-        }
-
-        // Press E to turn OFF scooter
-        if (Keyboard.current.eKey.wasPressedThisFrame && powerOn)
-        {
-            SetPower(false);
+            rb.position = pos;
         }
     }
 
     private void HandleTurningAndLean()
     {
-        if (Mathf.Abs(currentSpeed) < 0.1f) // Only turn when moving
+        if (Mathf.Abs(currentSpeed) < 0.1f)
         {
-            // Reset lean
             visualModel.localRotation = Quaternion.Lerp(
                 visualModel.localRotation,
                 Quaternion.identity,
@@ -218,62 +196,65 @@ public class scooterCtrl : MonoBehaviour
         }
 
         float turnInput = 0f;
-        if (UnityEngine.InputSystem.Keyboard.current.aKey.isPressed) turnInput = -1f;
-        if (UnityEngine.InputSystem.Keyboard.current.dKey.isPressed) turnInput = 1f;
+        if (Keyboard.current.aKey.isPressed) turnInput = -1f;
+        if (Keyboard.current.dKey.isPressed) turnInput = 1f;
 
-        // Turn scooter
         if (turnInput != 0f)
         {
             scooterRoot.Rotate(Vector3.up, turnInput * turnSpeed * Time.fixedDeltaTime);
         }
 
-        // Lean visual model
-        // Speed sterngth
         float speedPercent = Mathf.Clamp01(Mathf.Abs(currentSpeed) / maxSpeed);
-
-        // Lean direction flips when reversing
         float directionMultiplier = currentSpeed >= 0 ? 1f : -1f;
 
         float lean = -turnInput * directionMultiplier * leanAmount * speedPercent;
 
         Quaternion targetLean = Quaternion.Euler(0f, 0f, lean);
-        visualModel.localRotation = Quaternion.Lerp(visualModel.localRotation, targetLean, Time.fixedDeltaTime * 5f);
 
-        // float lean = -turnInput * leanAmount * Mathf.Clamp01(currentSpeed / maxSpeed);
+        visualModel.localRotation = Quaternion.Lerp(
+            visualModel.localRotation,
+            targetLean,
+            Time.fixedDeltaTime * 5f
+        );
     }
-    
+
+    private void HandlePowerInput()
+    {
+        if (wasMountedLastFrame && !canControl)
+        {
+            SetPower(false);
+        }
+
+        wasMountedLastFrame = canControl;
+
+        if (!canControl) return;
+
+        if (Keyboard.current.wKey.wasPressedThisFrame && !powerOn && hasBattery)
+            SetPower(true);
+
+        if (Keyboard.current.eKey.wasPressedThisFrame && powerOn)
+            SetPower(false);
+    }
+
     private void DrainBattery()
     {
-        if (!powerOn || !canControl) return; //!powerOn || 
+        if (!powerOn || !canControl) return;
         if (currentBattery <= 0f) return;
 
-        // drain speed / converts drain per second to drain per minute
         float drainRate = Mathf.Abs(currentSpeed) > 1f ? movingDrainPM : idleDrainPM;
-
         float drainPerSecond = drainRate / 60f;
 
         currentBattery -= drainPerSecond * Time.fixedDeltaTime;
-        currentBattery = Mathf.Clamp(currentBattery, 0f,maxBattery);
+        currentBattery = Mathf.Clamp(currentBattery, 0f, maxBattery);
 
-        if (currentBattery <= 0f && powerOn)
-        {
+        if (currentBattery <= 0f)
             powerOn = false;
-        }
     }
 
-    // battery charge from previous battery amount
     public void ChargeBattery(float amount)
     {
-        currentBattery += amount;
-        currentBattery = Mathf.Clamp(currentBattery, 0f, maxBattery);
+        currentBattery = Mathf.Clamp(currentBattery + amount, 0f, maxBattery);
     }
-
-
-
-    // ----------------------------------
-    // ------   Sound Effects   ---------
-    //-----------------------------------
-
 
     public void SetPower(bool state)
     {
@@ -305,9 +286,6 @@ public class scooterCtrl : MonoBehaviour
             return;
 
         float speedPercent = Mathf.Clamp01(Mathf.Abs(currentSpeed) / maxSpeed);
-
         engineSource.pitch = Mathf.Lerp(minPitch, maxPitch, speedPercent);
     }
-
-
 }

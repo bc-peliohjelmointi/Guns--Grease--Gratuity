@@ -471,9 +471,9 @@ RectTransform:
   - {fileID: 1475581959}
   m_Father: {fileID: 50353336}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1, y: -100}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: -1, y: 124}
   m_SizeDelta: {x: 389, y: 361}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &287048886
@@ -1954,6 +1954,10 @@ PrefabInstance:
       propertyPath: m_RenderPostProcessing
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5844581374230767752, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
+      propertyPath: near clip plane
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 5844581374230767759, guid: d009453308a3a8b4684da5f196074c0d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2521,9 +2525,9 @@ RectTransform:
   - {fileID: 507088590}
   m_Father: {fileID: 50353336}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 3, y: -173}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 3, y: 51}
   m_SizeDelta: {x: 389, y: 106.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2064799315
