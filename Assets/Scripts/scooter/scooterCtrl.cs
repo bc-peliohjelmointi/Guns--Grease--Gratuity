@@ -29,6 +29,11 @@ public class scooterCtrl : MonoBehaviour
     public LayerMask groundMask;
     public float heightOffset = 0.15f;
 
+    [Header("Step Assist")]
+    public float stepHeight = 0.25f;
+    public float stepSmooth = 8f;
+    public float stepCheckDistance = 0.6f;
+
     [Header("Control")]
     public bool canControl = false;
     public bool powerOn = false;
@@ -168,18 +173,24 @@ public class scooterCtrl : MonoBehaviour
 
     private void ApplyGroundAssist()
     {
-        Vector3 origin = rb.position + Vector3.up * 0.2f;
+        Vector3 origin = rb.position + Vector3.up * 0.5f;
 
-        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 1.5f, groundMask))
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 2f, groundMask))
         {
-            Vector3 pos = rb.position;
-
-            // gently follow ground but NEVER hard snap
             float targetY = hit.point.y + heightOffset;
 
-            pos.y = Mathf.Lerp(pos.y, targetY, 0.05f);
+            // only correct if noticeably off ground
+            float diff = targetY - rb.position.y;
 
-            rb.position = pos;
+            if (Mathf.Abs(diff) > 0.05f)
+            {
+                Vector3 pos = rb.position;
+
+                // MUCH softer correction
+                pos.y = Mathf.Lerp(pos.y, targetY, 0.08f);
+
+                rb.MovePosition(pos);
+            }
         }
     }
 
