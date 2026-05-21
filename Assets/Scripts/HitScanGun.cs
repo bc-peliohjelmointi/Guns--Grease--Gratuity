@@ -137,7 +137,7 @@ public class GunHitscan : MonoBehaviour
 
         Vector3 targetPoint;
 
-        if (Physics.Raycast(camRay, out camHit, range, hitMask, QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(camRay, out camHit, range, hitMask, QueryTriggerInteraction.Collide))
         {
             targetPoint = camHit.point;
         }
@@ -150,7 +150,7 @@ public class GunHitscan : MonoBehaviour
         Vector3 dir = (targetPoint - origin).normalized;
 
         RaycastHit hit;
-        bool didHit = Physics.Raycast(origin, dir, out hit, range, hitMask, QueryTriggerInteraction.Ignore);
+        bool didHit = Physics.Raycast(origin, dir, out hit, range, hitMask, QueryTriggerInteraction.Collide);
 
         Vector3 tracerEnd;
 
