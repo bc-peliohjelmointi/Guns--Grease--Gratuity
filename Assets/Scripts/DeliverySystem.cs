@@ -67,6 +67,7 @@ public class DeliverySystem : MonoBehaviour
     public AudioClip startDeliverySFX;
     public AudioClip pickupPackageSFX;
     public AudioClip deliveryCompleteSFX;
+    public AudioClip deliveryFailSFX;
 
     [Header("Stairwell Audio")]
     public AudioClip openDoorSound;
@@ -85,6 +86,8 @@ public class DeliverySystem : MonoBehaviour
 
     // True when player is inside building and ready to deliver
     public bool pendingDelivery = false;
+
+    private bool showingTemporaryStatus = false;
 
     void Start()
     {
@@ -308,6 +311,9 @@ public class DeliverySystem : MonoBehaviour
     // Update status text based on current state
     void UpdateStatus()
     {
+        if (showingTemporaryStatus)
+            return;
+
         if (!hasActiveOrder)
         {
             statusText.text = "";
@@ -382,13 +388,18 @@ public class DeliverySystem : MonoBehaviour
     }
 
     // Fail the current delivery
+    // Fail the current delivery
     void FailDelivery(string reason)
     {
         hasPackage = false;
         hasActiveOrder = false;
 
-        statusText.text =
-            $"<color=red>Delivery failed! {reason}</color>";
+        // Play fail sound
+        if (deliveryFailSFX)
+            audioSource.PlayOneShot(deliveryFailSFX);
+
+        // Show temporary fail message
+        StartCoroutine(ShowFailureMessage());
 
         DeliveryModifierSystem modSystem = FindFirstObjectByType<DeliveryModifierSystem>();
 
@@ -403,8 +414,10 @@ public class DeliverySystem : MonoBehaviour
 
         if (teleportManager.isInStairwell)
         {
-            StartCoroutine(TeleportOutOfStairwell());   // Teleport out if in stairwell
+            StartCoroutine(TeleportOutOfStairwell());
         }
+
+        UpdateUI();
     }
 
     // Cancels the current order
@@ -412,6 +425,9 @@ public class DeliverySystem : MonoBehaviour
     {
         hasActiveOrder = false;
         hasPackage = false;
+
+        if (deliveryFailSFX)
+            audioSource.PlayOneShot(deliveryFailSFX);
 
         PlayerStats.Instance.OnOrderDeclined();
 
@@ -652,5 +668,22 @@ public class DeliverySystem : MonoBehaviour
 
         // clear current orders if needed
         // reset NPCs / packages
+    }
+
+    IEnumerator ShowFailureMessage()
+    {
+        showingTemporaryStatus = true;
+
+        statusText.text = "<color=red>Delivery Failed!</color>";
+
+        yield return new WaitForSeconds(4f);
+
+        showingTemporaryStatus = false;
+
+        // Clear only if no new order started
+        if (!hasActiveOrder)
+        {
+            statusText.text = "";
+        }
     }
 }
