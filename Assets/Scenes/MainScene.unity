@@ -62354,12 +62354,20 @@ PrefabInstance:
       value: 0.11
       objectReference: {fileID: 0}
     - target: {fileID: 5628927569763110887, guid: 6968d4bce26046a4d9fd1258a864ebc6, type: 3}
+      propertyPath: idleDrainPM
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5628927569763110887, guid: 6968d4bce26046a4d9fd1258a864ebc6, type: 3}
       propertyPath: powerOnClip
       value: 
       objectReference: {fileID: 8300000, guid: 214f7a1c0abf1ee49a248c1ef5815c9f, type: 3}
     - target: {fileID: 5628927569763110887, guid: 6968d4bce26046a4d9fd1258a864ebc6, type: 3}
       propertyPath: heightOffset
       value: 0.11
+      objectReference: {fileID: 0}
+    - target: {fileID: 5628927569763110887, guid: 6968d4bce26046a4d9fd1258a864ebc6, type: 3}
+      propertyPath: movingDrainPM
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 5628927569763110887, guid: 6968d4bce26046a4d9fd1258a864ebc6, type: 3}
       propertyPath: powerPromptUI
@@ -210311,7 +210319,7 @@ MonoBehaviour:
   autoSetControlPoints: 0
   points:
   - {x: -67.683334, y: 0, z: -6.8666687}
-  - {x: -67.683334, y: 0, z: -7.520983}
+  - {x: -67.683334, y: 0, z: -7.520984}
   - {x: -68.69346, y: 0.044613708, z: -11.615651}
   - {x: -67.38326, y: 0.059412647, z: -16.476467}
   - {x: -66.690056, y: 0.06724252, z: -19.048246}
@@ -226834,7 +226842,7 @@ MonoBehaviour:
   autoSetControlPoints: 0
   points:
   - {x: -4.75, y: 0, z: 2.7833328}
-  - {x: -4.75, y: 0, z: 2.1914756}
+  - {x: -4.75, y: 0, z: 2.1914752}
   - {x: -5.177961, y: 0.05, z: 2.5441349}
   - {x: -5.227905, y: 0.05, z: -0.60020655}
   - {x: -5.262367, y: 0.05, z: -2.7698257}
