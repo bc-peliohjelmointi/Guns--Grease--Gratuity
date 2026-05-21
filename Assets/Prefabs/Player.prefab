@@ -1648,6 +1648,10 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7317346411403300045, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
+      propertyPath: regenRate
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7317346411403300045, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
       propertyPath: deathSound
       value: 
       objectReference: {fileID: 8300000, guid: 7e9fff3541ab4e846a5088199c9a5e7b, type: 3}
@@ -1659,6 +1663,10 @@ PrefabInstance:
       propertyPath: playerController
       value: 
       objectReference: {fileID: 3213983986020760064}
+    - target: {fileID: 7317346411403300045, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
+      propertyPath: enableHealthRegen
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7317346411403300045, guid: c5efc39a8aaf6e64ea40e9ad573e9b47, type: 3}
       propertyPath: lowHealthHeartbeat
       value: 
@@ -1846,6 +1854,7 @@ MonoBehaviour:
   turretActivator: {fileID: 0}
   debreeSpawner: {fileID: 0}
   playerAtExitPoint: 0
+  postDeliverySpawnChance: 0.12
   hasActiveOrder: 0
   currentOrderName: 
   currentOrderReward: 0
@@ -1854,13 +1863,15 @@ MonoBehaviour:
   deliveryPoints: 0
   hasPackage: 0
   deliveryRange: 3
-  maxDeliveryHP: 100
   currentDeliveryHP: 0
   statusText: {fileID: 0}
   hpSlider: {fileID: 0}
   compassArrow: {fileID: 0}
   timerText: {fileID: 0}
   compassNav: {fileID: 5231433008958454834}
+  compassIcon: {fileID: 0}
+  packageSprite: {fileID: 21300000, guid: 80816a0d76edd8c4888b5e4bbd5390d9, type: 3}
+  deliverySprite: {fileID: 21300000, guid: abeaa0185cbc1a24caa9aec86fd801b2, type: 3}
   fadePanel: {fileID: 0}
   fadeDuration: 1
   fadeHold: 1.5
@@ -1868,6 +1879,7 @@ MonoBehaviour:
   startDeliverySFX: {fileID: 8300000, guid: 1214845774359c94db5d72cccfb09194, type: 3}
   pickupPackageSFX: {fileID: 8300000, guid: 81fa433b5d31ac448a66aec0f111feab, type: 3}
   deliveryCompleteSFX: {fileID: 8300000, guid: 904bc13cfeb9cc64895e025631e1c660, type: 3}
+  deliveryFailSFX: {fileID: 8300000, guid: 4507a514060fea7409edbe4d2fd58895, type: 3}
   openDoorSound: {fileID: 0}
   closeDoorSound: {fileID: 0}
   pendingDelivery: 0
@@ -1884,6 +1896,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   deliverySystem: {fileID: 1469568962133849383}
+  player: {fileID: 0}
   currentMode: 0
 --- !u!114 &4182661306016418333
 MonoBehaviour:
@@ -1901,6 +1914,11 @@ MonoBehaviour:
   mountPoint: {fileID: 0}
   batteryText: {fileID: 0}
   statusTxt: {fileID: 0}
+  batteryChargeText: {fileID: 0}
+  uiAudioSource: {fileID: 7258631385908644639}
+  buyBatteryClip: {fileID: 8300000, guid: 0009097d2b557554ba14c8ad8edb5c9b, type: 3}
+  chargeScooterClip: {fileID: 8300000, guid: cf0f96d52fb6c924f8003f7bc52887c2, type: 3}
+  notEnoughMoneyClip: {fileID: 8300000, guid: c806c448aae1aee4fb6a1d5d2a1ebb4f, type: 3}
   mountDistance: 2
   mountKey: 20
   powerKey: 19
@@ -2265,10 +2283,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2758822002551651491, guid: ec81deb4449b7cf489f777cca4142876, type: 3}
-      propertyPath: slide
-      value: 
-      objectReference: {fileID: 3317438720049267087}
-    - target: {fileID: 2758822002551651491, guid: ec81deb4449b7cf489f777cca4142876, type: 3}
       propertyPath: damage
       value: 20
       objectReference: {fileID: 0}
@@ -2280,6 +2294,10 @@ PrefabInstance:
       propertyPath: recoilZ
       value: 0.3
       objectReference: {fileID: 0}
+    - target: {fileID: 2758822002551651491, guid: ec81deb4449b7cf489f777cca4142876, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 7519590606170090228}
     - target: {fileID: 2758822002551651491, guid: ec81deb4449b7cf489f777cca4142876, type: 3}
       propertyPath: fireRate
       value: 5
@@ -2408,9 +2426,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3293647269517816288, guid: ec81deb4449b7cf489f777cca4142876, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6947934886704314858}
-    - targetCorrespondingSourceObject: {fileID: 3293647269517816288, guid: ec81deb4449b7cf489f777cca4142876, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3317438720049267087}
   m_SourcePrefab: {fileID: 100100000, guid: ec81deb4449b7cf489f777cca4142876, type: 3}
 --- !u!1 &3700896365188619770 stripped
 GameObject:
@@ -2518,21 +2533,6 @@ GameObject:
   m_PrefabInstance: {fileID: 8161127256065463685}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &6947934886704314858
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6698901320662852709}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec995b60952ed2e409cf4f4ddc89f895, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  slideDistance: 0.08
-  slideSpeed: 20
-  returnSpeed: 10
---- !u!114 &3317438720049267087
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

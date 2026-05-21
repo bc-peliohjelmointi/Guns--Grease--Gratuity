@@ -25,6 +25,7 @@ TagManager:
   - Home
   - PopupAnchor
   - PlayerScooter
+  - EnemySpawner
   layers:
   - Default
   - TransparentFX

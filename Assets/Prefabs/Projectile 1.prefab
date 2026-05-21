@@ -153,7 +153,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 10
   deliveryDamage: 15
-  speed: 40
+  speed: 60
   lifetime: 10
 --- !u!108 &-8468495027619128128
 Light:

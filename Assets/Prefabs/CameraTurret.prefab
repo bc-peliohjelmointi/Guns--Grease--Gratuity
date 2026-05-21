@@ -978,6 +978,7 @@ MonoBehaviour:
   bulletPrefab: {fileID: 6064456865497610199, guid: a6565cdd1cd95534ba8dd689b6eb5f40, type: 3}
   firePoint: {fileID: 3822399933216539925}
   shootSound: {fileID: 8300000, guid: 7d7598fcb214ac54eb9e29f71ccbc443, type: 3}
+  detectSound: {fileID: 8300000, guid: daba88262f7603a4cae68fb7319767c5, type: 3}
 --- !u!82 &6982418693113918632
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1035,7 +1036,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0

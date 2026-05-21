@@ -21,6 +21,10 @@ public class DeliverySystem : MonoBehaviour
     public DebreeSpawner debreeSpawner;
     [HideInInspector] public bool playerAtExitPoint = false;
 
+    [Header("Enemy Spawn")]
+    [Range(0f, 1f)]
+    public float postDeliverySpawnChance = 0.10f;
+
     // Current order data
     [Header("Order Info")]
     public bool hasActiveOrder = false;
@@ -385,6 +389,8 @@ public class DeliverySystem : MonoBehaviour
         DisableAllDeliveryZones();
         phoneUI?.CloseActiveOrderPanel();
         UpdateUI();
+
+        TrySpawnExtraEnemies();
     }
 
     // Fail the current delivery
@@ -684,6 +690,24 @@ public class DeliverySystem : MonoBehaviour
         if (!hasActiveOrder)
         {
             statusText.text = "";
+        }
+    }
+
+    private void TrySpawnExtraEnemies()
+    {
+        GameObject[] spawnerObjects = GameObject.FindGameObjectsWithTag("EnemySpawner");
+
+        if (spawnerObjects.Length == 0)
+            return;
+
+        foreach (GameObject obj in spawnerObjects)
+        {
+            TurretSpawner spawner = obj.GetComponent<TurretSpawner>();
+
+            if (spawner != null)
+            {
+                spawner.TrySpawnTurrets(postDeliverySpawnChance);
+            }
         }
     }
 }

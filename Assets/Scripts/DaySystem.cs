@@ -127,8 +127,9 @@ public class DaySystem : MonoBehaviour
         Debug.Log("🔄 Restarting Day " + currentDay);
 
         // Reset stats
-        deliveriesCompleted = 0;
-        totalMoneyEarned = 0f;
+        // !! Currently no way of progressing days so the following 2 are commented !!
+        // deliveriesCompleted = 0;
+        // totalMoneyEarned = 0f;
 
         // Reset systems
         if (delivery != null)

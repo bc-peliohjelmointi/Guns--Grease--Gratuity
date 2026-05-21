@@ -25,7 +25,9 @@ public class TurretAI : MonoBehaviour
 
     [Header("Audio")]
     public AudioClip shootSound;
+    public AudioClip detectSound;
 
+    private bool hasDetectedPlayer = false;
     private float fireCooldown;
     private Transform player;
     private DeliverySystem deliverySystem;
@@ -71,8 +73,22 @@ public class TurretAI : MonoBehaviour
             return;
 
         // Blocked line of sight
-        if (!HasLineOfSight(targetPos, distance))
+        bool canSeePlayer = HasLineOfSight(targetPos, distance);
+
+        if (!canSeePlayer)
+        {
+            hasDetectedPlayer = false;
             return;
+        }
+
+        // Play alarm once on detection
+        if (!hasDetectedPlayer)
+        {
+            hasDetectedPlayer = true;
+
+            if (detectSound && audioSource)
+                audioSource.PlayOneShot(detectSound);
+        }
 
         // Aim turret
         RotateYaw(targetPos);
