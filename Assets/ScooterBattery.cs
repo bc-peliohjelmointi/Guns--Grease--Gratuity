@@ -1,20 +1,37 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
-using TMPro;
 
 public class ScooterBattery : MonoBehaviour
 {
-    // how much the battery charges at once (tier 1)
     public float chargeAmount = 30.0f;
+
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip pickupClip;
 
     private void OnTriggerEnter(Collider other)
     {
-        ScooterMount player = other .GetComponent<ScooterMount>();
+        ScooterMount player = other.GetComponent<ScooterMount>();
 
         if (player != null && !player.isMounted && !player.HasBattery())
         {
             player.GetBattery(chargeAmount);
-            Destroy(gameObject);
+
+            PlayPickupSound();
+
+            Destroy(gameObject, 0.1f);
+        }
+    }
+
+    private void PlayPickupSound()
+    {
+        if (audioSource != null && pickupClip != null)
+        {
+            // detach so it survives destroy
+            audioSource.transform.parent = null;
+
+            audioSource.PlayOneShot(pickupClip);
+
+            Destroy(audioSource.gameObject, pickupClip.length);
         }
     }
 }

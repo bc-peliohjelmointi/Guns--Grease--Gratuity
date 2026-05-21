@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.InputSystem;
 
 public class VendingMachine : MonoBehaviour
@@ -15,6 +16,13 @@ public class VendingMachine : MonoBehaviour
 
     [Header("UI")]
     public TextMeshProUGUI statusText;
+
+    [Header("Audio")]
+    public AudioSource audioSource;
+
+    public AudioClip buyClip;
+    public AudioClip errorClip;
+
 
     private Transform player;
     private PlayerStats stats;
@@ -99,10 +107,16 @@ public class VendingMachine : MonoBehaviour
                 batterySpawnPoint.rotation
             );
 
+            if (audioSource && buyClip)
+                audioSource.PlayOneShot(buyClip);
+
             StartCoroutine(ShowTempMessage("Battery Purchased!"));
         }
         else
         {
+            if (audioSource && errorClip)
+                audioSource.PlayOneShot(errorClip);
+
             StartCoroutine(ShowTempMessage("Not enough money."));
         }
     }

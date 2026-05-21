@@ -33,6 +33,8 @@ public class scooterCtrl : MonoBehaviour
     public float stepHeight = 0.25f;
     public float stepSmooth = 8f;
     public float stepCheckDistance = 0.6f;
+    private bool isStepping;
+    private bool yLockedThisFrame;
 
     [Header("Control")]
     public bool canControl = false;
@@ -113,11 +115,14 @@ public class scooterCtrl : MonoBehaviour
             return;
         }
 
+        HandleStepClimb();
         HandleMovement();
-        ApplyGroundAssist();
+        SnapToGround();
         HandleTurningAndLean();
         DrainBattery();
         UpdateEngineSound();
+
+        yLockedThisFrame = false;
     }
 
     private void ApplyUpgrades()
@@ -166,30 +171,52 @@ public class scooterCtrl : MonoBehaviour
 
         currentSpeed = Mathf.Clamp(currentSpeed, maxReverse, maxSpeed);
 
-        Vector3 velocity = scooterRoot.forward * currentSpeed;
-        velocity.y = rb.linearVelocity.y; // keep gravity working
-        rb.linearVelocity = velocity;
+        Vector3 newVel = scooterRoot.forward * currentSpeed;
+        newVel.y = Mathf.Min(rb.linearVelocity.y, 0f);
+        rb.linearVelocity = newVel;
     }
 
-    private void ApplyGroundAssist()
+    private void SnapToGround()
     {
+        if (isStepping || yLockedThisFrame) return;
+
         Vector3 origin = rb.position + Vector3.up * 0.5f;
 
         if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 2f, groundMask))
         {
             float targetY = hit.point.y + heightOffset;
 
-            // only correct if noticeably off ground
-            float diff = targetY - rb.position.y;
+            Vector3 pos = rb.position;
 
-            if (Mathf.Abs(diff) > 0.05f)
+            if (Mathf.Abs(pos.y - targetY) < 0.25f)
             {
+                pos.y = Mathf.Lerp(pos.y, targetY, 0.2f);
+                rb.position = pos;
+            }
+        }
+    }
+
+    private void HandleStepClimb()
+    {
+        isStepping = false;
+
+        Vector3 origin = rb.position + Vector3.up * 0.2f;
+        Vector3 dir = scooterRoot.forward;
+
+        if (Physics.Raycast(origin, dir, out RaycastHit hit, stepCheckDistance, groundMask))
+        {
+            float stepY = hit.point.y - rb.position.y;
+
+            if (stepY > 0f && stepY <= stepHeight)
+            {
+                isStepping = true;
+                yLockedThisFrame = true;
+
                 Vector3 pos = rb.position;
+                float targetY = hit.point.y + heightOffset;
 
-                // MUCH softer correction
-                pos.y = Mathf.Lerp(pos.y, targetY, 0.08f);
-
-                rb.MovePosition(pos);
+                pos.y = Mathf.Lerp(pos.y, targetY, 0.25f);
+                rb.position = pos;
             }
         }
     }

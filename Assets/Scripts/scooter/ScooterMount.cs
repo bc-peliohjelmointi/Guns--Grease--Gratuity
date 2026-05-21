@@ -10,6 +10,14 @@ public class ScooterMount : MonoBehaviour
     public Transform mountPoint;
     public TextMeshProUGUI batteryText;
     public TextMeshProUGUI statusTxt;
+    public TextMeshProUGUI batteryChargeText;
+
+    [Header("Audio")]
+    public AudioSource uiAudioSource;
+
+    public AudioClip buyBatteryClip;
+    public AudioClip chargeScooterClip;
+    public AudioClip notEnoughMoneyClip;
 
     [Header("Settings")]
     // mount
@@ -43,6 +51,9 @@ public class ScooterMount : MonoBehaviour
             cameraOriginalParent = playerCamera.transform.parent;
 
         UpdateStatusText();
+
+        if (batteryChargeText != null)
+            batteryChargeText.text = "";
     }
 
     private void Update()
@@ -172,14 +183,19 @@ public class ScooterMount : MonoBehaviour
     // Scooter charge control and battery pack usage
     private void HandleScooterCharging()
     {
-        if (scooterControl == null) return;
+        if (scooterControl == null)
+            return;
 
         float distance = Vector3.Distance(transform.position, scooter.position);
 
+        // Default: clear if not valid
+        if (batteryChargeText != null)
+            batteryChargeText.text = "";
+
         if (!isMounted && hasBatteryPack && distance <= chargeRange)
         {
-            if (batteryText != null)
-                batteryText.text = "[Y] Charge Scooter";
+            if (batteryChargeText != null)
+                batteryChargeText.text = "[Y] Charge Scooter";
 
             if (Keyboard.current[chargeKey].wasPressedThisFrame)
             {
@@ -187,6 +203,12 @@ public class ScooterMount : MonoBehaviour
 
                 hasBatteryPack = false;
                 storedChargeAmount = 0f;
+
+                if (batteryChargeText != null)
+                    batteryChargeText.text = "Battery Charged!";
+
+                if (uiAudioSource && chargeScooterClip)
+                    uiAudioSource.PlayOneShot(chargeScooterClip);
             }
         }
     }
